@@ -144,9 +144,9 @@ function LinuxDistroWorkspace({
   const current = distros.find(d => d.id === selectedId) || distros[0];
 
   return (
-    <div className="rounded-2xl border border-black/[0.06] bg-white p-6 shadow-sm transition-all duration-200 dark:border-white/10 dark:bg-[#201f27] md:p-8">
+    <div className="rounded-2xl border border-purple-100 bg-white p-6 shadow-sm transition-all duration-200 dark:border-white/10 dark:bg-[#201f27] md:p-8">
       {/* 1. Header with Badge, Title & All Distros Link */}
-      <div className="flex flex-col justify-between gap-4 border-b border-black/[0.06] pb-6 dark:border-white/10 sm:flex-row sm:items-center">
+      <div className="flex flex-col justify-between gap-4 border-b border-purple-100 pb-6 dark:border-white/10 sm:flex-row sm:items-center">
         <div>
           <div
             style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
@@ -248,7 +248,7 @@ function LinuxDistroWorkspace({
         </div>
 
         {/* Verification and Next Step — Full Container */}
-        <div className="border-t border-black/[0.06] pt-6 dark:border-white/10">
+        <div className="border-t border-purple-100 pt-6 dark:border-white/10">
           <div className="overflow-hidden rounded-xl border-0 bg-[#0e0a1a] shadow-sm dark:bg-[#120c22]">
             <div className="bg-purple-950/50 flex items-center justify-between border-b border-white/10 px-4 py-2.5">
               <div className="flex items-center gap-2 text-xs font-bold text-white">
@@ -341,7 +341,7 @@ function ResourceCard({ badge, badgeColor, icon, iconBg, title, desc, href, cta,
       onKeyDown={e => {
         if (e.key === 'Enter') window.open(href, '_blank', 'noopener,noreferrer');
       }}
-      className="group relative flex cursor-pointer flex-col justify-between rounded-2xl border border-black/[0.06] bg-white p-7 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-black/[0.14] hover:shadow-md dark:border-white/10 dark:bg-[#201f27] dark:hover:border-white/20">
+      className="group relative flex cursor-pointer flex-col justify-between rounded-2xl border border-purple-100 bg-white p-7 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-purple-300 hover:shadow-md dark:border-white/10 dark:bg-[#201f27] dark:hover:border-white/20">
       <div>
         {/* Top bar: Badge + Icon */}
         <div className="flex items-center justify-between gap-3">
@@ -379,7 +379,7 @@ function ResourceCard({ badge, badgeColor, icon, iconBg, title, desc, href, cta,
       </div>
 
       {/* Footer link */}
-      <div className="mt-6 flex items-center justify-between border-t border-black/[0.06] pt-4 text-sm font-bold text-[#892CA0] transition-colors duration-150 group-hover:text-purple-900 dark:border-white/10 dark:text-purple-300 dark:group-hover:text-white">
+      <div className="mt-6 flex items-center justify-between border-t border-purple-100 pt-4 text-sm font-bold text-[#892CA0] transition-colors duration-150 group-hover:text-purple-900 dark:border-white/10 dark:text-purple-300 dark:group-hover:text-white">
         <span className="font-bold text-[#892CA0] group-hover:text-purple-900 dark:text-purple-300 dark:group-hover:text-white">
           {cta}
         </span>
@@ -532,67 +532,59 @@ export default function DownloadsPage(): JSX.Element {
       title="Download Podman"
       description="Download Podman CLI for Windows, macOS, and Linux. Free, open-source, daemonless container engine.">
       {/* ============================================================
-          HERO SECTION (Prominent 2-Column Hero: Download Podman CLI + Live Terminal)
+          HERO SECTION (Clean Centered Hero: Download Podman CLI & OS Switcher)
       ============================================================ */}
       <section className="relative overflow-hidden bg-gradient-to-r from-blue-500 to-purple-700 pb-16 pt-10 dark:from-blue-700 dark:to-purple-900 sm:pb-20 md:pt-14 lg:pb-24">
-        <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 xl:px-10">
-          <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-10">
-            {/* Left Column: Details & OS Switcher */}
-            <div className="relative z-30 text-center lg:col-span-6 lg:text-left xl:col-span-6">
-              {/* Release version badge */}
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/20 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
-                <span style={{ color: '#ffffff' }} className="!text-white dark:!text-white">
-                  Latest release &mdash; v{LATEST_VERSION}
-                </span>
-              </div>
-
-              {/* Headline */}
-              <h1
-                style={{ color: '#ffffff' }}
-                className="mb-3 text-3xl font-extrabold tracking-tight !text-white dark:!text-white sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl">
-                Download Podman
-              </h1>
-              <p
-                style={{ color: 'rgba(255, 255, 255, 0.95)' }}
-                className="mb-8 max-w-xl text-base leading-relaxed !text-white/95 dark:!text-white/95 sm:text-lg">
-                The daemonless, open-source container engine. Develop, manage, and run OCI containers and pods without a
-                background daemon and without root privileges.
-              </p>
-
-              {/* OS Selector — clean segmented control matching MeetingTypeSwitcher */}
-              <div className="flex justify-center lg:justify-start">
-                <div
-                  role="tablist"
-                  aria-label="Select operating system"
-                  className="relative inline-flex w-fit rounded-2xl border border-white/25 bg-black/20 p-1.5 backdrop-blur-md">
-                  {OS_OPTIONS.map(({ id, label, icon }) => {
-                    const isActive = os === id;
-                    return (
-                      <button
-                        key={id}
-                        type="button"
-                        role="tab"
-                        aria-selected={isActive}
-                        onClick={() => setOs(id)}
-                        style={{ border: 'none', outline: 'none', textDecoration: 'none' }}
-                        className={`flex cursor-pointer items-center gap-2.5 rounded-xl px-5 py-3 text-sm font-bold !no-underline transition-all duration-200 ${
-                          isActive
-                            ? 'bg-white text-purple-900 shadow-sm'
-                            : 'bg-transparent text-white hover:text-white/80'
-                        }`}>
-                        <Icon icon={icon} className={`text-xl ${isActive ? 'text-purple-900' : 'text-white'}`} />
-                        <span>{label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+        <div className="container mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <div className="relative z-30 mx-auto max-w-3xl text-center">
+            {/* Release version badge */}
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/20 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
+              <span style={{ color: '#ffffff' }} className="!text-white dark:!text-white">
+                Latest release &mdash; v{LATEST_VERSION}
+              </span>
             </div>
 
-            {/* Right Column: Interactive CLI Terminal Showcase */}
-            <div className="relative z-10 flex items-center justify-center lg:col-span-6 lg:justify-end xl:col-span-6">
-              <HeroCliTerminal os={os} />
+            {/* Headline */}
+            <h1
+              style={{ color: '#ffffff' }}
+              className="mb-3 text-3xl font-extrabold tracking-tight !text-white dark:!text-white sm:text-4xl md:text-5xl lg:text-6xl">
+              Download Podman
+            </h1>
+            <p
+              style={{ color: 'rgba(255, 255, 255, 0.95)' }}
+              className="mx-auto mb-8 max-w-2xl text-base leading-relaxed !text-white/95 dark:!text-white/95 sm:text-lg">
+              The daemonless, open-source container engine. Develop, manage, and run OCI containers and pods without a
+              background daemon and without root privileges.
+            </p>
+
+            {/* OS Selector — clean segmented control matching MeetingTypeSwitcher */}
+            <div className="flex justify-center">
+              <div
+                role="tablist"
+                aria-label="Select operating system"
+                className="relative inline-flex w-fit rounded-2xl border border-white/25 bg-black/20 p-1.5 backdrop-blur-md">
+                {OS_OPTIONS.map(({ id, label, icon }) => {
+                  const isActive = os === id;
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => setOs(id)}
+                      style={{ border: 'none', outline: 'none', textDecoration: 'none' }}
+                      className={`flex cursor-pointer items-center gap-2.5 rounded-xl px-5 py-3 text-sm font-bold !no-underline transition-all duration-200 ${
+                        isActive
+                          ? 'bg-white text-purple-900 shadow-sm'
+                          : 'bg-transparent text-white hover:text-white/80'
+                      }`}>
+                      <Icon icon={icon} className={`text-xl ${isActive ? 'text-purple-900' : 'text-white'}`} />
+                      <span>{label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -649,7 +641,7 @@ export default function DownloadsPage(): JSX.Element {
           {os === 'windows' && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-stretch">
               {/* Card 1: Standalone MSI Installers */}
-              <div className="flex flex-col justify-between rounded-2xl border border-black/[0.06] bg-white p-7 shadow-sm transition-all duration-200 hover:border-black/[0.14] hover:shadow-md dark:border-white/10 dark:bg-[#201f27] dark:hover:border-white/20">
+              <div className="flex flex-col justify-between rounded-2xl border border-purple-100 bg-white p-7 shadow-sm transition-all duration-200 hover:border-purple-300 hover:shadow-md dark:border-white/10 dark:bg-[#201f27] dark:hover:border-white/20">
                 <div>
                   <div className="flex items-center justify-between gap-3">
                     <div
@@ -691,12 +683,12 @@ export default function DownloadsPage(): JSX.Element {
                         icon="material-symbols:check-circle-rounded"
                         className="text-base text-[#892CA0] dark:text-purple-300"
                       />
-                      <span>Signed by Red Hat with checksum verification</span>
+                      <span>Cryptographically signed with checksum verification</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-8 space-y-3 border-t border-black/[0.06] pt-5 dark:border-white/10">
+                <div className="mt-8 space-y-3 border-t border-purple-100 pt-5 dark:border-white/10">
                   <DownloadBtn
                     href={`https://github.com/podman-container-tools/podman/releases/download/v${LATEST_VERSION}/podman-installer-windows-amd64.msi`}
                     primary
@@ -712,7 +704,7 @@ export default function DownloadsPage(): JSX.Element {
               </div>
 
               {/* Card 2: Package Managers (WinGet & Chocolatey) */}
-              <div className="flex flex-col justify-between rounded-2xl border border-black/[0.06] bg-white p-7 shadow-sm transition-all duration-200 hover:border-black/[0.14] hover:shadow-md dark:border-white/10 dark:bg-[#201f27] dark:hover:border-white/20">
+              <div className="flex flex-col justify-between rounded-2xl border border-purple-100 bg-white p-7 shadow-sm transition-all duration-200 hover:border-purple-300 hover:shadow-md dark:border-white/10 dark:bg-[#201f27] dark:hover:border-white/20">
                 <div>
                   <div className="flex items-center justify-between gap-3">
                     <div
@@ -738,7 +730,7 @@ export default function DownloadsPage(): JSX.Element {
                   </div>
                 </div>
 
-                <div className="mt-8 border-t border-black/[0.06] pt-6 dark:border-white/10">
+                <div className="mt-8 border-t border-purple-100 pt-6 dark:border-white/10">
                   <Terminal
                     command="podman machine init && podman machine start"
                     label="Next step after installation"
@@ -749,102 +741,105 @@ export default function DownloadsPage(): JSX.Element {
           )}
 
           {/* ==========================================================
-              MACOS: 2-Column Balanced Showcase (PKG vs Homebrew)
+              MACOS: Unified Single Container Showcase (Official PKG + Homebrew Notice)
           ========================================================== */}
           {os === 'mac' && (
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-stretch">
-              {/* Card 1: Universal PKG Installer */}
-              <div className="flex flex-col justify-between rounded-2xl border border-black/[0.06] bg-white p-7 shadow-sm transition-all duration-200 hover:border-black/[0.14] hover:shadow-md dark:border-white/10 dark:bg-[#201f27] dark:hover:border-white/20">
-                <div>
-                  <div className="flex items-center justify-between gap-3">
+            <div className="mx-auto max-w-3xl">
+              <div className="rounded-2xl border border-purple-100 bg-white p-6 shadow-sm transition-all duration-200 dark:border-white/10 dark:bg-[#201f27] md:p-8">
+                {/* Top Header Card */}
+                <div className="flex flex-col justify-between gap-4 border-b border-purple-100 pb-6 dark:border-white/10 sm:flex-row sm:items-center">
+                  <div>
                     <div
                       style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#892CA0] text-white shadow-md shadow-[#892ca0]/25">
-                      <Icon icon="fa-brands:apple" className="text-2xl text-white" />
+                      className="shadow-xs inline-flex items-center gap-2 rounded-md bg-[#892CA0] px-3 py-1.5 text-xs font-bold text-white">
+                      <Icon icon="fa-brands:apple" className="text-sm text-white" />
+                      <span className="text-white">Official macOS Package</span>
                     </div>
-                    <span
-                      style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-                      className="shadow-xs rounded-full bg-[#892CA0] px-3 py-1 text-xs font-bold uppercase tracking-wider !text-white">
-                      Recommended
-                    </span>
+                    <h3 className="text-purple-950 mt-2 p-0 text-2xl font-extrabold tracking-tight dark:text-white sm:text-3xl">
+                      Universal PKG Installer
+                    </h3>
+                    <p className="mt-1 text-sm font-medium text-purple-900/90 dark:text-purple-100">
+                      Single graphical installer package (.pkg) optimized for both Apple Silicon (M1/M2/M3/M4) and Intel
+                      64-bit Macs.
+                    </p>
                   </div>
 
-                  <h3 className="text-purple-950 mb-2 mt-5 p-0 text-xl font-bold dark:text-white">
-                    Universal PKG Installer
-                  </h3>
-                  <p className="m-0 text-sm font-medium leading-relaxed text-purple-900/90 dark:text-purple-100">
-                    Single graphical installer package (.pkg) optimized for both Apple Silicon (M1/M2/M3/M4) and Intel
-                    64-bit Macs.
-                  </p>
-
-                  <div className="text-purple-950 mt-5 space-y-2 text-xs font-semibold dark:text-purple-100">
-                    <div className="flex items-center gap-2">
-                      <Icon
-                        icon="material-symbols:check-circle-rounded"
-                        className="text-base text-[#892CA0] dark:text-purple-300"
-                      />
-                      <span>Universal Binary (Apple Silicon &amp; Intel x86_64)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Icon
-                        icon="material-symbols:check-circle-rounded"
-                        className="text-base text-[#892CA0] dark:text-purple-300"
-                      />
-                      <span>Includes Podman CLI, machine helpers &amp; man pages</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Icon
-                        icon="material-symbols:check-circle-rounded"
-                        className="text-base text-[#892CA0] dark:text-purple-300"
-                      />
-                      <span>Cryptographically signed by Red Hat</span>
-                    </div>
-                  </div>
+                  <span
+                    style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
+                    className="shadow-xs shrink-0 rounded-full bg-[#892CA0] px-3.5 py-1 text-xs font-bold uppercase tracking-wider !text-white">
+                    Recommended Method
+                  </span>
                 </div>
 
-                <div className="mt-8 border-t border-black/[0.06] pt-5 dark:border-white/10">
+                {/* Main Download Section */}
+                <div className="mt-6">
+                  {/* High-Contrast Feature Points (No background blur or grey pills) */}
+                  <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <div className="flex items-center gap-2.5">
+                      <Icon
+                        icon="material-symbols:check-circle-rounded"
+                        className="dark:text-purple-400 shrink-0 text-lg text-[#892CA0]"
+                      />
+                      <span className="text-gray-800 text-xs font-bold dark:text-gray-100">
+                        Universal Binary (Apple &amp; Intel)
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <Icon
+                        icon="material-symbols:check-circle-rounded"
+                        className="dark:text-purple-400 shrink-0 text-lg text-[#892CA0]"
+                      />
+                      <span className="text-gray-800 text-xs font-bold dark:text-gray-100">
+                        Includes CLI &amp; machine helpers
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <Icon
+                        icon="material-symbols:check-circle-rounded"
+                        className="dark:text-purple-400 shrink-0 text-lg text-[#892CA0]"
+                      />
+                      <span className="text-gray-800 text-xs font-bold dark:text-gray-100">
+                        Signed installer package
+                      </span>
+                    </div>
+                  </div>
+
                   <DownloadBtn
                     href={`https://github.com/podman-container-tools/podman/releases/download/v${LATEST_VERSION}/podman-installer-macos-arm64.pkg`}
                     primary
-                    title="macOS Universal Installer"
-                    sub={`v${LATEST_VERSION} · Universal PKG (Apple Silicon & Intel)`}
+                    title="Download macOS Universal PKG Installer"
+                    sub={`v${LATEST_VERSION} · Universal PKG (.pkg)`}
                   />
                 </div>
-              </div>
 
-              {/* Card 2: Homebrew Package Manager */}
-              <div className="flex flex-col justify-between rounded-2xl border border-black/[0.06] bg-white p-7 shadow-sm transition-all duration-200 hover:border-black/[0.14] hover:shadow-md dark:border-white/10 dark:bg-[#201f27] dark:hover:border-white/20">
-                <div>
-                  <div className="flex items-center justify-between gap-3">
-                    <div
-                      style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#892CA0] text-white shadow-md shadow-[#892ca0]/25">
-                      <Icon icon="simple-icons:homebrew" className="text-2xl text-white" />
-                    </div>
-                    <span
-                      style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-                      className="shadow-xs rounded-full bg-[#892CA0] px-3 py-1 text-xs font-bold uppercase tracking-wider !text-white">
-                      Package Manager
-                    </span>
-                  </div>
-
-                  <h3 className="text-purple-950 mb-2 mt-5 p-0 text-xl font-bold dark:text-white">
-                    Install via Homebrew
-                  </h3>
-                  <p className="m-0 text-sm font-medium leading-relaxed text-purple-900/90 dark:text-purple-100">
-                    Quick CLI setup using macOS's standard developer package manager. Handles updates automatically.
-                  </p>
-
-                  <div className="mt-5">
-                    <Terminal command="brew install podman" label="Homebrew" />
-                  </div>
-                </div>
-
-                <div className="mt-8 border-t border-black/[0.06] pt-6 dark:border-white/10">
+                {/* Next Step Terminal */}
+                <div className="mt-5">
                   <Terminal
                     command="podman machine init && podman machine start"
-                    label="Next step to start your machine"
+                    label="Next step after installation"
                   />
+                </div>
+
+                {/* High-Contrast Low-Attention Homebrew Note */}
+                <div className="border-gray-200 dark:border-gray-800 mt-6 border-t pt-4">
+                  <div className="flex flex-col items-start justify-between gap-2 text-xs font-medium sm:flex-row sm:items-center">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <Icon
+                        icon="material-symbols:info-outline-rounded"
+                        className="dark:text-gray-400 shrink-0 text-base text-gray-500"
+                      />
+                      <span>
+                        <strong className="font-bold text-gray-900 dark:text-gray-100">
+                          Alternative option (Not recommended):
+                        </strong>{' '}
+                        <span className="text-gray-700 dark:text-gray-300">Homebrew formula</span>{' '}
+                        <span className="dark:bg-gray-800 dark:text-emerald-400 inline-flex items-center rounded border border-gray-300 bg-gray-100 px-2 py-0.5 font-mono text-[12px] font-bold text-gray-900 dark:border-gray-700">
+                          brew install podman
+                        </span>
+                      </span>
+                    </div>
+                    <CopyIconButton text="brew install podman" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -860,84 +855,39 @@ export default function DownloadsPage(): JSX.Element {
       </section>
 
       {/* ============================================================
-          PODMAN DESKTOP (Secondary GUI Callout Banner)
+          PODMAN DESKTOP (Secondary GUI Callout Banner — Low Attention & Purplish Container)
       ============================================================ */}
-      <section className="bg-white pb-14 pt-2 dark:bg-gray-900 sm:pb-16 sm:pt-4">
-        <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl border border-black/[0.06] bg-gradient-to-r from-[#1d1135] via-[#241344] to-[#140b29] p-8 text-white shadow-xl dark:border-white/10 sm:p-10 lg:p-12">
-            {/* Ambient subtle glow */}
-            <div className="bg-purple-600/20 pointer-events-none absolute -right-12 -top-12 h-64 w-64 rounded-full blur-3xl" />
-            <div className="bg-blue-600/15 pointer-events-none absolute -bottom-12 -left-12 h-64 w-64 rounded-full blur-3xl" />
-
-            <div className="relative flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
-              {/* Left Side: Info */}
-              <div className="max-w-2xl space-y-3.5">
-                <div
-                  style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-                  className="inline-flex items-center gap-2 rounded-full border-0 bg-[#892CA0] px-3.5 py-1 text-xs font-bold uppercase tracking-wider !text-white shadow-sm">
-                  <Icon icon="material-symbols:desktop-windows-rounded" className="text-base text-white" />
-                  <span className="!text-white">Podman Desktop &bull; v{LATEST_DESKTOP_VERSION}</span>
-                </div>
-
-                <h2 className="m-0 text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl">
-                  Prefer a Graphical Interface?
-                </h2>
-
-                <p className="m-0 text-sm font-medium leading-relaxed text-purple-100/90 sm:text-base">
-                  Podman Desktop provides a rich, intuitive GUI to manage containers, inspect logs, build images, and
-                  work with Kubernetes effortlessly &mdash; all daemonless and local.
-                </p>
-
-                {/* Feature checklist chips */}
-                <div className="text-purple-200 flex flex-wrap items-center gap-2 pt-1 text-xs font-bold">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1">
-                    <Icon icon="material-symbols:check-circle-rounded" className="text-emerald-400" />
-                    One-click container engine
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1">
-                    <Icon icon="material-symbols:check-circle-rounded" className="text-emerald-400" />
-                    Kubernetes &amp; Kind ready
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1">
-                    <Icon icon="material-symbols:check-circle-rounded" className="text-emerald-400" />
-                    100% Free &amp; Open Source
-                  </span>
-                </div>
+      <section className="bg-white pb-12 pt-2 dark:bg-gray-900 sm:pb-16 sm:pt-4">
+        <div className="container mx-auto max-w-3xl px-4 sm:px-6">
+          <div className="border-purple-800/40 dark:border-purple-800/50 flex flex-col items-start justify-between gap-4 rounded-2xl border bg-[#1d1430] p-5 text-white shadow-md dark:bg-[#181028] sm:flex-row sm:items-center sm:p-6">
+            <div className="max-w-lg space-y-1">
+              <div className="flex items-center gap-2 text-xs font-bold text-purple-300">
+                <Icon icon="material-symbols:desktop-windows-rounded" className="text-base text-purple-300" />
+                <span>Podman Desktop GUI &bull; v{LATEST_DESKTOP_VERSION}</span>
               </div>
+              <h3 className="m-0 text-base font-extrabold text-white">Looking for a Graphical Interface?</h3>
+              <p className="m-0 text-xs font-medium leading-relaxed text-purple-100/90">
+                Manage containers, inspect logs, build images, and run Kubernetes effortlessly with the official Podman
+                Desktop app.
+              </p>
+            </div>
 
-              {/* Right Side: CTA Action Buttons */}
-              <div className="flex shrink-0 flex-wrap items-center gap-3 sm:flex-nowrap">
-                <a
-                  href="https://podman-desktop.io/downloads"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ textDecoration: 'none', color: '#5f246b' }}
-                  className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-black !text-purple-900 shadow-xl transition-all duration-200 hover:-translate-y-1 hover:bg-purple-50 hover:!text-purple-900 hover:shadow-2xl sm:text-base">
-                  <Icon
-                    icon="material-symbols:download-rounded"
-                    className="text-xl !text-purple-900 sm:text-2xl"
-                    style={{ color: '#5f246b' }}
-                  />
-                  <span className="font-black !text-purple-900" style={{ color: '#5f246b' }}>
-                    Download Podman Desktop
-                  </span>
-                </a>
-                <a
-                  href="https://podman-desktop.io"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ textDecoration: 'none', color: '#ffffff' }}
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-white/30 bg-white/10 px-4 py-3.5 text-sm font-bold !text-white transition-all hover:border-white/60 hover:bg-white/20 hover:!text-white">
-                  <span className="!text-white" style={{ color: '#ffffff' }}>
-                    Learn more
-                  </span>
-                  <Icon
-                    icon="material-symbols:arrow-forward-rounded"
-                    className="text-base !text-white"
-                    style={{ color: '#ffffff' }}
-                  />
-                </a>
-              </div>
+            <div className="flex shrink-0 items-center gap-2.5">
+              <a
+                href="https://podman-desktop.io/downloads"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none', backgroundColor: '#892CA0', color: '#ffffff' }}
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border-0 bg-[#892CA0] px-4 py-2.5 text-xs font-bold text-white !no-underline shadow-sm transition-all hover:bg-[#77218d] hover:!text-white hover:shadow-md">
+                <span style={{ color: '#ffffff' }} className="font-bold !text-white">
+                  Get Podman Desktop
+                </span>
+                <Icon
+                  icon="material-symbols:arrow-outward-rounded"
+                  className="text-sm text-white"
+                  style={{ color: '#ffffff' }}
+                />
+              </a>
             </div>
           </div>
         </div>

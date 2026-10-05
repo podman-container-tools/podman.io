@@ -35,9 +35,26 @@ function MeetingsPage(): JSX.Element {
   const communityMeetings = useMemo(() => getCommunityMeetings(), []);
   const cabalMeetings = useMemo(() => getCabalMeetings(), []);
 
-  const [activeType, setActiveType] = useState<MeetingCategory>('community');
-  const [selectedMeetingId, setSelectedMeetingId] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<MeetingTab>('notes');
+  const [activeType, setActiveType] = useState<MeetingCategory>(() => {
+    if (typeof window === 'undefined') return 'community';
+    const params = new URLSearchParams(window.location.search);
+    const typeParam = params.get('type');
+    return typeParam === 'cabal' ? 'cabal' : 'community';
+  });
+
+  const [selectedMeetingId, setSelectedMeetingId] = useState<string>(() => {
+    if (typeof window === 'undefined') return '';
+    const params = new URLSearchParams(window.location.search);
+    return params.get('date') || '';
+  });
+
+  const [activeTab, setActiveTab] = useState<MeetingTab>(() => {
+    if (typeof window === 'undefined') return 'notes';
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab');
+    return tabParam === 'transcript' ? 'transcript' : 'notes';
+  });
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedYear, setSelectedYear] = useState<string>('all');
   const [copiedLink, setCopiedLink] = useState(false);
@@ -93,14 +110,15 @@ function MeetingsPage(): JSX.Element {
     });
   }, [currentList, selectedYear, searchQuery]);
 
-  const [mobileExpandedId, setMobileExpandedId] = useState<string | null>(null);
+  const [mobileExpandedId, setMobileExpandedId] = useState<string | null>(() => selectedMeetingId || null);
 
-  // Synchronize state from URL query parameters on mount
+  // Synchronize state from URL query parameters on mount or back/forward navigation
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const dateParam = params.get('date');
     const typeParam = params.get('type');
+    const tabParam = params.get('tab');
 
     if (typeParam === 'cabal' || typeParam === 'community') {
       setActiveType(typeParam);
@@ -110,19 +128,40 @@ function MeetingsPage(): JSX.Element {
       setSelectedMeetingId(dateParam);
       setMobileExpandedId(dateParam);
     }
+
+    if (tabParam === 'notes' || tabParam === 'transcript') {
+      setActiveTab(tabParam);
+    }
   }, []);
+
+  // Handle active reading tab changes and sync query parameters to address bar
+  const handleSelectTab = useCallback(
+    (tab: MeetingTab) => {
+      setActiveTab(tab);
+      if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href);
+        if (selectedMeetingId) {
+          url.searchParams.set('date', selectedMeetingId);
+        }
+        url.searchParams.set('type', activeType);
+        url.searchParams.set('tab', tab);
+        window.history.replaceState({}, '', url.toString());
+      }
+    },
+    [selectedMeetingId, activeType],
+  );
 
   // Listen to switchMeetingTab events (e.g. from timeline notice button or transcript links)
   useEffect(() => {
     const handleSwitchTab = (e: Event) => {
       const customEvent = e as CustomEvent<{ tab: MeetingTab }>;
       if (customEvent.detail?.tab) {
-        setActiveTab(customEvent.detail.tab);
+        handleSelectTab(customEvent.detail.tab);
       }
     };
     window.addEventListener('switchMeetingTab', handleSwitchTab);
     return () => window.removeEventListener('switchMeetingTab', handleSwitchTab);
-  }, []);
+  }, [handleSelectTab]);
 
   // Ensure an active meeting is always selected if available
   useEffect(() => {
@@ -147,10 +186,11 @@ function MeetingsPage(): JSX.Element {
         const url = new URL(window.location.href);
         url.searchParams.set('date', meeting.id);
         url.searchParams.set('type', activeType);
+        url.searchParams.set('tab', activeTab);
         window.history.replaceState({}, '', url.toString());
       }
     },
-    [activeType],
+    [activeType, activeTab],
   );
 
   // Handle mobile accordion toggle: click to expand, click again to collapse
@@ -174,7 +214,7 @@ function MeetingsPage(): JSX.Element {
     setMobileExpandedId(null);
   }, []);
 
-  // Copy shareable link to clipboard
+  // Copy shareable link to clipboard including current active reading tab
   const handleCopyLink = useCallback(
     (meeting?: MeetingItem) => {
       const target = meeting || activeMeeting;
@@ -182,13 +222,14 @@ function MeetingsPage(): JSX.Element {
       const url = new URL(window.location.href);
       url.searchParams.set('date', target.id);
       url.searchParams.set('type', activeType);
+      url.searchParams.set('tab', activeTab);
       navigator.clipboard.writeText(url.toString()).then(() => {
         setCopiedLink(true);
         if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
         copyTimerRef.current = setTimeout(() => setCopiedLink(false), 2000);
       });
     },
-    [activeMeeting, activeType],
+    [activeMeeting, activeType, activeTab],
   );
 
   return (
@@ -351,7 +392,7 @@ function MeetingsPage(): JSX.Element {
                 <div className="hidden h-px flex-1 bg-black/[0.06] dark:bg-white/10 sm:block" />
                 <MeetingViewDropdown
                   activeTab={activeTab}
-                  onSelectTab={setActiveTab}
+                  onSelectTab={handleSelectTab}
                   hasTranscript={meeting.hasTranscript}
                 />
               </div>

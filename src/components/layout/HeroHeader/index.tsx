@@ -146,16 +146,26 @@ function HeroHeader({ title, subtitle, podmanrelease, desktoprelease, image, pla
               )}
             </BrowserOnly>
           </div>
-          <p className="flex flex-nowrap items-center gap-2 whitespace-nowrap pt-2 text-xs font-normal text-white dark:text-gray-100 sm:gap-3 sm:text-sm 2xl:gap-4 2xl:text-base">
-            <span>
+          <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 pt-2 text-xs font-normal text-white dark:text-gray-100 sm:flex-nowrap sm:gap-x-3 sm:text-sm 2xl:gap-x-4 2xl:text-base">
+            <span className="max-w-full break-words sm:whitespace-nowrap">
               Latest stable Podman <Link {...podmanrelease} {...releaseLinkProps} />
             </span>
-            <span className="opacity-60">-</span>
-            <span>
+            <span className="hidden opacity-60 sm:inline" aria-hidden="true">
+              -
+            </span>
+            <span className="max-w-full break-words sm:whitespace-nowrap">
               Latest stable Podman Desktop <Link {...desktoprelease} {...releaseLinkProps} />
             </span>
-            <span className="opacity-60">-</span>
-            <Link text="Apache License 2.0" path="https://www.apache.org/licenses/LICENSE-2.0" {...releaseLinkProps} />
+            <span className="hidden opacity-60 sm:inline" aria-hidden="true">
+              -
+            </span>
+            <span className="max-w-full break-words sm:whitespace-nowrap">
+              <Link
+                text="Apache License 2.0"
+                path="https://www.apache.org/licenses/LICENSE-2.0"
+                {...releaseLinkProps}
+              />
+            </span>
           </p>
         </div>
 

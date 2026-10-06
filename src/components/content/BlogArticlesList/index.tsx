@@ -26,11 +26,24 @@ const BlogArticlesList: React.FC<BlogArticlesListProps> = ({
   containerLayout = 'grid',
   sectionClassName = '',
 }) => {
-  const { data, loading } = useBlogPosts(limit);
+  const { data, loading, error } = useBlogPosts(limit);
   const actualDisplayCount = displayCount ?? limit;
 
   if (loading) {
     return null;
+  }
+
+  if (error) {
+    return (
+      <section className={sectionClassName}>
+        <SectionHeader title={title} textColor={titleColor} />
+        <div className="my-8 flex justify-center text-center">
+          <p className="font-medium text-gray-600 dark:text-gray-400">
+            Failed to load the latest blog posts. Please check back later.
+          </p>
+        </div>
+      </section>
+    );
   }
 
   const containerClasses =

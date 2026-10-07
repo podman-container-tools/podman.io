@@ -114,8 +114,7 @@ function Terminal({ command, label }: { command: string; label?: string }) {
               p === 'start'
             )
               color = '#38bdf8';
-            else if (p.toLowerCase().includes('podman') || p.includes('RedHat') || p.includes('hello-world'))
-              color = '#4ade80';
+            else if (p.toLowerCase().includes('podman') || p.includes('hello-world')) color = '#4ade80';
             else if (p.startsWith('-') || p === '&&') color = '#c084fc';
             return (
               <span key={i} style={{ color, fontWeight: i === 0 || p === '&&' ? 700 : 500 }}>
@@ -144,9 +143,9 @@ function LinuxDistroWorkspace({
   const current = distros.find(d => d.id === selectedId) || distros[0];
 
   return (
-    <div className="rounded-2xl border border-purple-100 bg-white p-6 shadow-sm transition-all duration-200 dark:border-white/10 dark:bg-[#201f27] md:p-8">
+    <div className="overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.07)] backdrop-blur-md transition-all duration-200 dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none md:p-8">
       {/* 1. Header with Badge, Title & All Distros Link */}
-      <div className="flex flex-col justify-between gap-4 border-b border-purple-100 pb-6 dark:border-white/10 sm:flex-row sm:items-center">
+      <div className="flex flex-col justify-between gap-4 border-b border-purple-100/60 pb-6 dark:border-white/10 sm:flex-row sm:items-center">
         <div>
           <div
             style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
@@ -190,12 +189,12 @@ function LinuxDistroWorkspace({
                 className={`group flex cursor-pointer select-none flex-col justify-between rounded-xl p-4 text-left outline-none transition-all duration-150 ${
                   isSelected
                     ? 'border border-[#892CA0] bg-[#892CA0] text-white shadow-sm'
-                    : 'text-purple-950 border border-black/[0.06] bg-white shadow-sm hover:border-black/[0.14] hover:bg-purple-50/40 hover:shadow-md dark:border-white/10 dark:bg-[#25242b] dark:text-white dark:hover:border-white/20'
+                    : 'text-purple-950 border border-purple-100/60 bg-white shadow-sm hover:border-purple-300 hover:bg-purple-50/40 hover:shadow-md dark:border-white/10 dark:bg-[#25242b] dark:text-white dark:hover:border-white/20'
                 }`}>
                 <div className="flex items-center justify-between gap-2">
                   <div
                     style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-                    className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#892CA0] text-white shadow-md shadow-[#892ca0]/20">
+                    className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#892CA0] text-white shadow-md shadow-[#892ca0]/20 dark:shadow-none">
                     <Icon icon={d.icon} className="text-2xl text-white" />
                   </div>
                   <span
@@ -318,21 +317,18 @@ function DownloadBtn({ href, title, sub }: { href: string; primary?: boolean; ti
 }
 
 /* ------------------------------------------------------------------ */
-/*  Resource Card — True Bluish-Purple Developer Hub Card               */
+/*  Resource Card — Consistent Brand Card Matching Page UI            */
 /* ------------------------------------------------------------------ */
 interface ResourceCardProps {
   badge: string;
-  badgeColor: string;
   icon: string;
-  iconBg: string;
   title: string;
   desc: string;
   href: string;
   cta: string;
-  tags: string[];
 }
 
-function ResourceCard({ badge, badgeColor, icon, iconBg, title, desc, href, cta, tags }: ResourceCardProps) {
+function ResourceCard({ badge, icon, title, desc, href, cta }: ResourceCardProps) {
   return (
     <div
       onClick={() => window.open(href, '_blank', 'noopener,noreferrer')}
@@ -341,51 +337,40 @@ function ResourceCard({ badge, badgeColor, icon, iconBg, title, desc, href, cta,
       onKeyDown={e => {
         if (e.key === 'Enter') window.open(href, '_blank', 'noopener,noreferrer');
       }}
-      className="group relative flex cursor-pointer flex-col justify-between rounded-2xl border border-purple-100 bg-white p-7 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-purple-300 hover:shadow-md dark:border-white/10 dark:bg-[#201f27] dark:hover:border-white/20">
+      className="group flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 text-left shadow-[0_4px_20px_rgba(0,0,0,0.07)] backdrop-blur-md transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(137,44,160,0.12)] dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none">
       <div>
-        {/* Top bar: Badge + Icon */}
+        {/* Top Header: Icon + Badge */}
+        {/* Top Header: Icon + Badge */}
         <div className="flex items-center justify-between gap-3">
           <div
             style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-            className={`flex h-12 w-12 items-center justify-center rounded-2xl ${iconBg} shadow-md shadow-[#892ca0]/25`}>
+            className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#892CA0] text-white shadow-md shadow-[#892ca0]/25 dark:shadow-none">
             <Icon icon={icon} className="text-2xl text-white" />
           </div>
           <span
             style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-            className={`rounded-full px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider ${badgeColor}`}>
+            className="shadow-xs rounded-full bg-[#892CA0] px-3.5 py-1 text-xs font-bold uppercase tracking-wider !text-white">
             {badge}
           </span>
         </div>
 
         {/* Title */}
-        <h3 className="text-purple-950 mb-2.5 mt-5 p-0 text-xl font-bold tracking-tight transition-colors duration-150 group-hover:text-[#892CA0] dark:text-white dark:group-hover:text-purple-300">
+        <h3 className="text-purple-950 mb-2 mt-5 p-0 text-xl font-bold tracking-tight transition-colors group-hover:text-[#892CA0] dark:text-white dark:group-hover:text-purple-300">
           {title}
         </h3>
 
         {/* Description */}
-        <p className="m-0 text-sm font-medium leading-relaxed text-purple-900/90 dark:text-purple-100/90">{desc}</p>
-
-        {/* Feature Tags / Topics */}
-        <div className="mt-5 flex flex-wrap gap-1.5">
-          {tags.map((tag, idx) => (
-            <span
-              key={idx}
-              style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-              className="shadow-xs rounded-lg bg-[#892CA0] px-2.5 py-1 text-xs font-bold text-white">
-              {tag}
-            </span>
-          ))}
-        </div>
+        <p className="m-0 text-sm font-medium leading-relaxed text-purple-900/90 dark:text-purple-100">{desc}</p>
       </div>
 
-      {/* Footer link */}
-      <div className="mt-6 flex items-center justify-between border-t border-purple-100 pt-4 text-sm font-bold text-[#892CA0] transition-colors duration-150 group-hover:text-purple-900 dark:border-white/10 dark:text-purple-300 dark:group-hover:text-white">
-        <span className="font-bold text-[#892CA0] group-hover:text-purple-900 dark:text-purple-300 dark:group-hover:text-white">
+      {/* Footer Action Link */}
+      <div className="mt-8 flex items-center justify-between border-t border-purple-100/60 pt-4 dark:border-white/10">
+        <span className="text-sm font-bold text-[#892CA0] transition-colors group-hover:text-[#77218d] dark:text-purple-300 dark:group-hover:text-white">
           {cta}
         </span>
         <div
           style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-[#892CA0] text-white transition-all duration-200 group-hover:bg-[#77218d]">
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-[#892CA0] text-white shadow-sm transition-all duration-200 group-hover:bg-[#77218d]">
           <Icon
             icon="material-symbols:arrow-outward-rounded"
             className="text-base text-white transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
@@ -525,12 +510,12 @@ export default function DownloadsPage(): JSX.Element {
           {os === 'windows' && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-stretch">
               {/* Card 1: Standalone MSI Installers */}
-              <div className="flex flex-col justify-between rounded-2xl border border-purple-100 bg-white p-7 shadow-sm transition-all duration-200 hover:border-purple-300 hover:shadow-md dark:border-white/10 dark:bg-[#201f27] dark:hover:border-white/20">
+              <div className="flex flex-col justify-between overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 shadow-[0_4px_20px_rgba(0,0,0,0.07)] backdrop-blur-md transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(137,44,160,0.12)] dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none">
                 <div>
                   <div className="flex items-center justify-between gap-3">
                     <div
                       style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#892CA0] text-white shadow-md shadow-[#892ca0]/25">
+                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#892CA0] text-white shadow-md shadow-[#892ca0]/25 dark:shadow-none">
                       <Icon icon="fa-brands:windows" className="text-2xl text-white" />
                     </div>
                     <span
@@ -572,7 +557,7 @@ export default function DownloadsPage(): JSX.Element {
                   </div>
                 </div>
 
-                <div className="mt-8 space-y-3 border-t border-purple-100 pt-5 dark:border-white/10">
+                <div className="mt-8 space-y-3 border-t border-purple-100/60 pt-5 dark:border-white/10">
                   <DownloadBtn
                     href={`https://github.com/podman-container-tools/podman/releases/download/v${LATEST_VERSION}/podman-installer-windows-amd64.msi`}
                     primary
@@ -588,12 +573,12 @@ export default function DownloadsPage(): JSX.Element {
               </div>
 
               {/* Card 2: Package Managers (WinGet & Chocolatey) */}
-              <div className="flex flex-col justify-between rounded-2xl border border-purple-100 bg-white p-7 shadow-sm transition-all duration-200 hover:border-purple-300 hover:shadow-md dark:border-white/10 dark:bg-[#201f27] dark:hover:border-white/20">
+              <div className="flex flex-col justify-between overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 shadow-[0_4px_20px_rgba(0,0,0,0.07)] backdrop-blur-md transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(137,44,160,0.12)] dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none">
                 <div>
                   <div className="flex items-center justify-between gap-3">
                     <div
                       style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#892CA0] text-white shadow-md shadow-[#892ca0]/25">
+                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#892CA0] text-white shadow-md shadow-[#892ca0]/25 dark:shadow-none">
                       <Icon icon="material-symbols:terminal-rounded" className="text-2xl text-white" />
                     </div>
                     <span
@@ -609,7 +594,7 @@ export default function DownloadsPage(): JSX.Element {
                   </p>
 
                   <div className="mt-5 space-y-3">
-                    <Terminal command="winget install RedHat.Podman" label="WinGet" />
+                    <Terminal command="winget install podman" label="WinGet" />
                     <Terminal command="choco install podman" label="Chocolatey" />
                   </div>
                 </div>
@@ -629,9 +614,9 @@ export default function DownloadsPage(): JSX.Element {
           ========================================================== */}
           {os === 'mac' && (
             <div className="mx-auto max-w-3xl">
-              <div className="rounded-2xl border border-purple-100 bg-white p-6 shadow-sm transition-all duration-200 dark:border-white/10 dark:bg-[#201f27] md:p-8">
+              <div className="overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.07)] backdrop-blur-md transition-all duration-200 dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none md:p-8">
                 {/* Top Header Card */}
-                <div className="flex flex-col justify-between gap-4 border-b border-purple-100 pb-6 dark:border-white/10 sm:flex-row sm:items-center">
+                <div className="flex flex-col justify-between gap-4 border-b border-purple-100/60 pb-6 dark:border-white/10 sm:flex-row sm:items-center">
                   <div>
                     <div
                       style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
@@ -705,7 +690,7 @@ export default function DownloadsPage(): JSX.Element {
                 </div>
 
                 {/* High-Contrast Low-Attention Homebrew Note */}
-                <div className="border-gray-200 dark:border-gray-800 mt-6 border-t pt-4">
+                <div className="mt-6 border-t border-purple-100/60 pt-4 dark:border-white/10">
                   <div className="flex flex-col items-start justify-between gap-2 text-xs font-medium sm:flex-row sm:items-center">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <Icon
@@ -739,36 +724,40 @@ export default function DownloadsPage(): JSX.Element {
       </section>
 
       {/* ============================================================
-          PODMAN DESKTOP (Secondary GUI Callout Banner — Low Attention & Purplish Container)
+          PODMAN DESKTOP (Secondary GUI Callout Banner)
       ============================================================ */}
       <section className="bg-white pb-12 pt-2 dark:bg-gray-900 sm:pb-16 sm:pt-4">
-        <div className="container mx-auto max-w-3xl px-4 sm:px-6">
-          <div className="border-purple-800/40 dark:border-purple-800/50 flex flex-col items-start justify-between gap-4 rounded-2xl border bg-[#1d1430] p-5 text-white shadow-md dark:bg-[#181028] sm:flex-row sm:items-center sm:p-6">
-            <div className="max-w-lg space-y-1">
-              <div className="flex items-center gap-2 text-xs font-bold text-purple-300">
-                <Icon icon="material-symbols:desktop-windows-rounded" className="text-base text-purple-300" />
-                <span>Podman Desktop GUI &bull; v{LATEST_DESKTOP_VERSION}</span>
+        <div className="container mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="flex flex-col items-start justify-between gap-6 overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.07)] backdrop-blur-md transition-all duration-200 hover:shadow-[0_8px_30px_rgba(137,44,160,0.12)] dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none sm:flex-row sm:items-center sm:p-7">
+            <div className="max-w-xl space-y-1.5">
+              <div
+                style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
+                className="shadow-xs inline-flex items-center gap-2 rounded-md bg-[#892CA0] px-3 py-1 text-xs font-bold text-white">
+                <Icon icon="material-symbols:desktop-windows-rounded" className="text-sm text-white" />
+                <span className="text-white">Podman Desktop GUI &bull; v{LATEST_DESKTOP_VERSION}</span>
               </div>
-              <h3 className="m-0 text-base font-extrabold text-white">Looking for a Graphical Interface?</h3>
-              <p className="m-0 text-xs font-medium leading-relaxed text-purple-100/90">
+              <h3 className="text-purple-950 mt-2 p-0 text-xl font-bold dark:text-white sm:text-2xl">
+                Looking for a Graphical Interface?
+              </h3>
+              <p className="m-0 text-sm font-medium leading-relaxed text-purple-900/90 dark:text-purple-100">
                 Manage containers, inspect logs, build images, and run Kubernetes effortlessly with the official Podman
                 Desktop app.
               </p>
             </div>
 
-            <div className="flex shrink-0 items-center gap-2.5">
+            <div className="flex shrink-0 items-center gap-3">
               <a
                 href="https://podman-desktop.io/downloads"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ textDecoration: 'none', backgroundColor: '#892CA0', color: '#ffffff' }}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border-0 bg-[#892CA0] px-4 py-2.5 text-xs font-bold text-white !no-underline shadow-sm transition-all hover:bg-[#77218d] hover:!text-white hover:shadow-md">
+                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#892CA0] px-5 py-3 text-sm font-bold text-white !no-underline shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#77218d] hover:!text-white hover:shadow-md">
                 <span style={{ color: '#ffffff' }} className="font-bold !text-white">
                   Get Podman Desktop
                 </span>
                 <Icon
                   icon="material-symbols:arrow-outward-rounded"
-                  className="text-sm text-white"
+                  className="text-base text-white"
                   style={{ color: '#ffffff' }}
                 />
               </a>
@@ -778,58 +767,49 @@ export default function DownloadsPage(): JSX.Element {
       </section>
 
       {/* ============================================================
-          RELEASES & RESOURCES (True Bluish-Purple Developer Hub Cards)
+          RELEASES & RESOURCES (Consistent Section Layout)
       ============================================================ */}
       <section className="bg-white pb-20 pt-4 dark:bg-gray-900 sm:pb-28 sm:pt-6">
         <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
             <div
               style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-              className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#892CA0] px-4 py-1.5 text-xs font-black uppercase tracking-wider !text-white shadow-sm">
+              className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#892CA0] px-3.5 py-1 text-xs font-bold uppercase tracking-wider !text-white shadow-sm">
               <Icon icon="material-symbols:library-books-outline-rounded" className="text-base text-white" />
-              <span className="!text-white">Developer Hub</span>
+              <span className="!text-white">Developer Resources</span>
             </div>
-            <h2 className="text-purple-950 text-3xl font-black tracking-tight dark:text-white sm:text-4xl">
-              Releases &amp; Resources
+            <h2 className="text-purple-950 text-3xl font-extrabold tracking-tight dark:text-white sm:text-4xl">
+              Releases &amp; Documentation
             </h2>
-            <p className="text-purple-800 mx-auto mt-2 max-w-xl text-base font-bold dark:text-purple-300">
-              Explore official release archives, configuration guides, and in-depth documentation.
+            <p className="mx-auto mt-2 max-w-xl text-base font-medium leading-relaxed text-purple-900/90 dark:text-purple-100">
+              Explore official release archives, troubleshooting guides, and in-depth documentation.
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <ResourceCard
               badge="Archive & Binaries"
-              badgeColor="bg-[#892CA0] text-white shadow-xs"
               icon="fa-brands:github"
-              iconBg="bg-[#892CA0]"
               title="GitHub Releases"
               desc="Access all historical releases, release notes, changelogs, and binary tarballs directly on GitHub."
               href="https://github.com/containers/podman/releases"
               cta="Browse all releases"
-              tags={['v5.4+ Releases', 'Source Code', 'Checksums']}
             />
             <ResourceCard
               badge="Setup & Support"
-              badgeColor="bg-[#892CA0] text-white shadow-xs"
               icon="material-symbols:help-outline-rounded"
-              iconBg="bg-[#892CA0]"
               title="Troubleshooting Guide"
               desc="Solutions for common installation issues, rootless container setups, WSL2 errors, and socket configuration."
               href="https://github.com/containers/podman/blob/main/troubleshooting.md"
               cta="Read troubleshooting guide"
-              tags={['WSL2 Fixes', 'Rootless FAQ', 'Socket Issues']}
             />
             <ResourceCard
               badge="Guides & Reference"
-              badgeColor="bg-[#892CA0] text-white shadow-xs"
               icon="material-symbols:article-outline"
-              iconBg="bg-[#892CA0]"
               title="Official Documentation"
               desc="Complete man pages, CLI command references, architecture guides, and container tutorials."
               href="https://docs.podman.io"
               cta="Explore documentation"
-              tags={['CLI Man Pages', 'Pod Tutorials', 'Architecture']}
             />
           </div>
         </div>

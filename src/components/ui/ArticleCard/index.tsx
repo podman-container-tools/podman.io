@@ -60,7 +60,7 @@ function ArticleCard(props: ArticleCardProps) {
 
   if (props.altLayout) {
     return (
-      <article className="group my-4 overflow-hidden rounded-xl border border-transparent bg-white shadow-[0_-4px_14px_rgba(0,0,0,0.05),0_4px_14px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_-6px_18px_rgba(0,0,0,0.07),0_8px_22px_rgba(0,0,0,0.1)] dark:border-white/[0.08] dark:bg-[#242528] dark:shadow-none dark:hover:border-white/[0.15]">
+      <article className="group my-4 overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none dark:hover:border-purple-500/30">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="relative flex h-48 items-center justify-center p-4">
             <img
@@ -126,7 +126,7 @@ function ArticleCard(props: ArticleCardProps) {
 
   // Normal Layout
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-transparent bg-white shadow-[0_-4px_14px_rgba(0,0,0,0.05),0_4px_14px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_-6px_18px_rgba(0,0,0,0.07),0_8px_22px_rgba(0,0,0,0.1)] dark:border-white/[0.08] dark:bg-[#242528] dark:shadow-none dark:hover:border-white/[0.15]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none dark:hover:border-purple-500/30">
       {/* Graphic Container */}
       <div className="relative flex h-44 w-full items-center justify-center p-4 sm:h-48">
         <img

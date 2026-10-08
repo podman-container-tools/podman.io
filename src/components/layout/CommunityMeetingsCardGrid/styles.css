@@ -23,8 +23,8 @@
 }
 
 .md-wrapper h1,
-h2,
-h3 {
+.md-wrapper h2,
+.md-wrapper h3 {
   padding: 0.5rem;
 }
 

@@ -9,7 +9,8 @@ interface BlogPost {
     author_link: string;
     display_name: string;
   };
-  wbDate: string;
+  date?: string;
+  wbDate?: string;
   jetpack_featured_media_url: string;
   link: string;
   excerpt: {
@@ -30,7 +31,7 @@ export const useBlogPosts = (limit = 4): UseBlogPostsReturn => {
     const fetchData = async () => {
       try {
         const rawData = await fetch(
-          `https://blog.podman.io/wp-json/wp/v2/posts?per_page=${limit}&_fields=id,author_info,title,wbDate,jetpack_featured_media_url,link,excerpt`,
+          `https://blog.podman.io/wp-json/wp/v2/posts?per_page=${limit}&_fields=id,author_info,title,wbDate,date,jetpack_featured_media_url,link,excerpt`,
         );
         const jsonData = await rawData.json();
         setData(jsonData);

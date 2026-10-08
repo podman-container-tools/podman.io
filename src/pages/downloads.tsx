@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@theme/Layout';
 import { Icon } from '@iconify/react';
 import WaveBorder from '@site/src/components/shapes/WaveBorder';
@@ -392,9 +392,31 @@ const OS_OPTIONS: { id: OS; label: string; icon: string }[] = [
   { id: 'linux', label: 'Linux', icon: 'fa-brands:linux' },
 ];
 
+const detectOperatingSystem = (): OS => {
+  if (typeof window === 'undefined') return 'windows';
+  const userAgent = window.navigator.userAgent.toLowerCase();
+  if (userAgent.includes('win')) {
+    return 'windows';
+  }
+  if (userAgent.includes('mac') || userAgent.includes('darwin')) {
+    return 'mac';
+  }
+  if (userAgent.includes('linux') || userAgent.includes('x11')) {
+    return 'linux';
+  }
+  return 'windows';
+};
+
 export default function DownloadsPage(): JSX.Element {
   const [os, setOs] = useState<OS>('windows');
+  const [detectedOs, setDetectedOs] = useState<OS | null>(null);
   const [distro, setDistro] = useState('fedora');
+
+  useEffect(() => {
+    const detected = detectOperatingSystem();
+    setDetectedOs(detected);
+    setOs(detected);
+  }, []);
 
   return (
     <Layout

@@ -8,10 +8,11 @@ import WaveBorder from '@site/src/components/shapes/WaveBorder';
 import operatingSystemData from './installOptions';
 
 const detectOperatingSystem = () => {
-  const userAgent = window.navigator.userAgent.toLowerCase().split(' ');
-  if (userAgent.find(item => item.includes('windows'))) {
+  if (typeof window === 'undefined') return 'windows';
+  const userAgent = window.navigator.userAgent.toLowerCase();
+  if (userAgent.includes('win')) {
     return 'windows';
-  } else if (userAgent.find(item => item.includes('macintosh'))) {
+  } else if (userAgent.includes('mac') || userAgent.includes('darwin')) {
     return 'mac';
   }
   return 'linux';

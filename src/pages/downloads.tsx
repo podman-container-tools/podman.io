@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@theme/Layout';
+import Link from '@docusaurus/Link';
 import { Icon } from '@iconify/react';
 import WaveBorder from '@site/src/components/shapes/WaveBorder';
 import { LATEST_VERSION, LATEST_DESKTOP_VERSION } from '@site/static/data/global';
@@ -162,8 +163,8 @@ function LinuxDistroWorkspace({
           </p>
         </div>
 
-        <a
-          href="/docs/installation#installing-on-linux"
+        <Link
+          to="/docs/installation#installing-on-linux"
           style={{ textDecoration: 'none', backgroundColor: '#892CA0', color: '#ffffff' }}
           className="inline-flex shrink-0 items-center gap-2 rounded-xl border-0 bg-[#892CA0] px-4 py-2.5 text-sm font-bold text-white !no-underline shadow-sm transition-all duration-150 hover:bg-[#77218d] hover:!text-white hover:shadow">
           <span style={{ color: '#ffffff' }} className="font-bold !text-white">
@@ -174,7 +175,7 @@ function LinuxDistroWorkspace({
             className="text-base text-white"
             style={{ color: '#ffffff' }}
           />
-        </a>
+        </Link>
       </div>
 
       {/* 2. Distro Selector Grid — Inspo from Meeting SessionCard */}

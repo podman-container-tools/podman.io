@@ -7,7 +7,7 @@ interface VideoProps {
   posterImg?: string;
 }
 
-const PlayOnScroll: React.FC<VideoProps> = (props) => {
+const PlayOnScroll: React.FC<VideoProps> = props => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {

@@ -409,12 +409,10 @@ const detectOperatingSystem = (): OS => {
 
 export default function DownloadsPage(): JSX.Element {
   const [os, setOs] = useState<OS>('windows');
-  const [detectedOs, setDetectedOs] = useState<OS | null>(null);
   const [distro, setDistro] = useState('fedora');
 
   useEffect(() => {
     const detected = detectOperatingSystem();
-    setDetectedOs(detected);
     setOs(detected);
   }, []);
 

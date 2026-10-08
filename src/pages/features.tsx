@@ -50,7 +50,12 @@ const PodmanDesktopSection = () => {
       </div>
       <div className="container flex flex-col items-center md:flex-row">
         <div id="imgdiv" className="mx-auto w-full md:w-auto">
-          <img id="pdlogo" className="mx-auto" src="logos/optimized/podman-desktop-logo-200w-198h.webp" alt="Podman Desktop Logo" />
+          <img
+            id="pdlogo"
+            className="mx-auto"
+            src="logos/optimized/podman-desktop-logo-200w-198h.webp"
+            alt="Podman Desktop Logo"
+          />
         </div>
         <div className="md:w-1/2 xl:w-3/4">
           <p className="my-8 align-middle text-2xl leading-relaxed">
@@ -186,7 +191,11 @@ const PodmanCLISection = () => {
       </div>
       <div className="container mb-4 grid gap-2 lg:grid-cols-3">
         <div className="mx-auto">
-          <img className="max-h-[200px]" src="images/optimized/podman-selkie-385w-358h.webp" alt="Podman Selkie Mascot" />
+          <img
+            className="max-h-[200px]"
+            src="images/optimized/podman-selkie-385w-358h.webp"
+            alt="Podman Selkie Mascot"
+          />
         </div>
         <div className="col-span-2">
           <p className="my-8 align-middle text-2xl leading-relaxed">

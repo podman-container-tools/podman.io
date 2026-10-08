@@ -53,10 +53,6 @@ const linuxDistros: LinuxDistro[] = [
 ];
 
 /* ------------------------------------------------------------------ */
-/*  Terminal component                                                  */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
 /*  Copy Icon Button (Icon Only, Official Brand Purple #892CA0)        */
 /* ------------------------------------------------------------------ */
 function CopyIconButton({ text, className = '' }: { text: string; className?: string }) {
@@ -405,15 +401,9 @@ const OS_OPTIONS: { id: OS; label: string; icon: string }[] = [
 const detectOperatingSystem = (): OS => {
   if (typeof window === 'undefined') return 'windows';
   const userAgent = window.navigator.userAgent.toLowerCase();
-  if (userAgent.includes('win')) {
-    return 'windows';
-  }
-  if (userAgent.includes('mac') || userAgent.includes('darwin')) {
-    return 'mac';
-  }
-  if (userAgent.includes('linux') || userAgent.includes('x11')) {
-    return 'linux';
-  }
+  if (userAgent.includes('win')) return 'windows';
+  if (userAgent.includes('mac') || userAgent.includes('darwin')) return 'mac';
+  if (userAgent.includes('linux') || userAgent.includes('x11')) return 'linux';
   return 'windows';
 };
 

@@ -91,19 +91,19 @@ function Terminal({ command, label }: { command: string; label?: string }) {
   const parts = command.split(' ');
 
   return (
-    <div className="overflow-hidden rounded-xl border-0 bg-[#0e0a1a] shadow-sm dark:bg-[#120c22]">
-      <div className="bg-purple-950/50 flex items-center justify-between border-b border-white/10 px-4 py-2">
+    <div className="overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-sm dark:border dark:border-white/10 dark:bg-[#120c22] dark:shadow-none">
+      <div className="dark:bg-purple-950/60 flex items-center justify-between bg-[#892CA0] px-4 py-2 text-white dark:border-b dark:border-white/10">
         <div className="flex items-center gap-2">
-          <Icon icon="material-symbols:terminal-rounded" className="text-base text-purple-300" />
+          <Icon icon="material-symbols:terminal-rounded" className="text-base text-white dark:text-purple-300" />
           {label && <span className="font-mono text-xs font-bold text-white">{label}</span>}
         </div>
         <CopyIconButton text={command} />
       </div>
-      <div className="flex items-center gap-3 overflow-x-auto px-5 py-3.5 font-mono text-[13px] text-white">
-        <span className="shrink-0 select-none font-bold text-purple-300">$</span>
+      <div className="text-purple-950 flex items-center gap-3 overflow-x-auto px-5 py-3.5 font-mono text-[13px] dark:bg-[#120c22] dark:text-white">
+        <span className="shrink-0 select-none font-bold text-[#892CA0] dark:text-purple-300">$</span>
         <div className="whitespace-nowrap">
           {parts.map((p, i) => {
-            let color = '#ffffff';
+            let className = 'text-purple-950 dark:text-white';
             if (
               i === 0 ||
               p === 'install' ||
@@ -113,11 +113,12 @@ function Terminal({ command, label }: { command: string; label?: string }) {
               p === 'init' ||
               p === 'start'
             )
-              color = '#38bdf8';
-            else if (p.toLowerCase().includes('podman') || p.includes('hello-world')) color = '#4ade80';
-            else if (p.startsWith('-') || p === '&&') color = '#c084fc';
+              className = 'font-bold text-[#892CA0] dark:text-[#38bdf8]';
+            else if (p.toLowerCase().includes('podman') || p.includes('hello-world'))
+              className = 'font-bold text-emerald-600 dark:text-[#4ade80]';
+            else if (p.startsWith('-') || p === '&&') className = 'font-semibold text-purple-700 dark:text-[#c084fc]';
             return (
-              <span key={i} style={{ color, fontWeight: i === 0 || p === '&&' ? 700 : 500 }}>
+              <span key={i} className={className}>
                 {p}{' '}
               </span>
             );
@@ -218,10 +219,10 @@ function LinuxDistroWorkspace({
 
       {/* 3. Selected Distro Command Box — Inspo from Meeting Containers */}
       <div className="mt-6 space-y-4">
-        <div className="overflow-hidden rounded-xl border-0 bg-[#0e0a1a] shadow-sm dark:bg-[#120c22]">
-          <div className="bg-purple-950/50 flex items-center justify-between border-b border-white/10 px-4 py-2.5">
+        <div className="overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-sm dark:border dark:border-white/10 dark:bg-[#120c22] dark:shadow-none">
+          <div className="dark:bg-purple-950/60 flex items-center justify-between bg-[#892CA0] px-4 py-2.5 text-white dark:border-b dark:border-white/10">
             <div className="flex items-center gap-2 text-xs font-bold text-white">
-              <Icon icon="material-symbols:terminal-rounded" className="text-base text-purple-300" />
+              <Icon icon="material-symbols:terminal-rounded" className="text-base text-white dark:text-purple-300" />
               <span className="font-mono text-white">
                 {current.name} &bull; {current.pkgMgr}
               </span>
@@ -229,17 +230,20 @@ function LinuxDistroWorkspace({
             <CopyIconButton text={current.command} />
           </div>
 
-          <div className="flex items-center gap-3 overflow-x-auto p-5 font-mono text-sm leading-relaxed text-white">
-            <span className="select-none font-bold text-purple-300">$</span>
-            <span className="text-emerald-300 font-bold">{current.command}</span>
+          <div className="text-purple-950 flex items-center gap-3 overflow-x-auto p-5 font-mono text-sm leading-relaxed dark:bg-[#120c22] dark:text-white">
+            <span className="select-none font-bold text-[#892CA0] dark:text-purple-300">$</span>
+            <span className="text-emerald-600 dark:text-emerald-300 font-bold">{current.command}</span>
           </div>
 
-          <div className="bg-purple-950/30 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 px-5 py-3 text-xs text-purple-100">
+          <div className="text-purple-950 flex flex-wrap items-center justify-between gap-2 border-t border-purple-100/60 bg-white px-5 py-3 text-xs dark:border-t dark:border-white/10 dark:bg-[#1d142d] dark:text-purple-100">
             <div className="flex items-center gap-2">
-              <Icon icon="material-symbols:info-outline-rounded" className="shrink-0 text-base text-purple-300" />
-              <span className="font-semibold text-purple-100">{current.note}</span>
+              <Icon
+                icon="material-symbols:info-outline-rounded"
+                className="shrink-0 text-base text-[#892CA0] dark:text-purple-300"
+              />
+              <span className="text-purple-950 font-semibold dark:text-purple-100">{current.note}</span>
             </div>
-            <div className="text-emerald-300 flex items-center gap-1.5 text-[11px] font-bold">
+            <div className="text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5 text-[11px] font-bold">
               <Icon icon="material-symbols:verified-rounded" className="text-sm" />
               <span>Official Repository</span>
             </div>
@@ -248,26 +252,31 @@ function LinuxDistroWorkspace({
 
         {/* Verification and Next Step — Full Container */}
         <div className="border-t border-purple-100 pt-6 dark:border-white/10">
-          <div className="overflow-hidden rounded-xl border-0 bg-[#0e0a1a] shadow-sm dark:bg-[#120c22]">
-            <div className="bg-purple-950/50 flex items-center justify-between border-b border-white/10 px-4 py-2.5">
+          <div className="overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-sm dark:border dark:border-white/10 dark:bg-[#120c22] dark:shadow-none">
+            <div className="dark:bg-purple-950/60 flex items-center justify-between bg-[#892CA0] px-4 py-2.5 text-white dark:border-b dark:border-white/10">
               <div className="flex items-center gap-2 text-xs font-bold text-white">
-                <Icon icon="material-symbols:terminal-rounded" className="text-base text-purple-300" />
+                <Icon icon="material-symbols:terminal-rounded" className="text-base text-white dark:text-purple-300" />
                 <span className="font-mono text-white">Verify Installation</span>
               </div>
               <CopyIconButton text="podman --version && podman run --rm hello-world" />
             </div>
 
-            <div className="flex items-center gap-3 overflow-x-auto p-5 font-mono text-sm leading-relaxed text-white">
-              <span className="select-none font-bold text-purple-300">$</span>
-              <span className="text-emerald-300 font-bold">
+            <div className="text-purple-950 flex items-center gap-3 overflow-x-auto p-5 font-mono text-sm leading-relaxed dark:bg-[#120c22] dark:text-white">
+              <span className="select-none font-bold text-[#892CA0] dark:text-purple-300">$</span>
+              <span className="text-emerald-600 dark:text-emerald-300 font-bold">
                 podman --version &amp;&amp; podman run --rm hello-world
               </span>
             </div>
 
-            <div className="bg-purple-950/30 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-5 py-3 text-xs text-purple-100">
+            <div className="text-purple-950 flex flex-wrap items-center justify-between gap-3 border-t border-purple-100/60 bg-white px-5 py-3 text-xs dark:border-t dark:border-white/10 dark:bg-[#1d142d] dark:text-purple-100">
               <div className="flex items-center gap-2">
-                <Icon icon="material-symbols:check-circle-rounded" className="text-emerald-400 shrink-0 text-base" />
-                <span className="font-semibold text-purple-100">Confirms daemonless engine &amp; rootless runtime</span>
+                <Icon
+                  icon="material-symbols:check-circle-rounded"
+                  className="text-emerald-700 dark:text-emerald-400 shrink-0 text-base"
+                />
+                <span className="text-purple-950 font-semibold dark:text-purple-100">
+                  Confirms daemonless engine &amp; rootless runtime
+                </span>
               </div>
               <a
                 href="https://docs.podman.io/en/latest/Introduction.html"
@@ -300,17 +309,17 @@ function DownloadBtn({ href, title, sub }: { href: string; primary?: boolean; ti
     <a
       href={href}
       style={{ textDecoration: 'none', backgroundColor: '#892CA0', color: '#ffffff' }}
-      className="group flex w-full items-center justify-between rounded-xl bg-[#892CA0] px-5 py-3 text-sm font-bold text-white !no-underline shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#77218d] hover:!text-white hover:shadow-md">
-      <div className="flex items-center gap-3">
-        <Icon icon="material-symbols:download-rounded" className="shrink-0 text-xl text-white" />
+      className="group flex w-full items-center justify-between rounded-2xl bg-[#892CA0] px-6 py-5 text-sm font-bold text-white !no-underline shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#77218d] hover:!text-white hover:shadow-md">
+      <div className="flex items-center gap-4">
+        <Icon icon="material-symbols:download-rounded" className="shrink-0 text-2xl text-white" />
         <div className="text-left">
-          <div className="text-sm font-bold leading-tight !text-white">{title}</div>
-          <div className="!text-purple-200 mt-0.5 text-xs font-medium">{sub}</div>
+          <div className="text-base font-bold leading-tight !text-white">{title}</div>
+          <div className="!text-purple-200 mt-1 text-xs font-medium">{sub}</div>
         </div>
       </div>
       <Icon
         icon="material-symbols:arrow-forward-rounded"
-        className="shrink-0 text-base text-white transition-transform duration-150 group-hover:translate-x-1"
+        className="shrink-0 text-xl text-white transition-transform duration-150 group-hover:translate-x-1"
       />
     </a>
   );
@@ -518,7 +527,7 @@ export default function DownloadsPage(): JSX.Element {
               {os === 'windows' &&
                 'Official standalone MSI installers for 64-bit and ARM64, or silent install via package manager.'}
               {os === 'mac' &&
-                'Universal PKG installer for Apple Silicon and Intel, or one-command setup via Homebrew.'}
+                'ARM64 PKG installer for Apple Silicon (M1/M2/M3/M4), or one-command setup via Homebrew.'}
               {os === 'linux' &&
                 'Natively available, tested, and maintained across all major Linux distribution repositories.'}
             </p>
@@ -530,7 +539,7 @@ export default function DownloadsPage(): JSX.Element {
           {os === 'windows' && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-stretch">
               {/* Card 1: Standalone MSI Installers */}
-              <div className="flex flex-col justify-between overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 shadow-[0_4px_20px_rgba(0,0,0,0.07)] backdrop-blur-md transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(137,44,160,0.12)] dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none">
+              <div className="flex flex-col overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 shadow-[0_4px_20px_rgba(0,0,0,0.07)] backdrop-blur-md transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(137,44,160,0.12)] dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none">
                 <div>
                   <div className="flex items-center justify-between gap-3">
                     <div
@@ -549,35 +558,11 @@ export default function DownloadsPage(): JSX.Element {
                     Windows MSI Packages
                   </h3>
                   <p className="m-0 text-sm font-medium leading-relaxed text-purple-900/90 dark:text-purple-100">
-                    Standalone MSI installers with automated WSL 2 integration and background machine setup.
+                    Standalone MSI installers with automated WSL 2 and HyperV support.
                   </p>
-
-                  <div className="text-purple-950 mt-5 space-y-2 text-xs font-semibold dark:text-purple-100">
-                    <div className="flex items-center gap-2">
-                      <Icon
-                        icon="material-symbols:check-circle-rounded"
-                        className="text-base text-[#892CA0] dark:text-purple-300"
-                      />
-                      <span>WSL 2 based container machine engine</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Icon
-                        icon="material-symbols:check-circle-rounded"
-                        className="text-base text-[#892CA0] dark:text-purple-300"
-                      />
-                      <span>Docker CLI compatible alias &amp; compose support</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Icon
-                        icon="material-symbols:check-circle-rounded"
-                        className="text-base text-[#892CA0] dark:text-purple-300"
-                      />
-                      <span>Cryptographically signed with checksum verification</span>
-                    </div>
-                  </div>
                 </div>
 
-                <div className="mt-8 space-y-3 border-t border-purple-100/60 pt-5 dark:border-white/10">
+                <div className="mt-6 space-y-6 border-t border-purple-100/60 pt-6 dark:border-white/10">
                   <DownloadBtn
                     href={`https://github.com/podman-container-tools/podman/releases/download/v${LATEST_VERSION}/podman-installer-windows-amd64.msi`}
                     primary
@@ -645,11 +630,10 @@ export default function DownloadsPage(): JSX.Element {
                       <span className="text-white">Official macOS Package</span>
                     </div>
                     <h3 className="text-purple-950 mt-2 p-0 text-2xl font-extrabold tracking-tight dark:text-white sm:text-3xl">
-                      Universal PKG Installer
+                      ARM64 PKG Installer
                     </h3>
                     <p className="mt-1 text-sm font-medium text-purple-900/90 dark:text-purple-100">
-                      Single graphical installer package (.pkg) optimized for both Apple Silicon (M1/M2/M3/M4) and Intel
-                      64-bit Macs.
+                      Official graphical installer package (.pkg) for Apple Silicon (M1/M2/M3/M4) Macs.
                     </p>
                   </div>
 
@@ -662,42 +646,11 @@ export default function DownloadsPage(): JSX.Element {
 
                 {/* Main Download Section */}
                 <div className="mt-6">
-                  {/* High-Contrast Feature Points (No background blur or grey pills) */}
-                  <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <div className="flex items-center gap-2.5">
-                      <Icon
-                        icon="material-symbols:check-circle-rounded"
-                        className="dark:text-purple-400 shrink-0 text-lg text-[#892CA0]"
-                      />
-                      <span className="text-gray-800 text-xs font-bold dark:text-gray-100">
-                        Universal Binary (Apple &amp; Intel)
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <Icon
-                        icon="material-symbols:check-circle-rounded"
-                        className="dark:text-purple-400 shrink-0 text-lg text-[#892CA0]"
-                      />
-                      <span className="text-gray-800 text-xs font-bold dark:text-gray-100">
-                        Includes CLI &amp; machine helpers
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <Icon
-                        icon="material-symbols:check-circle-rounded"
-                        className="dark:text-purple-400 shrink-0 text-lg text-[#892CA0]"
-                      />
-                      <span className="text-gray-800 text-xs font-bold dark:text-gray-100">
-                        Signed installer package
-                      </span>
-                    </div>
-                  </div>
-
                   <DownloadBtn
                     href={`https://github.com/podman-container-tools/podman/releases/download/v${LATEST_VERSION}/podman-installer-macos-arm64.pkg`}
                     primary
-                    title="Download macOS Universal PKG Installer"
-                    sub={`v${LATEST_VERSION} · Universal PKG (.pkg)`}
+                    title="Download macOS ARM64 PKG Installer"
+                    sub={`v${LATEST_VERSION} · ARM64 PKG (.pkg)`}
                   />
                 </div>
 
@@ -722,7 +675,7 @@ export default function DownloadsPage(): JSX.Element {
                           Alternative option (Not recommended):
                         </strong>{' '}
                         <span className="text-gray-700 dark:text-gray-300">Homebrew formula</span>{' '}
-                        <span className="dark:bg-gray-800 dark:text-emerald-400 inline-flex items-center rounded border border-gray-300 bg-gray-100 px-2 py-0.5 font-mono text-[12px] font-bold text-gray-900 dark:border-gray-700">
+                        <span className="text-emerald-600 shadow-xs dark:text-emerald-400 inline-flex items-center rounded-md border-0 bg-white px-2.5 py-1 font-mono text-[12px] font-bold dark:bg-[#120c22]">
                           brew install podman
                         </span>
                       </span>
@@ -824,12 +777,12 @@ export default function DownloadsPage(): JSX.Element {
               cta="Read troubleshooting guide"
             />
             <ResourceCard
-              badge="Guides & Reference"
-              icon="material-symbols:article-outline"
-              title="Official Documentation"
-              desc="Complete man pages, CLI command references, architecture guides, and container tutorials."
-              href="https://docs.podman.io"
-              cta="Explore documentation"
+              badge="Installation Options"
+              icon="material-symbols:build-circle-outline-rounded"
+              title="Additional Installation Options"
+              desc="Information on bleeding edge builds, building from source, custom packages, and advanced installation guides."
+              href="https://podman.io/docs/installation"
+              cta="View all installation options"
             />
           </div>
         </div>

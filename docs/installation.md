@@ -17,7 +17,7 @@ programmatic access from your language of choice.
 
 ### macOS
 
-On Mac, each Podman machine is backed by a virtual machine. 
+On Mac, each Podman machine is backed by a virtual machine.
 Once installed, the podman command can run directly from
 the Unix shell in `Terminal`, where it remotely communicates with the `podman`
 service running in the Machine VM.
@@ -41,6 +41,7 @@ service running in the Machine VM.
 
      It's not recommended to install via [Homebrew](https://brew.sh/) because it is a community-maintained package manager, and we cannot guarantee the stability
      of the Podman installation. However, if you do wish to use Brew, run:
+
      ```bash
      brew install podman
      ```
@@ -71,7 +72,7 @@ prefer a Linux prompt and Linux tooling.
 
 See the [Podman for Windows guide](https://github.com/containers/podman/blob/main/docs/tutorials/podman-for-windows.md) for setup and usage instructions.
 
-## Installing on Linux
+## Installing on Linux {#installing-on-linux}
 
 ### Linux Distributions
 
@@ -233,6 +234,7 @@ pkg install podman
 There's also a `podman-suite` meta package that will pull additional packages for you (buildah, skopeo).
 
 #### Initial configuration
+
 To properly support Podman's container restart policy, conmon needs `fdescfs(5)` to be mounted on `/dev/fd`.
 
 If `/dev/fd` is not already mounted:
@@ -242,16 +244,19 @@ mount -t fdescfs fdesc /dev/fd
 ```
 
 To make it permanent, add the following line to `/etc/fstab`:
+
 ```
 fdesc   /dev/fd         fdescfs         rw      0       0
 ```
 
 To start Podman after reboot:
+
 ```bash
 service podman enable
 ```
 
 ##### Networking
+
 Container networking relies on NAT to allow container network packets out to the host's network. This requires a PF firewall to perform the translation. A simple example is included - to use it:
 
 ```bash
@@ -261,6 +266,7 @@ cp /usr/local/etc/containers/pf.conf.sample /etc/pf.conf
 Edit `/etc/pf.conf` and set `v4egress_if`, `v6egress_if` variables to your network interface(s)s
 
 Enable and start `pf`:
+
 ```
 service pf enable
 service pf start
@@ -298,6 +304,7 @@ or
 ```bash
 fetch -o- http://localhost:1234
 ```
+
 ##### Storage
 
 Container images and related state is stored in `/var/db/containers`. It is recommended to use ZFS for this:
@@ -348,6 +355,7 @@ sudo dnf -y install catatonit conmon containers-common-extra
 ```
 
 On all RHEL and CentOS Stream, first install `dnf-builddep`:
+
 ```bash
 sudo dnf -y install 'dnf-command(builddep)'
 ```
@@ -363,6 +371,7 @@ sudo dnf -y builddep rpm/podman.spec --enablerepo=codeready-builder-for-rhel-$(r
 ```
 
 Install runtime dependencies:
+
 ```bash
 sudo dnf -y install \
   conmon \
@@ -545,6 +554,7 @@ make BUILDTAGS='seccomp apparmor'
 ```
 
 If you are building on RHEL8 you'll need to build without btrfs support due to [it being removed](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/considerations_in_adopting_rhel_8/file-systems-and-storage_considerations-in-adopting-rhel-8#btrfs-has-been-removed_file-systems-and-storage):
+
 ```
 make BUILDTAGS="btrfs_noversion exclude_graphdriver_btrfs"
 ```

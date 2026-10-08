@@ -92,7 +92,7 @@ const config = {
                 activeBaseRegex: '^/community/?$',
               },
               {
-                label: 'Meetings',
+                label: 'Meetings Archive',
                 to: 'community/meetings',
                 exact: true,
                 activeBaseRegex: '^/community/meetings/?$',

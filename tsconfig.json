@@ -3,6 +3,8 @@
   "extends": "@tsconfig/docusaurus/tsconfig.json",
   "compilerOptions": {
     "jsx": "react",
+    "module": "esnext",
+    "moduleResolution": "node",
     "typeRoots": ["node_modules/@types", "src/types"],
     "baseUrl": "."
   }

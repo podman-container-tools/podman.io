@@ -117,6 +117,6 @@ _Text and Images_
 - Linting: [Eslint](https://eslint.org/) (see `.eslintrc`, `.eslintignore`)
 - Rendering markdown from js strings: [react markdown parser](https://github.com/remarkjs/react-markdown)
   - Use the custom `<Markdown text="..." styles="..." /> component for any markdown strings
-    - This component wraps the markdown parser in `<BrowserOnly>{() => <ReactMarkdown />}</BrowserOnly>` and handles the lazy loading and imports, reducing the amount of code needed on each instance.
+    - This component wraps the markdown parser and handles the import, reducing the amount of code needed on each instance. It renders during the static build, so the text ends up in the generated HTML.
 - Rendering html from wordpress: [html-react-parser](https://www.npmjs.com/package/html-react-parser)
   - Use this to render any injected html to avoid XSS

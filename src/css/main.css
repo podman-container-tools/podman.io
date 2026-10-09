@@ -144,6 +144,15 @@
   @apply text-blue-300 hover:text-blue-500;
 }
 
+/* Below Infima's default breakpoint, footer columns stack full-width but
+   their left-aligned content leaves a large empty gap on the right.
+   Center each column so the empty space is balanced instead. */
+@media (max-width: 996px) {
+  .footer__col {
+    text-align: center;
+  }
+}
+
 .menu a {
   @apply no-underline;
 }

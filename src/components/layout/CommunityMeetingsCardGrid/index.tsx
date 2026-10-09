@@ -51,21 +51,38 @@ function MeetingCard({
 }) {
   const meta = CARD_META[index] ?? CARD_META[0];
 
-  return (
-    <div
-      className={`meeting-card flex w-full flex-1 flex-col rounded-2xl p-6 sm:p-7 ${isSingle ? 'max-w-4xl' : 'max-w-[540px]'}`}>
-      {/* Top Row: Badge on left, Time on right top */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2.5">
-        <div className="meeting-badge shadow-xs inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold">
-          <Icon icon={meta.icon} className="text-sm" />
-          <span>{meta.label}</span>
-        </div>
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalHeader, setModalHeader] = useState<ReactNode | undefined>(undefined);
+  const [meetinNotesMD, setMeetinNotesMD] = useState<ReactNode | undefined>(undefined);
+  const meetingMinutesRef = [useRef(), useRef()];
+  const modalRef = useRef<HTMLDialogElement>(null);
 
-        {/* Time at top right — clean text & icon without container */}
-        <div className="meeting-time-indicator inline-flex items-center gap-1.5 text-xs font-semibold">
-          <Icon icon="material-symbols:schedule-rounded" className="shrink-0 text-sm" />
-          <span>{card.timeZone}</span>
-        </div>
+  toggleModalOpen(modalRef, () => setIsModalOpen(false));
+
+  useEffect(() => {
+    const dialogEl = modalRef.current;
+    if (!dialogEl) {
+      return;
+    }
+    if (isModalOpen && !dialogEl.open) {
+      dialogEl.showModal();
+    } else if (!isModalOpen && dialogEl.open) {
+      dialogEl.close();
+    }
+  }, [isModalOpen]);
+
+  const prepareModalHeader = (text: string, date: string) => {
+    const modalHeader: ReactNode = (
+      <div className="modal-header dark:bg-gray-500 dark:shadow-none">
+        <h3 className="modal-header-title dark:text-gray-900">{text}</h3>
+        <h3 className="modal-header-date dark:text-gray-900">{date}</h3>
+        <button
+          type="button"
+          className="cursor-pointer border-0 bg-transparent p-0"
+          onClick={() => setIsModalOpen(false)}
+          aria-label="Close meeting minutes">
+          <CloseIcon />
+        </button>
       </div>
 
       {/* Title */}
@@ -117,6 +134,45 @@ function MeetingCard({
 function CommunityMeetingsCardGrid({ cards }: { cards: CommunityMeetingsCardProps[] }): JSX.Element {
   const isSingle = cards.length === 1;
   return (
+    <div className="justify-content-center align-items-center custom-card-grid-root flex">
+      {cards.map((card: CommunityMeetingsCardProps, index: number) => {
+        let meetingsData = index == 1 ? CabalMeetingsData : communityMeetingsData;
+        return (
+          <div
+            key={`card-container-${index}`}
+            className="align-items-center card-container mb-4 flex flex-1 flex-col flex-wrap justify-center transition duration-150 ease-linear lg:mb-6">
+            <CustomCard
+              key={`custom-card-${index}`}
+              title={card?.title}
+              subtitle={card?.date}
+              details={card?.timeZone}
+              text={card?.subtitle}
+              data={card?.buttons}
+              primary={true}
+            />
+            <SectionHeader
+              title=""
+              description="Most Recent meetings"
+              textGradientStops="from-purple-500 to-purple-700 dark:text-purple-500"
+              textGradient={false}
+            />
+            <SubcardGrid key={`subcard-grid-${index}`} cards={meetingsData} toggleIsModalOpen={toggleIsModalOpen} />
+            <Dropdown
+              options={getDropdownOption(index == 1 ? [...cabalDropdownOptions] : [...MeetingDropdownOptions])}
+              dropdownRef={meetingMinutesRef[index]}
+              text="Older meeting details"
+            />
+            <dialog
+              className="bg-stone-200 w-90-screen h-80-screen fixed top-20 z-50 max-h-screen w-fit border-4 border-purple-100"
+              ref={modalRef}
+              onClose={() => setIsModalOpen(false)}>
+              <div className="modal-content flex flex-col">
+                {modalHeader}
+                <div className="md-wrapper overflow-y-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 dark:bg-gray-700  dark:text-gray-50 dark:shadow-none">
+                  {meetinNotesMD}
+                </div>
+              </div>
+            </dialog>
     <div className="mt-4 w-full md:mt-6">
       {/* Meeting Cards */}
       <div

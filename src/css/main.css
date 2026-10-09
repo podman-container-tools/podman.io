@@ -98,9 +98,9 @@
   height: 7rem;
 }
 
-.navbar__title,
-.navbar__link,
-.clean-btn {
+.navbar__inner .navbar__title,
+.navbar__inner .navbar__link,
+.navbar__inner .clean-btn {
   @apply text-white dark:text-gray-50;
 }
 
@@ -112,6 +112,12 @@
 .navbar-sidebar__brand .navbar__title,
 .navbar-sidebar__brand .clean-btn {
   @apply text-gray-900 dark:text-gray-50;
+}
+
+.navbar-sidebar__back {
+  @apply text-gray-900 dark:text-gray-50;
+  font-size: x-large;
+  margin-top: 1rem;
 }
 
 .navbar__link svg,

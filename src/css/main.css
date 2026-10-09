@@ -263,8 +263,18 @@
   background-color: #892ca0 !important; /* bg-purple-700 */
   color: #ffffff !important; /* text-white */
   font-weight: 700 !important; /* font-bold */
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; /* shadow-sm */
+  box-shadow: none !important;
   text-decoration: none !important;
+}
+
+/* Whole dropdown menu background turns purple when active page item is present */
+.dropdown__menu:has(.dropdown__link--active),
+.dropdown__menu:has([aria-current='page']),
+[data-theme='dark'] .dropdown__menu:has(.dropdown__link--active),
+[data-theme='dark'] .dropdown__menu:has([aria-current='page']) {
+  background-color: #892ca0 !important;
+  border-color: #77218d !important;
+  box-shadow: none !important;
 }
 
 /* Dark mode normal state */
@@ -291,7 +301,7 @@
   background-color: #892ca0 !important; /* bg-purple-700 */
   color: #ffffff !important; /* text-white */
   font-weight: 700 !important; /* font-bold */
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; /* shadow-sm */
+  box-shadow: none !important;
   text-decoration: none !important;
 }
 

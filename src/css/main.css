@@ -120,9 +120,12 @@
   margin-left: 8px;
 }
 
-.navbar__link,
-.navbar__brand {
+.navbar__link {
   @apply no-underline transition duration-150 ease-linear hover:text-purple-300;
+}
+
+.navbar__brand {
+  @apply no-underline transition-colors duration-150 ease-linear hover:text-purple-300;
 }
 
 .footer {

@@ -160,17 +160,25 @@
 /* Navbar Dropdown Menu Styling                             */
 /* Matches the meetings page dropdown design system        */
 /* ======================================================== */
+.navbar__items {
+  align-items: center !important;
+}
+
 .dropdown {
   position: relative !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
-.navbar__item.dropdown {
-  padding-bottom: 14px !important;
-  margin-bottom: -14px !important;
+/* Keep navbar dropdown trigger text crisp white and aligned with other navbar links */
+.dropdown > .navbar__link {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0.5rem 0.65rem !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
 }
 
-/* Keep navbar dropdown trigger text crisp white in all states */
-.dropdown > .navbar__link,
 .dropdown > .navbar__link:hover,
 .dropdown--hoverable:hover > .navbar__link,
 .dropdown--show > .navbar__link,
@@ -183,7 +191,7 @@
   border-top-color: #ffffff !important;
   opacity: 0.9;
   margin-left: 6px;
-  vertical-align: middle;
+  margin-top: 1px;
 }
 
 .dropdown__menu {

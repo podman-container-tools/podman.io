@@ -83,16 +83,11 @@ const config = {
           {
             type: 'dropdown',
             label: 'Community',
+            to: 'community',
             position: 'right',
             items: [
               {
-                label: 'Community',
-                to: 'community',
-                exact: true,
-                activeBaseRegex: '^/community/?$',
-              },
-              {
-                label: 'Meetings',
+                label: 'Meetings Archive',
                 to: 'community/meetings',
                 exact: true,
                 activeBaseRegex: '^/community/meetings/?$',

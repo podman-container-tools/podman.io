@@ -11,7 +11,7 @@ export default function NotFound(): JSX.Element {
   const [searchLink, setSearchLink] = useState('');
 
   useEffect(() => {
-    if (typeof window !== undefined) {
+    if (typeof window !== 'undefined') {
       setCurrUrl(window.location.href);
     }
   }, []);

@@ -1,4 +1,4 @@
-export const LATEST_VERSION = '6.1.3';
+export const LATEST_VERSION = '6.1.4';
 export const LATEST_DESKTOP_VERSION = '1.29.3';
 export const LATEST_DESKTOP_DOWNLOAD_URL = 'https://podman-desktop.io/blog/podman-desktop-release-1.29';
 export const MEETING_URL =

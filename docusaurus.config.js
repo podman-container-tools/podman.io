@@ -108,7 +108,7 @@ const config = {
           },
 
           {
-            to: 'https://github.com/containers/',
+            to: 'https://github.com/podman-container-tools/podman.io',
             target: '_self',
             label: 'GitHub',
             position: 'right',

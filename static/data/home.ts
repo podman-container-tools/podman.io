@@ -27,25 +27,33 @@ const header = {
 
 const featureList = [
   {
+    id: 'fast-and-light',
     title: 'Fast and light.',
+    icon: 'material-symbols:bolt-rounded',
     description:
       "Daemonless, using the fastest technologies for a snappy experience. Our UI is reactive and light on resource usage and won't drag you down.",
     href: 'https://www.redhat.com/architect/hpc-containers-scale-using-podman',
   },
   {
+    id: 'secure',
     title: 'Secure.',
+    icon: 'material-symbols:shield-lock-rounded',
     description:
       'Rootless containers allow you to contain privileges without compromising functionality. Trusted by US government agencies for secure HPC at scale [case study](https://www.redhat.com/architect/hpc-containers-scale-using-podman). ',
     href: 'https://www.redhat.com/architect/hpc-containers-scale-using-podman',
   },
   {
+    id: 'open',
     title: 'Open.',
+    icon: 'material-symbols:lock-open-right-rounded',
     description:
       "Podman is open source first and won't lock you in. Podman Desktop can be used as one tool to manage all your containers, regardless of container engine - even if you don't use Podman as your container engine.",
     href: 'https://developers.redhat.com/blog/2020/11/19/transitioning-from-docker-to-podman',
   },
   {
+    id: 'compatible',
     title: 'Compatible.',
+    icon: 'material-symbols:layers-rounded',
     description:
       'Compatible with other OCI compliant container formats including Docker. Run your legacy Docker containers (including docker-compose files) on Podman. [Learn more](https://developers.redhat.com/blog/2020/11/19/transitioning-from-docker-to-podman)',
     href: 'https://developers.redhat.com/blog/2020/11/19/transitioning-from-docker-to-podman',

@@ -35,25 +35,9 @@ function MeetingsPage(): JSX.Element {
   const communityMeetings = useMemo(() => getCommunityMeetings(), []);
   const cabalMeetings = useMemo(() => getCabalMeetings(), []);
 
-  const [activeType, setActiveType] = useState<MeetingCategory>(() => {
-    if (typeof window === 'undefined') return 'community';
-    const params = new URLSearchParams(window.location.search);
-    const typeParam = params.get('type');
-    return typeParam === 'cabal' ? 'cabal' : 'community';
-  });
-
-  const [selectedMeetingId, setSelectedMeetingId] = useState<string>(() => {
-    if (typeof window === 'undefined') return '';
-    const params = new URLSearchParams(window.location.search);
-    return params.get('date') || '';
-  });
-
-  const [activeTab, setActiveTab] = useState<MeetingTab>(() => {
-    if (typeof window === 'undefined') return 'notes';
-    const params = new URLSearchParams(window.location.search);
-    const tabParam = params.get('tab');
-    return tabParam === 'transcript' ? 'transcript' : 'notes';
-  });
+  const [activeType, setActiveType] = useState<MeetingCategory>('community');
+  const [selectedMeetingId, setSelectedMeetingId] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<MeetingTab>('notes');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedYear, setSelectedYear] = useState<string>('all');
@@ -110,7 +94,9 @@ function MeetingsPage(): JSX.Element {
     });
   }, [currentList, selectedYear, searchQuery]);
 
-  const [mobileExpandedId, setMobileExpandedId] = useState<string | null>(() => selectedMeetingId || null);
+  const [mobileExpandedId, setMobileExpandedId] = useState<string | null>(null);
+
+  const isInitialMount = useRef(true);
 
   // Synchronize state from URL query parameters on mount or back/forward navigation
   useEffect(() => {
@@ -120,19 +106,25 @@ function MeetingsPage(): JSX.Element {
     const typeParam = params.get('type');
     const tabParam = params.get('tab');
 
+    const targetType = typeParam === 'cabal' ? 'cabal' : 'community';
+    const targetList = targetType === 'cabal' ? cabalMeetings : communityMeetings;
+
     if (typeParam === 'cabal' || typeParam === 'community') {
       setActiveType(typeParam);
     }
 
-    if (dateParam) {
+    if (dateParam && targetList.some(m => m.id === dateParam)) {
       setSelectedMeetingId(dateParam);
       setMobileExpandedId(dateParam);
+    } else if (targetList.length > 0) {
+      setSelectedMeetingId(targetList[0].id);
+      setMobileExpandedId(targetList[0].id);
     }
 
     if (tabParam === 'notes' || tabParam === 'transcript') {
       setActiveTab(tabParam);
     }
-  }, []);
+  }, [cabalMeetings, communityMeetings]);
 
   // Handle active reading tab changes and sync query parameters to address bar
   const handleSelectTab = useCallback(
@@ -163,9 +155,13 @@ function MeetingsPage(): JSX.Element {
     return () => window.removeEventListener('switchMeetingTab', handleSwitchTab);
   }, [handleSelectTab]);
 
-  // Ensure an active meeting is always selected if available
+  // Ensure an active meeting is always selected if available when filtering
   useEffect(() => {
-    if (filteredMeetings.length > 0) {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    if (filteredMeetings.length > 0 && selectedMeetingId) {
       const exists = filteredMeetings.some(m => m.id === selectedMeetingId);
       if (!exists) {
         setSelectedMeetingId(filteredMeetings[0].id);
@@ -182,6 +178,7 @@ function MeetingsPage(): JSX.Element {
   const handleSelectMeeting = useCallback(
     (meeting: MeetingItem) => {
       setSelectedMeetingId(meeting.id);
+      setMobileExpandedId(meeting.id);
       if (typeof window !== 'undefined') {
         const url = new URL(window.location.href);
         url.searchParams.set('date', meeting.id);

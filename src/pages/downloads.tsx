@@ -141,7 +141,7 @@ function LinuxDistroWorkspace({
   const current = distros.find(d => d.id === selectedId) || distros[0];
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-6 shadow-md backdrop-blur-md transition-all duration-200 dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none md:p-8">
+    <div className="overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-6 shadow-md backdrop-blur-md transition-all duration-200 dark:border-white/10 dark:bg-[#232326] dark:shadow-none md:p-8">
       {/* 1. Header with Badge, Title & All Distros Link */}
       <div className="flex flex-col justify-between gap-4 border-b border-purple-100/60 pb-6 dark:border-white/10 sm:flex-row sm:items-center">
         <div>
@@ -343,7 +343,7 @@ function ResourceCard({ badge, icon, title, desc, href, cta }: ResourceCardProps
       onKeyDown={e => {
         if (e.key === 'Enter') window.open(href, '_blank', 'noopener,noreferrer');
       }}
-      className="group flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 text-left shadow-md backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none">
+      className="group flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 text-left shadow-md backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-[#232326] dark:shadow-none">
       <div>
         {/* Top Header: Icon + Badge */}
         {/* Top Header: Icon + Badge */}
@@ -399,16 +399,16 @@ const OS_OPTIONS: { id: OS; label: string; icon: string }[] = [
 ];
 
 const detectOperatingSystem = (): OS => {
-  if (typeof window === 'undefined') return 'windows';
+  if (typeof window === 'undefined') return 'linux';
   const userAgent = window.navigator.userAgent.toLowerCase();
   if (userAgent.includes('win')) return 'windows';
   if (userAgent.includes('mac') || userAgent.includes('darwin')) return 'mac';
   if (userAgent.includes('linux') || userAgent.includes('x11')) return 'linux';
-  return 'windows';
+  return 'linux';
 };
 
 export default function DownloadsPage(): JSX.Element {
-  const [os, setOs] = useState<OS>('windows');
+  const [os, setOs] = useState<OS>('linux');
   const [distro, setDistro] = useState('fedora');
 
   useEffect(() => {
@@ -530,7 +530,7 @@ export default function DownloadsPage(): JSX.Element {
           {os === 'windows' && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-stretch">
               {/* Card 1: Standalone MSI Installers */}
-              <div className="flex flex-col overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 shadow-md backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none">
+              <div className="flex flex-col overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 shadow-md backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-[#232326] dark:shadow-none">
                 <div>
                   <div className="flex items-center justify-between gap-3">
                     <div
@@ -569,7 +569,7 @@ export default function DownloadsPage(): JSX.Element {
               </div>
 
               {/* Card 2: Package Managers (WinGet & Chocolatey) */}
-              <div className="flex flex-col justify-between overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 shadow-md backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none">
+              <div className="flex flex-col justify-between overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 shadow-md backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-[#232326] dark:shadow-none">
                 <div>
                   <div className="flex items-center justify-between gap-3">
                     <div
@@ -610,7 +610,7 @@ export default function DownloadsPage(): JSX.Element {
           ========================================================== */}
           {os === 'mac' && (
             <div className="mx-auto max-w-3xl">
-              <div className="overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-6 shadow-md backdrop-blur-md transition-all duration-200 dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none md:p-8">
+              <div className="overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-6 shadow-md backdrop-blur-md transition-all duration-200 dark:border-white/10 dark:bg-[#232326] dark:shadow-none md:p-8">
                 {/* Top Header Card */}
                 <div className="flex flex-col justify-between gap-4 border-b border-purple-100/60 pb-6 dark:border-white/10 sm:flex-row sm:items-center">
                   <div>

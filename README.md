@@ -42,7 +42,7 @@ If you're doing development on a VM there are a few steps to take to test your c
 ### Deployment
 
 - The site is set to automatically deploy when code is pushed to the main branch
-  - See `.github/workflows/static.yml`
+  - See `.github/workflows/deploy.yml`
 - **Important**: prior to merging to main, run `yarn build` locally
 
 ---

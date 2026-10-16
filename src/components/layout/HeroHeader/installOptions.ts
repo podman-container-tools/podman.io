@@ -25,7 +25,7 @@ const operatingSystemData = [
     },
     other: {
       path: '/downloads',
-      text: 'Other Install Options',
+      text: 'View All Download Options',
     },
   },
   {
@@ -45,7 +45,7 @@ const operatingSystemData = [
     },
     other: {
       path: '/downloads',
-      text: 'Other Install Options',
+      text: 'View All Download Options',
     },
   },
   {
@@ -64,7 +64,7 @@ const operatingSystemData = [
     },
     other: {
       path: '/downloads',
-      text: 'Other Install Options',
+      text: 'View All Download Options',
     },
   },
 ];

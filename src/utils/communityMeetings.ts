@@ -50,6 +50,7 @@ export const MEETING_VIDEO_OFFSETS: Record<string, number> = {
   '2026-04-07': 6 * 60 + 2, // 6 min 2 s
   '2026-06-02': 4 * 60 + 24, // 4 min 24 s
   '2026-08-04': 10 * 60 + 52, // 10 min 52 s
+  '2026-10-06': 4 * 60 + 43, // 4 min 43 s
 };
 
 /**

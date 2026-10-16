@@ -18,7 +18,6 @@ export const testimonials = [
     path: 'https://twitter.com/yanashin18618/status/1672012788951289857',
     date: 'Jun 22, 2023',
     avatar: 'https://pbs.twimg.com/profile_images/1460075843888480256/oLLVLho5_400x400.jpg',
-    featuredlink: 'https://twitter.com/vitalethomas/status/1671985089675247618',
   },
   {
     name: 'Fang-Pen Lin 🇺🇸🌈',

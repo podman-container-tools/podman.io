@@ -13,8 +13,8 @@ import { header, getHelp } from '@site/static/data/get-started';
 /* PAGE COMPONENTS */
 const GetHelpSection = () => {
   return (
-    <section className="bg-gradient-to-br from-purple-900 to-purple-500/75 dark:from-purple-700 dark:via-purple-900 dark:to-gray-900">
-      <SectionHeader title={getHelp.title} textColor="text-white dark:text-blue-300" />
+    <section className="colored-glass-section bg-gradient-to-br from-purple-900 to-purple-500/75">
+      <SectionHeader title={getHelp.title} textColor="!text-blue-500" />
       <div className="container mx-auto my-8 max-w-4xl px-4">
         <header className="mb-8 text-center">
           <h3 className="text-2xl font-bold text-white">{getHelp.subtitle}</h3>
@@ -22,7 +22,7 @@ const GetHelpSection = () => {
 
         <div className="space-y-6">
           {/* Manpages */}
-          <div className="grid grid-cols-1 items-center gap-4 rounded-2xl border border-white/15 bg-white/10 p-5 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-black/25 sm:p-6 lg:grid-cols-12 lg:gap-6">
+          <div className="grid grid-cols-1 items-center gap-4 rounded-2xl border border-white/20 bg-white/10 p-5 shadow-lg backdrop-blur-md sm:p-6 lg:grid-cols-12 lg:gap-6">
             <div className="text-left lg:col-span-5">
               <h4 className="mb-1 text-lg font-bold text-white">Manpages</h4>
               <p className="text-sm leading-relaxed text-white/90 sm:text-base">
@@ -31,7 +31,7 @@ const GetHelpSection = () => {
                   href="https://docs.podman.io/en/latest/Commands.html"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-200 text-sm font-semibold underline underline-offset-4 hover:text-white sm:text-base">
+                  className="text-sm font-semibold text-blue-500 underline underline-offset-4 hover:text-white dark:text-blue-500 dark:hover:text-white sm:text-base">
                   Podman manpages
                 </a>
                 .
@@ -47,7 +47,7 @@ const GetHelpSection = () => {
           </div>
 
           {/* Built-in Help */}
-          <div className="grid grid-cols-1 items-center gap-4 rounded-2xl border border-white/15 bg-white/10 p-5 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-black/25 sm:p-6 lg:grid-cols-12 lg:gap-6">
+          <div className="grid grid-cols-1 items-center gap-4 rounded-2xl border border-white/20 bg-white/10 p-5 shadow-lg backdrop-blur-md sm:p-6 lg:grid-cols-12 lg:gap-6">
             <div className="text-left lg:col-span-5">
               <h4 className="mb-1 text-lg font-bold text-white">Built-in Help</h4>
               <p className="text-sm leading-relaxed text-white/90 sm:text-base">
@@ -66,14 +66,14 @@ const GetHelpSection = () => {
 
         <div className="mt-8 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/15 px-5 py-2.5 text-sm text-white backdrop-blur-md sm:text-base">
-            <Icon icon="material-symbols:help-outline-rounded" className="text-blue-200 shrink-0 text-lg" />
+            <Icon icon="material-symbols:help-outline-rounded" className="shrink-0 text-lg text-blue-500" />
             <span>
               Looking for troubleshooting? Visit the{' '}
               <a
                 href="https://github.com/containers/podman/blob/main/troubleshooting.md"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-200 text-sm font-semibold underline underline-offset-4 hover:text-white sm:text-base">
+                className="text-sm font-semibold text-blue-500 underline underline-offset-4 hover:text-white dark:text-blue-500 dark:hover:text-white sm:text-base">
                 Podman Troubleshooting Guide
               </a>
               .
@@ -97,23 +97,20 @@ const SearchPullListSection = () => {
 
 const StickyNote = ({ children, title = 'Note' }: { children: React.ReactNode; title?: string }) => {
   return (
-    <div className="shadow-xs relative mt-5 rounded-xl border border-white/25 bg-white/25 p-5 backdrop-blur-md transition-all dark:border-white/10 dark:bg-white/10 sm:p-6">
+    <div className="shadow-xs relative mt-5 rounded-xl border border-white/25 bg-white/25 p-5 backdrop-blur-md transition-all sm:p-6">
       <div className="mb-2.5 flex items-center gap-2 font-bold text-white">
         <Icon icon="material-symbols:sticky-note-2-rounded" className="shrink-0 text-xl text-white/90" />
         <span className="text-xs font-extrabold uppercase tracking-wider text-white">{title}:</span>
       </div>
-      <div className="text-left text-sm leading-relaxed text-white/95 sm:text-base">{children}</div>
+      <div className="text-justify text-sm leading-relaxed text-white/95 sm:text-base">{children}</div>
     </div>
   );
 };
 
 const RunListContainersSection = () => {
   return (
-    <section className="bg-gradient-to-br from-blue-500/75 to-blue-700 pb-16 pt-6 dark:bg-blue-900 dark:text-white">
-      <SectionHeader
-        textColor="text-white dark:text-blue-300"
-        title="Running a container &amp; listing running containers"
-      />
+    <section className="colored-glass-section bg-gradient-to-br from-blue-500/75 to-blue-700 pb-16 pt-6">
+      <SectionHeader textColor="!text-white" title="Running a container &amp; listing running containers" />
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <p className="mb-10 text-center text-lg leading-relaxed text-white/90">
           This sample container will run a basic httpd server that serves its default index page.
@@ -121,7 +118,7 @@ const RunListContainersSection = () => {
 
         <div className="space-y-8">
           {/* Step 1: Running a container */}
-          <div className="rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-black/25 sm:p-8">
+          <div className="rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
             <div className="mb-4 flex items-center gap-3">
               <span className="shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold text-white">
                 1
@@ -163,7 +160,7 @@ const RunListContainersSection = () => {
           </div>
 
           {/* Step 2: Listing running containers */}
-          <div className="rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-black/25 sm:p-8">
+          <div className="rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
             <div className="mb-4 flex items-center gap-3">
               <span className="shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold text-white">
                 2
@@ -199,7 +196,7 @@ const RunListContainersSection = () => {
           </div>
 
           {/* Step 3: Testing the container */}
-          <div className="rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-black/25 sm:p-8">
+          <div className="rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
             <div className="mb-4 flex items-center gap-3">
               <span className="shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold text-white">
                 3

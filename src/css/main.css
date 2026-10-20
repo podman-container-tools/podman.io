@@ -680,3 +680,64 @@ mark.search-highlight {
   background-color: rgba(255, 255, 255, 0.35);
   color: #ffffff;
 }
+
+/* ─── Get Started Page: Colored glass sections text styling in dark theme ─── */
+.colored-glass-section h3,
+.colored-glass-section h4,
+[data-theme='dark'] .colored-glass-section h3,
+[data-theme='dark'] .colored-glass-section h4 {
+  color: #ffffff !important;
+}
+
+.colored-glass-section p,
+[data-theme='dark'] .colored-glass-section p {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.colored-glass-section strong,
+[data-theme='dark'] .colored-glass-section strong {
+  color: #ffffff !important;
+}
+
+.colored-glass-section :not(pre) > code,
+[data-theme='dark'] .colored-glass-section :not(pre) > code {
+  color: #ffffff !important;
+}
+
+/* ─── Glass Container for Resources & Action Cards ─── */
+.glass-container {
+  background: linear-gradient(135deg, rgba(237, 253, 255, 0.6) 0%, rgba(247, 234, 253, 0.5) 100%);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow:
+    0 4px 18px -2px rgba(0, 0, 0, 0.05),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-container:hover {
+  background: linear-gradient(135deg, rgba(237, 253, 255, 0.85) 0%, rgba(247, 234, 253, 0.75) 100%);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 8px 24px -2px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px 0 #ffffff;
+  transform: translateY(-2px);
+}
+
+[data-theme='dark'] .glass-container {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow:
+    0 4px 16px -2px rgba(0, 0, 0, 0.25),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme='dark'] .glass-container:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow:
+    0 8px 24px -2px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25) !important;
+  transform: translateY(-2px);
+}

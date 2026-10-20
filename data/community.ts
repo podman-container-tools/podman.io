@@ -1,4 +1,3 @@
-import { CABAL_MEETING_URL } from './global';
 import { MEETING_URL } from './global';
 const header = {
   title: 'Community',
@@ -66,13 +65,15 @@ const communityMeetings = {
       ],
     },
     {
-      title: 'Podman Community Cabal',
-      isPaused: true,
+      title: 'Podman Office Hours',
       subtitle:
-        'The focus of the cabal meeting was planning and discussion of future architectural changes to Podman and related Containers projects. Note: Cabal sessions are currently paused and covered in regular community stand-ups.',
-      date: '**(Paused)** formerly 1st Tuesday of odd numbered months',
-      timeZone: '11 AM US ET / 5 PM CET',
-      buttons: [{ text: 'Meeting Agenda', path: 'https://hackmd.io/gQCfskDuRLm7iOsWgH2yrg?both' }],
+        "The Podman project's Office Hours meeting. Join us to discuss issues, the status of the maintainers, do a demo, and ask questions! Here's your chance to connect with the community!",
+      date: '**Every Monday & Thursday**',
+      timeZone: 'Mon 10:30 AM / Thu 11:30 AM US ET (4:30 / 5:30 PM CET)',
+      buttons: [
+        { text: 'LFX Calendar', path: 'https://app.lfx.dev/projects/podman-container-tools/calendar' },
+        { text: 'Meeting Agenda', path: 'https://hackmd.io/@TomSweeneyRedHat/H1qIC9nkMe' },
+      ],
     },
   ],
 };

@@ -38,9 +38,13 @@ type InstructionsProps = PageHeaderProps & {
 
 const TextBox = ({ grid, display, layout, title, description }: PageHeaderProps): JSX.Element => {
   return (
-    <div className={`${grid} ${display} ${layout}`}>
-      <h1 className="mb-6 max-w-sm text-purple-700 dark:text-purple-500 lg:max-w-lg">{title}</h1>
-      <Markdown text={description} styles="leading-relaxed" />
+    <div className={`${grid || ''} ${display || ''} ${layout || ''}`}>
+      <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-purple-700 dark:!text-purple-500 sm:text-4xl lg:text-5xl">
+        {title}
+      </h1>
+      {description && (
+        <Markdown text={description} styles="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-200" />
+      )}
     </div>
   );
 };
@@ -48,12 +52,12 @@ const TextBox = ({ grid, display, layout, title, description }: PageHeaderProps)
 const Image = ({
   grid,
   display,
-  layout, // if array then {[key:string]: any}[];
+  layout,
   image = { path: 'images/optimized/podman-2-196w-172h.webp', alt: 'Podman Logo' },
 }: ImageSectionProps) => {
   return (
-    <div>
-      <img src={image.path} alt={image.alt} className={`${grid} ${display} ${layout}`} />
+    <div className="flex justify-center">
+      <img src={image.path} alt={image.alt} className={`${grid || ''} ${display || ''} ${layout || ''}`} />
     </div>
   );
 };
@@ -62,25 +66,46 @@ function PageHeaderSupplementalInfo({ image, basicResources }: PageHeaderSupplem
   if (basicResources) {
     return <BasicResourcesBox />;
   }
-  return <Image image={image} layout="mb-8 lg:mb-0" />;
+  return <Image image={image} layout="mb-8 lg:mb-0 max-w-xs md:max-w-sm" />;
 }
 
 function Instructions({ instructions }: InstructionsProps) {
   if (instructions) {
+    const isExternal = instructions.button?.path?.startsWith('http');
     return (
-      <div>
-        <h3 className="mb-4 text-gray-700">{instructions.title}</h3>
-        <p>{instructions.subtitle}</p>
-        <ul className="mb-10 mt-4 flex flex-col gap-6 sm:flex-row lg:mb-16 lg:gap-4 xl:flex-col">
-          <li>
+      <div className="mt-8 border-t border-purple-100/60 pt-6 dark:border-white/10">
+        {instructions.title && (
+          <h2 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-2xl">
+            {instructions.title}
+          </h2>
+        )}
+        {instructions.subtitle && (
+          <p className="mb-4 text-base leading-relaxed text-gray-700 dark:text-gray-300">{instructions.subtitle}</p>
+        )}
+        {instructions.button && (
+          <div className="max-w-md">
             <a
               href={instructions.button.path}
-              className="flex h-32 max-w-lg flex-col items-center justify-center gap-4 rounded-md bg-gray-100 p-4 text-center text-purple-700 no-underline underline-offset-4 transition duration-150 ease-linear hover:bg-purple-700 hover:text-purple-50 hover:no-underline hover:shadow-md dark:bg-gray-700 dark:hover:bg-purple-900 dark:hover:text-white lg:h-auto lg:flex-row xl:justify-start">
-              <span>{instructions.button.text}</span>
-              <Icon icon={instructions.button.icon} className="order-first hidden lg:block" />
+              target={isExternal ? '_blank' : undefined}
+              rel={isExternal ? 'noopener noreferrer' : undefined}
+              style={{ textDecoration: 'none' }}
+              className="glass-container group flex w-full items-center justify-between gap-4 rounded-xl p-3.5 !no-underline dark:border-white/20 dark:bg-white/10 dark:hover:border-white/30 dark:hover:bg-white/15">
+              <div className="flex min-w-0 items-center gap-3.5 !no-underline">
+                <Icon
+                  icon={instructions.button.icon || 'fa6-solid:book'}
+                  className="shrink-0 text-xl text-blue-700 transition-colors dark:text-blue-500"
+                />
+                <span className="truncate text-sm font-semibold text-gray-900 !no-underline transition-colors group-hover:!text-blue-700 dark:text-white dark:group-hover:!text-blue-500 sm:text-base">
+                  {instructions.button.text}
+                </span>
+              </div>
+              <Icon
+                icon={isExternal ? 'material-symbols:open-in-new' : 'material-symbols:arrow-forward-rounded'}
+                className="shrink-0 text-base text-blue-700/70 transition-all duration-200 group-hover:translate-x-0.5 group-hover:!text-blue-700 dark:text-blue-500/70 dark:group-hover:!text-blue-500"
+              />
             </a>
-          </li>
-        </ul>
+          </div>
+        )}
       </div>
     );
   }
@@ -97,17 +122,19 @@ function PageHeader({
   instructions,
 }: PageHeaderProps) {
   return (
-    <header className={`bg-${lightColor} dark:bg-${darkColor}`}>
+    <header className={`bg-${lightColor} dark:bg-${darkColor} transition-colors`}>
       <div className="bg-gradient-to-r from-blue-500 to-purple-700 dark:from-blue-700 dark:to-purple-900 lg:pt-8">
         <WaveBorder />
       </div>
-      <div className="container flex flex-col justify-around md:flex-row">
-        <div>
-          <TextBox title={title} description={description} layout="mt-12 lg:mt-0 mb-8" />
-          <Instructions instructions={instructions} />
-        </div>
-        <div className="ml-24 w-[50%]">
-          <PageHeaderSupplementalInfo basicResources={basicResources} image={image} />
+      <div className="container py-8 lg:py-12">
+        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
+          <div className="lg:col-span-7">
+            <TextBox title={title} description={description} layout="mb-6" />
+            <Instructions instructions={instructions} />
+          </div>
+          <div className="flex justify-center lg:col-span-5 lg:justify-end">
+            <PageHeaderSupplementalInfo basicResources={basicResources} image={image} />
+          </div>
         </div>
       </div>
     </header>

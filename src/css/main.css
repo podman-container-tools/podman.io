@@ -11,7 +11,7 @@
   --ifm-color-primary-darkest: #5f246b;
   --ifm-color-primary-light: #bd58dd;
   --ifm-color-primary-lightest: #e3b4f3;
-  --ifm-code-fonts-size: 95%;
+  --ifm-code-font-size: 85%;
   --docusaurus-highlighted-code-line-bg: rgba(43, 39, 53, 0.1);
 }
 
@@ -22,6 +22,11 @@
   --ifm-color-primary-light: #bd59dd;
   --ifm-color-primary-lightest: #e4b4f3;
   --docusaurus-highlighted-code-line-bg: rgba(44, 39, 53, 0.3);
+}
+
+:not(pre) > code {
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 .breadcrumbs__link {
@@ -365,7 +370,8 @@
   }
 
   a {
-    @apply font-text text-lg text-blue-500 underline underline-offset-4 transition duration-150 ease-linear hover:opacity-90 dark:text-blue-500 dark:hover:text-blue-700 lg:text-xl;
+    font-size: inherit;
+    @apply font-text text-blue-500 underline underline-offset-4 transition duration-150 ease-linear hover:opacity-90 dark:text-blue-500 dark:hover:text-blue-700;
   }
 
   /* headings size and weight */
@@ -638,6 +644,9 @@
 
 /* Hide scrollbars completely across all browsers */
 .no-scrollbar::-webkit-scrollbar,
+.no-scrollbar pre::-webkit-scrollbar,
+.no-scrollbar code::-webkit-scrollbar,
+.no-scrollbar div::-webkit-scrollbar,
 .speaker-dropdown-menu::-webkit-scrollbar,
 .meetings-year-menu::-webkit-scrollbar,
 .meetings-sessions-container::-webkit-scrollbar,
@@ -648,6 +657,9 @@
   height: 0 !important;
 }
 .no-scrollbar,
+.no-scrollbar pre,
+.no-scrollbar code,
+.no-scrollbar div,
 .speaker-dropdown-menu,
 .meetings-year-menu,
 .meetings-sessions-container,
@@ -677,4 +689,145 @@ mark.search-highlight {
 .session-card-active mark.search-highlight {
   background-color: rgba(255, 255, 255, 0.35);
   color: #ffffff;
+}
+
+/* ─── Get Started Page: Colored glass sections text styling (on blue/purple gradient backgrounds) ─── */
+.colored-glass-section h3,
+.colored-glass-section h4 {
+  color: #ffffff !important;
+}
+
+.colored-glass-section p {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.colored-glass-section strong {
+  color: #ffffff !important;
+}
+
+.colored-glass-section :not(pre) > code {
+  color: #ffffff !important;
+}
+
+.colored-glass-section .section-subtitle {
+  color: #111827 !important;
+}
+
+[data-theme='dark'] .colored-glass-section .section-subtitle {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ─── Step Cards inside RunListContainersSection: dark text in light theme, white in dark theme ─── */
+.step-card {
+  color: #111827;
+}
+
+.step-card h3,
+.step-card h4 {
+  color: #111827 !important;
+}
+
+.step-card p {
+  color: #111827 !important;
+}
+
+.step-card strong {
+  color: #000000 !important;
+}
+
+.step-card :not(pre) > code {
+  color: #111827 !important;
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.step-card .step-badge {
+  color: #111827 !important;
+  background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.step-card .sticky-note {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  background-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.step-card .sticky-note-header,
+.step-card .sticky-note-header span,
+.step-card .sticky-note-header svg {
+  color: #111827 !important;
+}
+
+[data-theme='dark'] .step-card {
+  color: #ffffff;
+}
+
+[data-theme='dark'] .step-card h3,
+[data-theme='dark'] .step-card h4 {
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] .step-card p {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+[data-theme='dark'] .step-card strong {
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] .step-card :not(pre) > code {
+  color: #ffffff !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme='dark'] .step-card .step-badge {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+[data-theme='dark'] .step-card .sticky-note {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+[data-theme='dark'] .step-card .sticky-note-header,
+[data-theme='dark'] .step-card .sticky-note-header span,
+[data-theme='dark'] .step-card .sticky-note-header svg {
+  color: #ffffff !important;
+}
+
+/* ─── Glass Container for Resources & Action Cards ─── */
+.glass-container {
+  background: linear-gradient(135deg, rgba(237, 253, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow:
+    0 4px 18px -2px rgba(0, 0, 0, 0.05),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-container:hover {
+  background: linear-gradient(135deg, rgba(237, 253, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 8px 24px -2px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px 0 #ffffff;
+  transform: translateY(-2px);
+}
+
+[data-theme='dark'] .glass-container {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow:
+    0 4px 16px -2px rgba(0, 0, 0, 0.25),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme='dark'] .glass-container:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow:
+    0 8px 24px -2px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25) !important;
+  transform: translateY(-2px);
 }

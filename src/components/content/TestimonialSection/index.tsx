@@ -25,6 +25,11 @@ function TestimonialSection() {
   }, []);
 
   const maxIndex = Math.max(0, testimonials.length - itemsPerPage);
+
+  useEffect(() => {
+    setCurrentIndex(i => Math.min(i, maxIndex));
+  }, [maxIndex]);
+
   const showLeftArrow = currentIndex > 0;
   const showRightArrow = currentIndex < maxIndex;
 

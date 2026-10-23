@@ -97,12 +97,12 @@ const SearchPullListSection = () => {
 
 const StickyNote = ({ children, title = 'Note' }: { children: React.ReactNode; title?: string }) => {
   return (
-    <div className="shadow-xs relative mt-5 rounded-xl border border-white/25 bg-white/25 p-5 backdrop-blur-md transition-all sm:p-6">
-      <div className="mb-2.5 flex items-center gap-2 font-bold text-white">
-        <Icon icon="material-symbols:sticky-note-2-rounded" className="shrink-0 text-xl text-white/90" />
-        <span className="text-xs font-extrabold uppercase tracking-wider text-white">{title}:</span>
+    <div className="sticky-note shadow-xs relative mt-5 rounded-xl border border-white/25 bg-white/25 p-5 backdrop-blur-md transition-all sm:p-6">
+      <div className="sticky-note-header mb-2.5 flex items-center gap-2 font-bold">
+        <Icon icon="material-symbols:sticky-note-2-rounded" className="shrink-0 text-xl" />
+        <span className="text-xs font-extrabold uppercase tracking-wider">{title}:</span>
       </div>
-      <div className="text-justify text-sm leading-relaxed text-white/95 sm:text-base">{children}</div>
+      <div className="text-justify text-sm leading-relaxed sm:text-base">{children}</div>
     </div>
   );
 };
@@ -110,24 +110,27 @@ const StickyNote = ({ children, title = 'Note' }: { children: React.ReactNode; t
 const RunListContainersSection = () => {
   return (
     <section className="colored-glass-section bg-gradient-to-br from-blue-500/75 to-blue-700 pb-16 pt-6">
-      <SectionHeader textColor="!text-white" title="Running a container &amp; listing running containers" />
+      <SectionHeader
+        textColor="!text-gray-900 dark:!text-white"
+        title="Running a container &amp; listing running containers"
+      />
       <div className="container mx-auto max-w-4xl px-4 py-8">
-        <p className="mb-10 text-center text-lg leading-relaxed text-white/90">
+        <p className="section-subtitle mb-10 text-center text-lg leading-relaxed !text-gray-900 dark:!text-white/90">
           This sample container will run a basic httpd server that serves its default index page.
         </p>
 
         <div className="space-y-8">
           {/* Step 1: Running a container */}
-          <div className="rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
+          <div className="step-card rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
             <div className="mb-4 flex items-center gap-3">
-              <span className="shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold text-white">
+              <span className="step-badge shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold">
                 1
               </span>
-              <h3 className="text-xl font-bold text-white sm:text-2xl">Running a container</h3>
+              <h3 className="text-xl font-bold sm:text-2xl">Running a container</h3>
             </div>
-            <p className="mb-4 text-left text-base leading-relaxed text-white/90">
+            <p className="mb-4 text-left text-base leading-relaxed">
               Run an Apache HTTP server in detached mode on port{' '}
-              <code className="inline-block whitespace-nowrap rounded bg-black/30 px-1.5 py-0.5 font-mono text-xs font-semibold text-white">
+              <code className="inline-block whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-xs font-semibold">
                 8080
               </code>
               :
@@ -138,16 +141,16 @@ const RunListContainersSection = () => {
             <StickyNote title="Note">
               <p className="mb-2">
                 Because the container is being run in detached mode, represented by the{' '}
-                <code className="inline-block whitespace-nowrap rounded bg-black/30 px-1.5 py-0.5 font-mono text-xs font-semibold text-white">
+                <code className="inline-block whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-xs font-semibold">
                   -d
                 </code>{' '}
                 in the{' '}
-                <code className="inline-block whitespace-nowrap rounded bg-black/30 px-1.5 py-0.5 font-mono text-xs font-semibold text-white">
+                <code className="inline-block whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-xs font-semibold">
                   podman run
                 </code>{' '}
                 command, Podman will run the container in the background and print the container ID after it has
                 executed the command. The{' '}
-                <code className="inline-block whitespace-nowrap rounded bg-black/30 px-1.5 py-0.5 font-mono text-xs font-semibold text-white">
+                <code className="inline-block whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-xs font-semibold">
                   -t
                 </code>{' '}
                 also adds a pseudo-tty to run arbitrary commands in an interactive shell.
@@ -160,16 +163,16 @@ const RunListContainersSection = () => {
           </div>
 
           {/* Step 2: Listing running containers */}
-          <div className="rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
+          <div className="step-card rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
             <div className="mb-4 flex items-center gap-3">
-              <span className="shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold text-white">
+              <span className="step-badge shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold">
                 2
               </span>
-              <h3 className="text-xl font-bold text-white sm:text-2xl">Listing running containers</h3>
+              <h3 className="text-xl font-bold sm:text-2xl">Listing running containers</h3>
             </div>
-            <p className="mb-4 text-left text-base leading-relaxed text-white/90">
+            <p className="mb-4 text-left text-base leading-relaxed">
               The{' '}
-              <code className="inline-block whitespace-nowrap rounded bg-black/30 px-1.5 py-0.5 font-mono text-xs font-semibold text-white">
+              <code className="inline-block whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-xs font-semibold">
                 podman ps
               </code>{' '}
               command is used to list created and running containers:
@@ -183,11 +186,11 @@ const RunListContainersSection = () => {
             <StickyNote title="Note">
               <p>
                 If you add{' '}
-                <code className="inline-block whitespace-nowrap rounded bg-black/30 px-1.5 py-0.5 font-mono text-xs font-semibold text-white">
+                <code className="inline-block whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-xs font-semibold">
                   -a
                 </code>{' '}
                 to the{' '}
-                <code className="inline-block whitespace-nowrap rounded bg-black/30 px-1.5 py-0.5 font-mono text-xs font-semibold text-white">
+                <code className="inline-block whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-xs font-semibold">
                   podman ps
                 </code>{' '}
                 command, Podman will show all containers (created, exited, running, etc.).
@@ -196,27 +199,27 @@ const RunListContainersSection = () => {
           </div>
 
           {/* Step 3: Testing the container */}
-          <div className="rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
+          <div className="step-card rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
             <div className="mb-4 flex items-center gap-3">
-              <span className="shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold text-white">
+              <span className="step-badge shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold">
                 3
               </span>
-              <h3 className="text-xl font-bold text-white sm:text-2xl">
+              <h3 className="text-xl font-bold sm:text-2xl">
                 Testing the{' '}
-                <code className="inline-block whitespace-nowrap rounded bg-black/30 px-1.5 py-0.5 font-mono text-xs font-semibold text-white">
+                <code className="inline-block whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-xs font-semibold">
                   httpd
                 </code>{' '}
                 container
               </h3>
             </div>
-            <p className="mb-3 text-left text-base leading-relaxed text-white/90">
+            <p className="mb-3 text-left text-base leading-relaxed">
               The container is reachable via its mapped port on your local machine:
             </p>
             <CodeBlock language="bash" showLineNumbers className="no-scrollbar w-full rounded-xl text-left shadow-md">
               $ curl http://localhost:8080{'\n'}
             </CodeBlock>
 
-            <p className="mb-3 mt-6 text-left text-base leading-relaxed text-white/90">
+            <p className="mb-3 mt-6 text-left text-base leading-relaxed">
               From another machine, reach it using the host's IP address:
             </p>
             <CodeBlock language="bash" showLineNumbers className="no-scrollbar w-full rounded-xl text-left shadow-md">
@@ -226,11 +229,11 @@ const RunListContainersSection = () => {
             <StickyNote title="Note">
               <p>
                 Instead of using{' '}
-                <code className="inline-block whitespace-nowrap rounded bg-black/30 px-1.5 py-0.5 font-mono text-xs font-semibold text-white">
+                <code className="inline-block whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-xs font-semibold">
                   curl
                 </code>
                 , you can also point a browser to{' '}
-                <code className="inline-block whitespace-nowrap rounded bg-black/30 px-1.5 py-0.5 font-mono text-xs font-semibold text-white">
+                <code className="inline-block whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-xs font-semibold">
                   http://localhost:8080
                 </code>
                 .

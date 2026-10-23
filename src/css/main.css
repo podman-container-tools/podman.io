@@ -699,6 +699,91 @@ mark.search-highlight {
   color: #ffffff !important;
 }
 
+.colored-glass-section .section-subtitle {
+  color: #111827 !important;
+}
+
+[data-theme='dark'] .colored-glass-section .section-subtitle {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ─── Step Cards inside RunListContainersSection: dark text in light theme, white in dark theme ─── */
+.step-card {
+  color: #111827;
+}
+
+.step-card h3,
+.step-card h4 {
+  color: #111827 !important;
+}
+
+.step-card p {
+  color: #111827 !important;
+}
+
+.step-card strong {
+  color: #000000 !important;
+}
+
+.step-card :not(pre) > code {
+  color: #111827 !important;
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.step-card .step-badge {
+  color: #111827 !important;
+  background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.step-card .sticky-note {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  background-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.step-card .sticky-note-header,
+.step-card .sticky-note-header span,
+.step-card .sticky-note-header svg {
+  color: #111827 !important;
+}
+
+[data-theme='dark'] .step-card {
+  color: #ffffff;
+}
+
+[data-theme='dark'] .step-card h3,
+[data-theme='dark'] .step-card h4 {
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] .step-card p {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+[data-theme='dark'] .step-card strong {
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] .step-card :not(pre) > code {
+  color: #ffffff !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme='dark'] .step-card .step-badge {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+[data-theme='dark'] .step-card .sticky-note {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+[data-theme='dark'] .step-card .sticky-note-header,
+[data-theme='dark'] .step-card .sticky-note-header span,
+[data-theme='dark'] .step-card .sticky-note-header svg {
+  color: #ffffff !important;
+}
+
 /* ─── Glass Container for Resources & Action Cards ─── */
 .glass-container {
   background: linear-gradient(135deg, rgba(237, 253, 255, 0.7) 0%, rgba(255, 255, 255, 0.6) 100%);

@@ -14,12 +14,12 @@ const RenderLabelledCode = (props: CodeProps) => {
   const { command, code, label, extra, className } = props;
 
   return (
-    <div className={`w-full max-w-md ${className}`}>
-      <div className="my-3 w-full rounded-md bg-blue-700 p-4 text-center shadow-md dark:bg-blue-900 md:my-0 md:max-w-sm md:text-start lg:mx-0">
+    <div className={`w-96 md:max-w-md ${className}`}>
+      <div className="m-4 max-w-md rounded-md bg-blue-700 p-4 text-center shadow-md dark:bg-blue-900 md:max-w-sm md:text-start lg:mx-0">
         <Markdown text={label} styles="text-white dark:text-white" />
       </div>
       {extra && (
-        <div className="my-3 hidden w-full rounded-md bg-blue-700 p-4 shadow-md dark:bg-blue-900 md:my-0 md:block md:max-w-sm">
+        <div className="mx-4 mb-2 mt-4 hidden max-w-md rounded-md bg-blue-700 p-4 shadow-md dark:bg-blue-900 md:mx-0 md:block md:max-w-sm">
           <Markdown text={extra} styles="text-white dark:text-white" />
         </div>
       )}
@@ -36,7 +36,7 @@ interface DeskProps {
 }
 const DesktopCodeBlock = (props: DeskProps) => {
   return (
-    <div className={`container hidden min-w-0 md:block ${props.className}`}>
+    <div className={`container hidden md:block ${props.className}`}>
       <CodeBlock language="bash" showLineNumbers>
         {searchExample.command}
         {searchExample.code}

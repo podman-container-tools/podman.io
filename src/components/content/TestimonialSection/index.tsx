@@ -1,53 +1,58 @@
 import React from 'react';
-import { Icon } from '@iconify/react';
 import Testimonial from '@site/src/components/ui/Testimonial';
 import SectionHeader from '@site/src/components/layout/SectionHeader';
 import { testimonials } from '@site/static/data/testimonials';
 
+// Quadruple the cards (16 items total) to form two identical 8-card halves (-50% animation loop)
+const marqueeCards = [...testimonials, ...testimonials, ...testimonials, ...testimonials];
+
 function TestimonialSection() {
-  const slideLeft = () => {
-    const slider = document.getElementById('slider');
-    slider.scrollLeft = slider.scrollLeft - 500;
-  };
-  const slideRight = () => {
-    const slider = document.getElementById('slider');
-    slider.scrollLeft = slider.scrollLeft + 500;
-  };
   return (
-    <section className="bg-gradient-to-b from-white to-purple-100 dark:from-gray-900 dark:via-gray-900 dark:to-purple-900">
-      <SectionHeader
-        title="What people are saying about Podman"
-        textGradient={true}
-        textGradientStops="from-blue-700 to-blue-500"
+    <section className="relative overflow-hidden bg-gradient-to-b from-white via-purple-100 to-blue-50/30 py-16 dark:from-[#1B1B1D] dark:via-purple-900/25 dark:to-[#1B1B1D] xl:py-24">
+      {/* Left Side Vertical Gradient Blur Overlay */}
+      <div
+        aria-hidden="true"
+        className="dark:via-purple-950/70 pointer-events-none absolute inset-y-0 left-0 z-20 w-16 bg-gradient-to-b from-white via-purple-100/90 to-blue-50/60 backdrop-blur-md dark:from-[#1B1B1D] dark:to-[#1B1B1D] sm:w-28 md:w-44 lg:w-60"
+        style={{
+          maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0) 100%)',
+          WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0) 100%)',
+        }}
       />
-      <div className="container relative mx-auto my-8 flex items-center justify-center">
-        <button
-          type="button"
-          onClick={slideLeft}
-          className="hidden shrink-0 p-2 sm:block"
-          aria-label="Previous testimonial">
-          <Icon
-            icon="fa-solid:arrow-circle-left"
-            className="text-4xl text-gray-500 opacity-25 transition duration-150 ease-linear hover:text-purple-900 hover:opacity-100 dark:hover:text-purple-700"
+
+      {/* Right Side Vertical Gradient Blur Overlay */}
+      <div
+        aria-hidden="true"
+        className="dark:via-purple-950/70 pointer-events-none absolute inset-y-0 right-0 z-20 w-16 bg-gradient-to-b from-white via-purple-100/90 to-blue-50/60 backdrop-blur-md dark:from-[#1B1B1D] dark:to-[#1B1B1D] sm:w-28 md:w-44 lg:w-60"
+        style={{
+          maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0) 100%)',
+          WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0) 100%)',
+        }}
+      />
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <SectionHeader
+            title="What people are saying about Podman"
+            textGradient={true}
+            textGradientStops="from-blue-700 to-blue-500"
           />
-        </button>
-        <div id="slider" className="h-full w-full overflow-x-scroll scroll-smooth whitespace-nowrap scrollbar">
-          <div className="mx-auto flex w-max gap-4">
-            {testimonials.map((testimonial, index) => {
-              return <Testimonial key={index} {...testimonial} />;
-            })}
+        </div>
+
+        {/* Continuous Smooth Marquee Wrapper */}
+        <div
+          className="testimonial-marquee-wrapper relative w-full overflow-hidden py-4"
+          style={{
+            maskImage: 'linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)',
+          }}>
+          <div className="testimonial-marquee-track flex gap-6">
+            {marqueeCards.map((testimonial, index) => (
+              <div key={index} className="w-[320px] shrink-0 sm:w-[380px]">
+                <Testimonial {...testimonial} />
+              </div>
+            ))}
           </div>
         </div>
-        <button
-          type="button"
-          onClick={slideRight}
-          className="hidden shrink-0 p-2 sm:block"
-          aria-label="Next testimonial">
-          <Icon
-            icon="fa-solid:arrow-circle-right"
-            className="dark:hover-text-purple-700 text-4xl text-gray-500 opacity-25 transition duration-150 ease-linear hover:text-purple-900 hover:opacity-100"
-          />
-        </button>
       </div>
     </section>
   );

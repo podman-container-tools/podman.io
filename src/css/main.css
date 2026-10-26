@@ -677,3 +677,30 @@ mark.search-highlight {
   background-color: rgba(255, 255, 255, 0.35);
   color: #ffffff;
 }
+
+/* ─── Testimonials Continuous Smooth Marquee ─── */
+@keyframes testimonial-marquee-glide {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.testimonial-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: testimonial-marquee-glide 45s linear infinite;
+  will-change: transform;
+}
+
+.testimonial-marquee-wrapper:hover .testimonial-marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-marquee-track {
+    animation-play-state: paused;
+  }
+}

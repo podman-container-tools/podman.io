@@ -46,7 +46,7 @@ function TestimonialSection() {
   };
 
   return (
-    <section className="my-12 overflow-hidden xl:my-20">
+    <section className="overflow-hidden bg-gradient-to-b from-white via-purple-100 to-white py-16 dark:from-[#1B1B1D] dark:via-purple-900/25 dark:to-[#1B1B1D] xl:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
           <SectionHeader
@@ -84,16 +84,8 @@ function TestimonialSection() {
             </button>
           )}
 
-          {/* Dissolve Gradient Masks */}
-          {showLeftArrow && (
-            <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-3 bg-gradient-to-r from-white to-transparent dark:from-[#1b1b1d] dark:to-transparent sm:w-4" />
-          )}
-          {showRightArrow && (
-            <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-3 bg-gradient-to-l from-white to-transparent dark:from-[#1b1b1d] dark:to-transparent sm:w-4" />
-          )}
-
           {/* Carousel Track Container */}
-          <div className="relative -mx-3 overflow-hidden px-3 py-6 sm:py-8">
+          <div className="relative overflow-hidden py-6 sm:py-8">
             <div
               className="flex items-stretch transition-transform duration-500 ease-out"
               style={{

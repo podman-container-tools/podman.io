@@ -78,8 +78,23 @@ const config = {
           src: 'logos/optimized/podman-3-logo-266w-253h.webp',
         },
         items: [
-          { to: 'features', label: 'Features', position: 'right' },
-          { to: 'get-started', label: 'Get Started', position: 'right' },
+          {
+            type: 'dropdown',
+            label: 'Get Started',
+            to: 'get-started',
+            position: 'right',
+            items: [
+              {
+                label: 'Features',
+                to: 'features',
+              },
+              {
+                type: 'doc',
+                docId: 'podman',
+                label: 'Documentation',
+              },
+            ],
+          },
           {
             type: 'dropdown',
             label: 'Community',
@@ -101,18 +116,12 @@ const config = {
             position: 'right',
           },
           {
-            type: 'doc',
-            docId: 'podman',
-            label: 'Documentation',
-            position: 'right',
-          },
-
-          {
             to: 'https://github.com/podman-container-tools/podman.io',
             target: '_self',
             label: 'GitHub',
             position: 'right',
           },
+          { to: 'downloads', label: 'Downloads', position: 'right' },
         ],
       },
       footer: {

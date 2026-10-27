@@ -194,6 +194,33 @@ You can verify the deletion of the container by running `podman ps -a`.
 For a more detailed guide about Networking and DNS in containers, please see the
 [network guide](https://github.com/containers/podman/blob/main/docs/tutorials/basic_networking.md).
 
+## Pods
+
+A pod is a group of containers that Podman creates and manages together. By
+default, containers in a pod share their network, IPC, and UTS namespaces. This
+lets related containers communicate over `localhost` and share pod-level
+settings. Podman also creates an infra container by default to hold the pod's
+shared namespaces.
+
+Pods are useful for containers that belong to the same application, such as an
+application container and a helper container. Keep unrelated applications in
+separate pods. Publish ports when creating the pod; ports belong to the pod and
+cannot be published separately by its containers.
+
+For example, create a pod that publishes HTTP on port 8080, then add an Apache
+HTTP Server container to it:
+
+```bash
+podman pod create --name web --publish 8080:80
+podman run --detach --name web-server --pod web docker.io/library/httpd
+```
+
+You can inspect the pod with `podman pod ps`. To stop it, run
+`podman pod stop web`. See the
+[pod command reference](https://docs.podman.io/en/latest/markdown/podman-pod.1.html)
+and [`podman pod create`](https://docs.podman.io/en/latest/markdown/podman-pod-create.1.html)
+for more options.
+
 ## Checkpoint, Migration and Restoring containers
 
 Checkpointing a container stops the container while writing the state of all

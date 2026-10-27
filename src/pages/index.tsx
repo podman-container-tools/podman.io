@@ -39,7 +39,7 @@ const FeatureItem = ({ title, icon, description }: { title: string; icon?: strin
 const FeatureSection = () => {
   return (
     <section className="py-12 sm:py-16">
-      <div className="container mx-auto max-w-5xl px-4 sm:px-6">
+      <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
           {featureList.map(feature => {
             return (

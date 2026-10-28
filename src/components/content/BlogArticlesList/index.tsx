@@ -18,18 +18,23 @@ interface BlogArticlesListProps {
 
 const BlogArticlesList: React.FC<BlogArticlesListProps> = ({
   limit = 4,
+  displayCount,
   altLayout = false,
   title = 'Latest Articles',
   titleColor = 'text-blue-700',
   showFooter = false,
   footerText = '',
+  containerLayout,
   sectionClassName = '',
 }) => {
   const { data, loading } = useBlogPosts(limit);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(3);
+  const actualDisplayCount = displayCount ?? limit;
 
   useEffect(() => {
+    if (containerLayout === 'vertical') return;
+
     const handleResize = () => {
       if (window.innerWidth < 768) {
         setItemsPerPage(1);
@@ -43,12 +48,52 @@ const BlogArticlesList: React.FC<BlogArticlesListProps> = ({
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [containerLayout]);
 
   if (loading || !data || data.length === 0) {
     return null;
   }
 
+  if (containerLayout === 'vertical') {
+    return (
+      <section className={sectionClassName || 'flex w-full flex-1 flex-col justify-between'}>
+        <header className="mb-6 text-center lg:text-start">
+          <h3
+            className={`font-display text-2xl font-bold lg:text-3xl ${titleColor || 'text-blue-700 dark:text-blue-500'}`}>
+            {title}
+          </h3>
+        </header>
+        <div className="flex w-full flex-1 flex-col justify-between gap-6">
+          {data.slice(0, actualDisplayCount).map((card, index) => (
+            <ArticleCard
+              key={card.id}
+              title={card.title.rendered}
+              author_link={card.author_info.author_link}
+              display_name={card.author_info.display_name}
+              subtitle={card.excerpt.rendered}
+              date={(card as { date?: string; wbDate?: string }).date || card.wbDate}
+              imgSrc={card.jetpack_featured_media_url}
+              path={card.link}
+              altLayout={altLayout}
+              index={index}
+            />
+          ))}
+        </div>
+        {showFooter && footerText && (
+          <p className="text-gray-600 dark:text-gray-400 mt-6 text-center text-sm lg:text-start">
+            {footerText}{' '}
+            <a
+              href="https://blog.podman.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-purple-700 underline underline-offset-4 transition-colors hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300">
+              on our Blog!
+            </a>
+          </p>
+        )}
+      </section>
+    );
+  }
   const maxIndex = Math.max(0, data.length - itemsPerPage);
   const showLeftArrow = currentIndex > 0;
   const showRightArrow = currentIndex < maxIndex;
@@ -124,7 +169,7 @@ const BlogArticlesList: React.FC<BlogArticlesListProps> = ({
                     author_link={card.author_info.author_link}
                     display_name={card.author_info.display_name}
                     subtitle={card.excerpt.rendered}
-                    date={card.date || card.wbDate}
+                    date={(card as { date?: string; wbDate?: string }).date || card.wbDate}
                     imgSrc={card.jetpack_featured_media_url}
                     path={card.link}
                     altLayout={altLayout}
@@ -144,7 +189,7 @@ const BlogArticlesList: React.FC<BlogArticlesListProps> = ({
             href="https://blog.podman.io"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline-offset-4 transition duration-150 ease-linear hover:text-purple-700 dark:hover:text-purple-500">
+            className="text-inherit underline-offset-4 transition duration-150 ease-linear hover:text-purple-700 dark:hover:text-purple-500">
             on our Blog!
           </a>
         </p>

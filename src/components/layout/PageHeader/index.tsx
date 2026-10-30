@@ -38,9 +38,13 @@ type InstructionsProps = PageHeaderProps & {
 
 const TextBox = ({ grid, display, layout, title, description }: PageHeaderProps): JSX.Element => {
   return (
-    <div className={`${grid} ${display} ${layout}`}>
-      <h1 className="mb-6 max-w-sm text-purple-700 dark:text-purple-500 lg:max-w-lg">{title}</h1>
-      <Markdown text={description} styles="leading-relaxed" />
+    <div className={`${grid || ''} ${display || ''} ${layout || ''}`}>
+      <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-purple-700 dark:!text-purple-500 sm:text-4xl lg:text-5xl">
+        {title}
+      </h1>
+      {description && (
+        <Markdown text={description} styles="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-200" />
+      )}
     </div>
   );
 };
@@ -48,39 +52,73 @@ const TextBox = ({ grid, display, layout, title, description }: PageHeaderProps)
 const Image = ({
   grid,
   display,
-  layout, // if array then {[key:string]: any}[];
+  layout,
   image = { path: 'images/optimized/podman-2-196w-172h.webp', alt: 'Podman Logo' },
 }: ImageSectionProps) => {
   return (
-    <div>
-      <img src={image.path} alt={image.alt} className={`${grid} ${display} ${layout}`} />
+    <div className="flex justify-center">
+      <img src={image.path} alt={image.alt} className={`${grid || ''} ${display || ''} ${layout || ''}`} />
     </div>
   );
 };
 
 function PageHeaderSupplementalInfo({ image, basicResources }: PageHeaderSupplementalInfoProps) {
   if (basicResources) {
-    return <BasicResourcesBox />;
+    return <BasicResourcesBox compact={true} />;
   }
-  return <Image image={image} layout="mb-8 lg:mb-0" />;
+  return <Image image={image} layout="mb-8 lg:mb-0 max-w-xs md:max-w-sm" />;
 }
 
 function Instructions({ instructions }: InstructionsProps) {
   if (instructions) {
+    const isExternal = instructions.button?.path?.startsWith('http');
     return (
-      <div>
-        <h3 className="mb-4 text-gray-700">{instructions.title}</h3>
-        <p>{instructions.subtitle}</p>
-        <ul className="mb-10 mt-4 flex flex-col gap-6 sm:flex-row lg:mb-16 lg:gap-4 xl:flex-col">
-          <li>
+      <div className="mt-8 border-t border-purple-100/60 pt-6 dark:border-white/10">
+        {instructions.title && (
+          <h2 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-2xl">
+            {instructions.title}
+          </h2>
+        )}
+        {instructions.subtitle && (
+          <p className="mb-4 text-base leading-relaxed text-gray-700 dark:text-gray-300">{instructions.subtitle}</p>
+        )}
+        {instructions.button && (
+          <div className="max-w-md">
             <a
               href={instructions.button.path}
-              className="flex h-32 max-w-lg flex-col items-center justify-center gap-4 rounded-md bg-gray-100 p-4 text-center text-purple-700 no-underline underline-offset-4 transition duration-150 ease-linear hover:bg-purple-700 hover:text-purple-50 hover:no-underline hover:shadow-md dark:bg-gray-700 dark:hover:bg-purple-900 dark:hover:text-white lg:h-auto lg:flex-row xl:justify-start">
-              <span>{instructions.button.text}</span>
-              <Icon icon={instructions.button.icon} className="order-first hidden lg:block" />
+              target={isExternal ? '_blank' : undefined}
+              rel={isExternal ? 'noopener noreferrer' : undefined}
+              style={{ textDecoration: 'none' }}
+              className="group flex w-full items-center justify-between gap-3 rounded-xl border border-purple-100/60 bg-white p-3.5 !no-underline shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-[#232326] dark:shadow-none dark:hover:border-white/20 sm:gap-4 sm:p-4">
+              <div className="flex min-w-0 items-center gap-3 !no-underline sm:gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#892CA0] transition-colors duration-200 group-hover:bg-[#892CA0] group-hover:text-white dark:bg-purple-900/40 dark:text-purple-300 dark:group-hover:bg-[#892CA0] dark:group-hover:text-white sm:h-11 sm:w-11">
+                  <Icon
+                    icon={
+                      instructions.button.icon === 'fa6-solid:book'
+                        ? 'material-symbols:download-for-offline-rounded'
+                        : instructions.button.icon || 'material-symbols:download-for-offline-rounded'
+                    }
+                    className="text-xl sm:text-2xl"
+                  />
+                </div>
+                <div className="flex min-w-0 flex-col">
+                  <span className="truncate text-sm font-bold text-gray-900 !no-underline transition-colors group-hover:!text-[#892CA0] dark:text-white dark:group-hover:!text-purple-300 sm:text-base">
+                    {instructions.button.text}
+                  </span>
+                  <span className="dark:text-gray-400 truncate text-xs text-gray-500">
+                    Setup Podman on Linux, macOS, or Windows
+                  </span>
+                </div>
+              </div>
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-purple-100 text-[#892CA0] transition-all duration-200 group-hover:translate-x-0.5 group-hover:bg-[#892CA0] group-hover:text-white dark:bg-purple-900/40 dark:text-purple-300 dark:group-hover:bg-[#892CA0] dark:group-hover:text-white sm:h-8 sm:w-8">
+                <Icon
+                  icon={isExternal ? 'material-symbols:open-in-new' : 'material-symbols:arrow-forward-rounded'}
+                  className="text-sm sm:text-base"
+                />
+              </div>
             </a>
-          </li>
-        </ul>
+          </div>
+        )}
       </div>
     );
   }
@@ -97,17 +135,19 @@ function PageHeader({
   instructions,
 }: PageHeaderProps) {
   return (
-    <header className={`bg-${lightColor} dark:bg-${darkColor}`}>
-      <div className="bg-gradient-to-r from-blue-500 to-purple-700 dark:from-blue-700 dark:to-purple-900 lg:pt-8">
-        <WaveBorder />
+    <header className={`bg-${lightColor} dark:bg-${darkColor} transition-colors`}>
+      <div className="relative overflow-hidden bg-gradient-to-r from-blue-500 to-purple-700 dark:from-blue-700 dark:to-purple-900">
+        <WaveBorder height="48" preserveAspectRatio="none" className="block h-8 w-full sm:h-10 md:h-12 lg:h-14" />
       </div>
-      <div className="container flex flex-col justify-around md:flex-row">
-        <div>
-          <TextBox title={title} description={description} layout="mt-12 lg:mt-0 mb-8" />
-          <Instructions instructions={instructions} />
-        </div>
-        <div className="ml-24 w-[50%]">
-          <PageHeaderSupplementalInfo basicResources={basicResources} image={image} />
+      <div className="container pb-8 pt-4 sm:pt-6 lg:pb-12 lg:pt-8">
+        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
+          <div className="lg:col-span-7">
+            <TextBox title={title} description={description} layout="mb-6" />
+            <Instructions instructions={instructions} />
+          </div>
+          <div className="flex justify-center lg:col-span-5 lg:justify-end">
+            <PageHeaderSupplementalInfo basicResources={basicResources} image={image} />
+          </div>
         </div>
       </div>
     </header>

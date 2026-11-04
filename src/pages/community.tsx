@@ -4,7 +4,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import { Icon } from '@iconify/react';
 import WaveBorder from '@site/src/components/shapes/WaveBorder';
 import CommunityMeetingsCardGrid from '@site/src/components/layout/CommunityMeetingsCardGrid';
-import { header, communityMeetings, mailingList, submittingIssues } from '@site/static/data/community';
+import { communityMeetings, mailingList, submittingIssues } from '@site/static/data/community';
 import sponsorData from '@site/src/components/content/ThankYouSection/data';
 import DateTimeBox from '@site/src/components/content/DateTimeBox';
 
@@ -106,29 +106,13 @@ const chatChannels = [
 /* Optically Balanced Supporting Organization Logos (Larger Scale)           */
 /* -------------------------------------------------------------------------- */
 const sponsorLogos = [
-  { ...sponsorData[3], heightClass: 'h-14 sm:h-16 md:h-18' }, // Motorola Solutions (Far Left baseline)
-  { ...sponsorData[1], heightClass: 'h-8 sm:h-9 md:h-10' }, // Amadeus
+  { ...sponsorData[3], heightClass: 'h-14 sm:h-16 md:h-18' }, // Motorola Solutions
   { ...sponsorData[2], heightClass: 'h-9 sm:h-11 md:h-12' }, // SUSE
-  { ...sponsorData[0], heightClass: 'h-12 sm:h-14 md:h-16' }, // Red Hat (Top Center Apex)
+  { ...sponsorData[0], heightClass: 'h-12 sm:h-14 md:h-16' }, // Red Hat (Center)
+  { ...sponsorData[5], heightClass: 'h-10 sm:h-12 md:h-13' }, // IBM (Center)
   { ...sponsorData[4], heightClass: 'h-10 sm:h-12 md:h-13' }, // NTT
-  { ...sponsorData[5], heightClass: 'h-10 sm:h-12 md:h-13' }, // IBM
-  { ...sponsorData[6], heightClass: 'h-12 sm:h-14 md:h-16' }, // Debian (Far Right baseline)
-];
-
-/* Half-Circle Arch Coordinates (True 180° Semicircle with Exactly Equal Spacing)
-   Angle theta: 180° (Motorola), 150° (Amadeus), 120° (SUSE), 90° (Red Hat), 60° (NTT), 30° (IBM), 0° (Debian)
-   X = 50% + cos(theta) * var(--r)
-   Y = 82% - sin(theta) * var(--r)
-   Euclidean chord distance between every adjacent pair is exactly 2 * sin(15°) * r ≈ 0.5176 * r
-*/
-const halfCirclePositions = [
-  { left: 'calc(50% - var(--r))', top: '82%' }, // 180°: Motorola Solutions (Far Left baseline)
-  { left: 'calc(50% - var(--r) * 0.866)', top: 'calc(82% - var(--r) * 0.5)' }, // 150°: Amadeus
-  { left: 'calc(50% - var(--r) * 0.5)', top: 'calc(82% - var(--r) * 0.866)' }, // 120°: SUSE
-  { left: '50%', top: 'calc(82% - var(--r))' }, // 90°: Red Hat (Top Center Apex)
-  { left: 'calc(50% + var(--r) * 0.5)', top: 'calc(82% - var(--r) * 0.866)' }, // 60°: NTT
-  { left: 'calc(50% + var(--r) * 0.866)', top: 'calc(82% - var(--r) * 0.5)' }, // 30°: IBM
-  { left: 'calc(50% + var(--r))', top: '82%' }, // 0°: Debian (Far Right baseline)
+  { ...sponsorData[1], heightClass: 'h-8 sm:h-9 md:h-10' }, // Amadeus
+  { ...sponsorData[6], heightClass: 'h-12 sm:h-14 md:h-16' }, // Debian
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -208,7 +192,7 @@ export default function Community(): JSX.Element {
           SECTION 1: COMMUNITY CHAT & SOCIAL LINKS
           Circular Purple Containers with White Icons
       ============================================================ */}
-      <section id="community-chat" className="bg-white py-12 dark:bg-gray-900 sm:py-16">
+      <section id="community-chat" className="bg-white py-12 dark:bg-[#120f1d] sm:py-16">
         <div className="container mx-auto px-4 lg:px-8 xl:max-w-[1240px]">
           <div className="mb-8 text-center sm:mb-12">
             <div
@@ -262,7 +246,7 @@ export default function Community(): JSX.Element {
           SECTION 2: CURRENT TIME & MAINTAINER AVAILABILITY
           Horizontal Split: Left = Heading & Subheading; Right = Vertically Stacked Clocks
       ============================================================ */}
-      <section id="current-time" className="bg-[#FAF8FD] py-16 dark:bg-[#13101c] sm:py-20">
+      <section id="current-time" className="sm:py-18 bg-white py-14 dark:bg-[#120f1d]">
         <div className="container mx-auto px-4 lg:px-8 xl:max-w-[1240px]">
           <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
             {/* Left Column: Heading & Subheading */}
@@ -293,7 +277,51 @@ export default function Community(): JSX.Element {
       </section>
 
       {/* ============================================================
-          SECTION 3: COMMUNITY MEETINGS (STRICTLY PRESERVED INTACT)
+          SECTION 3: SUPPORTING ORGANIZATIONS (Placed After Clock Section)
+      ============================================================ */}
+      <section className="sm:py-18 bg-purple-100/50 py-14 dark:bg-[#161222]">
+        <div className="container mx-auto px-4 lg:px-8 xl:max-w-[1240px]">
+          <div className="mb-8 text-center sm:mb-10">
+            <div
+              style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
+              className="shadow-xs mb-3 inline-flex items-center gap-2 rounded-full bg-[#892CA0] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-white">
+              <Icon icon="material-symbols:star-rounded" className="text-base text-white" />
+              <span className="text-white">Special Thanks</span>
+            </div>
+            <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+              Supporting Organizations
+            </h2>
+            <p className="text-gray-600 mx-auto mt-2 max-w-xl text-center !text-base font-medium leading-relaxed dark:text-gray-300">
+              Podman thrives thanks to the continuous contributions from leading open source organizations.
+            </p>
+          </div>
+
+          {/* Connected Overlapping Circular Badges (Matching Reference Screenshot) */}
+          <div className="flex items-center justify-center -space-x-3 overflow-x-auto px-4 py-6 sm:-space-x-4 md:-space-x-5 lg:-space-x-6">
+            {sponsorLogos.map((sponsor, index) => (
+              <a
+                key={index}
+                href={sponsor.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={sponsor.label}
+                style={{ zIndex: index + 1 }}
+                className="group relative shrink-0 overflow-hidden rounded-full bg-[#f9f4ff] p-1 transition-all duration-300 ease-out hover:z-30 hover:-translate-y-2 hover:scale-110 dark:bg-[#161222] sm:p-1.5">
+                <div className="p-4.5 shadow-purple-950/20 flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-md dark:bg-[#1e172a] dark:shadow-none sm:h-28 sm:w-28 sm:p-5 md:h-32 md:w-32 md:p-6 lg:h-36 lg:w-36">
+                  <img
+                    src={useBaseUrl(sponsor.src)}
+                    alt={sponsor.alt}
+                    className="max-h-[82%] max-w-[82%] object-contain transition-all duration-200 dark:opacity-85 dark:brightness-0 dark:invert"
+                  />
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          SECTION 4: COMMUNITY MEETINGS (STRICTLY PRESERVED INTACT)
           Light purple container (#f3e8ff/50)
       ============================================================ */}
       <section id="community-meetings" className="bg-purple-100/50 py-12 dark:bg-[#161222] sm:py-16">
@@ -308,18 +336,9 @@ export default function Community(): JSX.Element {
             <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
               {communityMeetings.title}
             </h2>
-            <p className="text-gray-600 mx-auto mt-2 max-w-xl text-justify !text-base font-medium leading-relaxed dark:text-gray-300">
+            <p className="text-gray-600 mx-auto mt-2 max-w-xl text-center !text-base font-medium leading-relaxed dark:text-gray-300">
               {communityMeetings.subtitle}
             </p>
-          </div>
-
-          {/* Meeting illustration image from original page */}
-          <div className="mb-8 flex justify-center">
-            <img
-              src={useBaseUrl(communityMeetings.image.path)}
-              alt={communityMeetings.image.alt}
-              className="h-auto max-h-56 w-auto rounded-2xl object-cover shadow-sm"
-            />
           </div>
 
           {/* Preserved CommunityMeetingsCardGrid intact as requested */}
@@ -328,10 +347,10 @@ export default function Community(): JSX.Element {
       </section>
 
       {/* ============================================================
-          SECTION 4: PODMAN DESKTOP CALLOUT (Matching downloads.tsx)
+          SECTION 5: PODMAN DESKTOP CALLOUT (Matching downloads.tsx)
           Solid light purple container (#f3e8ff), NO gradient
       ============================================================ */}
-      <section className="bg-white py-10 dark:bg-gray-900 sm:py-14">
+      <section className="bg-white py-10 dark:bg-[#120f1d] sm:py-14">
         <div className="container mx-auto px-4 lg:px-8 xl:max-w-[1240px]">
           <div className="flex flex-col justify-between gap-6 rounded-2xl bg-purple-100 p-6 shadow-md dark:bg-[#1e172a] sm:flex-row sm:items-center sm:p-8">
             <div className="flex items-start gap-4 sm:items-center">
@@ -382,9 +401,9 @@ export default function Community(): JSX.Element {
       </section>
 
       {/* ============================================================
-          SECTION 5: FULL MAILING LIST SECTION (Restored from Original)
+          SECTION 6: FULL MAILING LIST SECTION (Restored from Original)
       ============================================================ */}
-      <section id="mailing-list" className="bg-white py-16 dark:bg-gray-900 sm:py-20">
+      <section id="mailing-list" className="bg-white py-16 dark:bg-[#120f1d] sm:py-20">
         <div className="container mx-auto px-4 lg:px-8 xl:max-w-[1240px]">
           <div className="mb-10 text-center sm:mb-12">
             <div
@@ -580,9 +599,9 @@ export default function Community(): JSX.Element {
       </section>
 
       {/* ============================================================
-          SECTION 6: SUBMITTING ISSUES & PRS (Restored from Original)
+          SECTION 7: SUBMITTING ISSUES & PRS (Restored from Original)
       ============================================================ */}
-      <section id="contribute" className="bg-[#FAF8FD] py-16 dark:bg-[#13101c] sm:py-20">
+      <section id="contribute" className="bg-purple-100/50 py-16 dark:bg-[#161222] sm:py-20">
         <div className="container mx-auto px-4 lg:px-8 xl:max-w-[1240px]">
           <div className="mb-10 text-center sm:mb-12">
             <div
@@ -717,72 +736,11 @@ export default function Community(): JSX.Element {
                   rel="noopener noreferrer"
                   style={{ textDecoration: 'none', backgroundColor: '#892CA0', color: '#ffffff' }}
                   className="shadow-xs inline-flex items-center gap-2 rounded-xl bg-[#892CA0] px-5 py-3 !text-sm font-bold text-white transition hover:bg-[#77218d]">
-                  <span className="text-white">PR Guidelines</span>
+                  <span className="text-white">{submittingIssues[2].button.text}</span>
                   <Icon icon="material-symbols:arrow-outward-rounded" className="text-xs text-white" />
                 </a>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          SECTION 7: SUPPORTING ORGANIZATIONS (C-Arc Orbit)
-      ============================================================ */}
-      <section className="bg-[#FAF8FD] py-16 dark:bg-[#13101c] sm:py-20">
-        <div className="container mx-auto px-4 lg:px-8 xl:max-w-[1240px]">
-          <div className="mb-8 text-center sm:mb-10">
-            <div
-              style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-              className="shadow-xs mb-3 inline-flex items-center gap-2 rounded-full bg-[#892CA0] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-white">
-              <Icon icon="material-symbols:star-rounded" className="text-base text-white" />
-              <span className="text-white">Special Thanks</span>
-            </div>
-            <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-              Supporting Organizations
-            </h2>
-            <p className="text-gray-600 mx-auto mt-2 max-w-xl text-justify !text-base font-medium leading-relaxed dark:text-gray-300">
-              Podman thrives thanks to the continuous contributions from leading open source organizations.
-            </p>
-          </div>
-
-          {/* Integrated Half-Circle Arch with True Equidistant Circular Radius */}
-          <div
-            style={{ '--r': 'clamp(140px, 26vw, 295px)' } as React.CSSProperties}
-            className="relative mx-auto h-[360px] w-full max-w-4xl sm:h-[430px] md:h-[480px] lg:h-[510px]">
-            {/* Center: Prominent Podman Seal Icon in a Circular Container */}
-            <div className="absolute left-1/2 top-[82%] z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
-              <div className="p-4.5 hover:scale-108 flex h-28 w-28 items-center justify-center rounded-full bg-white shadow-md shadow-purple-900/5 transition-transform duration-300 ease-out hover:-translate-y-2 dark:bg-[#1e172a] dark:shadow-none sm:h-36 sm:w-36 sm:p-5 md:h-40 md:w-40">
-                <img
-                  src={useBaseUrl('logos/optimized/podman-3-logo-266w-253h.webp')}
-                  alt="Podman Logo"
-                  className="h-full w-full object-contain"
-                />
-              </div>
-            </div>
-
-            {/* 7 Organization Logos in Larger Circular Containers Placed Along the Half-Circle Arch */}
-            {sponsorLogos.map((sponsor, index) => (
-              <a
-                key={index}
-                href={sponsor.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={sponsor.label}
-                style={{
-                  left: halfCirclePositions[index].left,
-                  top: halfCirclePositions[index].top,
-                }}
-                className="group absolute z-20 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white p-3 shadow-md shadow-purple-900/5 transition-transform duration-300 ease-out group-hover:-translate-y-3 group-hover:scale-110 dark:bg-[#1e172a] dark:shadow-none sm:h-24 sm:w-24 sm:p-3.5 md:h-28 md:w-28 md:p-4">
-                  <img
-                    src={useBaseUrl(sponsor.src)}
-                    alt={sponsor.alt}
-                    className="max-h-[82%] max-w-[82%] object-contain transition-all duration-200 dark:opacity-85 dark:brightness-0 dark:invert"
-                  />
-                </div>
-              </a>
-            ))}
           </div>
         </div>
       </section>

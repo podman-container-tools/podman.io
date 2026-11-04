@@ -194,7 +194,7 @@ const submittingIssues = [
       'Documentation changes.',
     ],
     button: {
-      text: 'PR Guidelines',
+      text: 'PR Submission Guidelines',
       path: 'https://github.com/containers/podman/blob/main/CONTRIBUTING.md#submitting-pull-requests',
     },
   },

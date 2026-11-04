@@ -106,26 +106,26 @@ const chatChannels = [
 /* Optically Balanced Supporting Organization Logos (Larger Scale)           */
 /* -------------------------------------------------------------------------- */
 const sponsorLogos = [
-  { ...sponsorData[0], heightClass: 'h-12 sm:h-14 md:h-16' }, // Red Hat
+  { ...sponsorData[3], heightClass: 'h-14 sm:h-16 md:h-18' }, // Motorola Solutions (Far Left baseline)
   { ...sponsorData[1], heightClass: 'h-8 sm:h-9 md:h-10' }, // Amadeus
   { ...sponsorData[2], heightClass: 'h-9 sm:h-11 md:h-12' }, // SUSE
-  { ...sponsorData[3], heightClass: 'h-14 sm:h-16 md:h-18' }, // Motorola Solutions
+  { ...sponsorData[0], heightClass: 'h-12 sm:h-14 md:h-16' }, // Red Hat (Top Center Apex)
   { ...sponsorData[4], heightClass: 'h-10 sm:h-12 md:h-13' }, // NTT
   { ...sponsorData[5], heightClass: 'h-10 sm:h-12 md:h-13' }, // IBM
-  { ...sponsorData[6], heightClass: 'h-12 sm:h-14 md:h-16' }, // Debian
+  { ...sponsorData[6], heightClass: 'h-12 sm:h-14 md:h-16' }, // Debian (Far Right baseline)
 ];
 
 /* Half-Circle Arch Coordinates (True 180° Semicircle with Exactly Equal Spacing)
-   Angle theta: 180° (Red Hat), 150° (Amadeus), 120° (SUSE), 90° (Motorola), 60° (NTT), 30° (IBM), 0° (Debian)
+   Angle theta: 180° (Motorola), 150° (Amadeus), 120° (SUSE), 90° (Red Hat), 60° (NTT), 30° (IBM), 0° (Debian)
    X = 50% + cos(theta) * var(--r)
    Y = 82% - sin(theta) * var(--r)
    Euclidean chord distance between every adjacent pair is exactly 2 * sin(15°) * r ≈ 0.5176 * r
 */
 const halfCirclePositions = [
-  { left: 'calc(50% - var(--r))', top: '82%' }, // 180°: Red Hat (Far Left baseline)
+  { left: 'calc(50% - var(--r))', top: '82%' }, // 180°: Motorola Solutions (Far Left baseline)
   { left: 'calc(50% - var(--r) * 0.866)', top: 'calc(82% - var(--r) * 0.5)' }, // 150°: Amadeus
   { left: 'calc(50% - var(--r) * 0.5)', top: 'calc(82% - var(--r) * 0.866)' }, // 120°: SUSE
-  { left: '50%', top: 'calc(82% - var(--r))' }, // 90°: Motorola Solutions (Apex)
+  { left: '50%', top: 'calc(82% - var(--r))' }, // 90°: Red Hat (Top Center Apex)
   { left: 'calc(50% + var(--r) * 0.5)', top: 'calc(82% - var(--r) * 0.866)' }, // 60°: NTT
   { left: 'calc(50% + var(--r) * 0.866)', top: 'calc(82% - var(--r) * 0.5)' }, // 30°: IBM
   { left: 'calc(50% + var(--r))', top: '82%' }, // 0°: Debian (Far Right baseline)

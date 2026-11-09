@@ -72,8 +72,8 @@ function FeaturesCarousel(): JSX.Element {
                   tabIndex={isActive ? 0 : -1}
                   onClick={() => setActiveTabIndex(index)}
                   onKeyDown={e => handleKeyDown(e, index)}
-                  style={{ WebkitTapHighlightColor: 'transparent', outline: 'none' }}
-                  className={`group relative flex h-full select-none flex-col items-center justify-center rounded-xl px-2.5 py-4 text-center outline-none transition-all duration-300 ease-out focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 sm:rounded-2xl sm:px-3 sm:py-6 md:px-4 md:py-7 ${
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
+                  className={`group relative flex h-full select-none flex-col items-center justify-center rounded-xl px-2.5 py-4 text-center transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[#009FFF] focus-visible:ring-offset-2 dark:focus-visible:ring-white dark:focus-visible:ring-offset-black sm:rounded-2xl sm:px-3 sm:py-6 md:px-4 md:py-7 ${
                     isActive
                       ? 'z-10 border-none bg-[#009FFF] text-white shadow-lg shadow-black/20 hover:bg-[#008fe6] dark:bg-[#009FFF] dark:shadow-md dark:shadow-black/30 dark:hover:bg-[#008fe6]'
                       : 'border-none bg-[#dcf0fe] text-[#009FFF] shadow hover:bg-[#cde7fc] hover:shadow-md dark:bg-[#18181c] dark:text-white dark:shadow-sm dark:shadow-black/20 dark:hover:bg-[#222228]'

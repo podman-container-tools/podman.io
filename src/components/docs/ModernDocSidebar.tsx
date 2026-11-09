@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
-import { useDocSubmenu, TOCHeading } from '@site/src/context/DocSubmenuContext';
+import { useDocSubmenu, type TOCHeading } from '@site/src/context/DocSubmenuContext';
 
 interface NavLinkItem {
   id: string;
@@ -348,7 +348,7 @@ export default function ModernDocSidebar({ currentPath, onItemClick, className }
 
   return (
     <nav
-      className={clsx('thin-scrollbar w-full flex-1 select-none space-y-6 overflow-y-auto px-3 py-5', className)}
+      className={clsx('no-scrollbar w-full flex-1 select-none space-y-6 overflow-y-auto px-3 py-5', className)}
       aria-label="Documentation Navigation">
       {NAV_SECTIONS.map(section => (
         <div key={section.title}>

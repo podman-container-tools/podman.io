@@ -7,7 +7,7 @@ import ModernDocSidebar from '@site/src/components/docs/ModernDocSidebar';
 const DocSidebarMobileSecondaryMenu = ({ path }: Props): JSX.Element => {
   const mobileSidebar = useNavbarMobileSidebar();
   return (
-    <div className="p-2">
+    <div className="no-scrollbar p-2">
       <ModernDocSidebar currentPath={path} onItemClick={() => mobileSidebar.toggle()} />
     </div>
   );

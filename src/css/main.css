@@ -641,7 +641,15 @@
 .meetings-year-menu::-webkit-scrollbar,
 .meetings-sessions-container::-webkit-scrollbar,
 .transcript-dialogue-list::-webkit-scrollbar,
-.chat-log-list::-webkit-scrollbar {
+.chat-log-list::-webkit-scrollbar,
+.navbar-sidebar::-webkit-scrollbar,
+.navbar-sidebar__items::-webkit-scrollbar,
+.navbar-sidebar__item::-webkit-scrollbar,
+.theme-doc-sidebar-container::-webkit-scrollbar,
+.theme-doc-sidebar-menu::-webkit-scrollbar,
+aside[class*='docSidebarContainer']::-webkit-scrollbar,
+nav[aria-label='Documentation Navigation']::-webkit-scrollbar,
+nav[aria-label='Docs sidebar']::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
@@ -651,9 +659,23 @@
 .meetings-year-menu,
 .meetings-sessions-container,
 .transcript-dialogue-list,
-.chat-log-list {
+.chat-log-list,
+.navbar-sidebar,
+.navbar-sidebar__items,
+.navbar-sidebar__item,
+.theme-doc-sidebar-container,
+.theme-doc-sidebar-menu,
+aside[class*='docSidebarContainer'],
+nav[aria-label='Documentation Navigation'],
+nav[aria-label='Docs sidebar'] {
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
+}
+
+/* When navbar hides on scroll, leave clean breathing space at top */
+html:has(nav[class*='navbarHidden']) .doc-sidebar-container,
+body:has(nav[class*='navbarHidden']) .doc-sidebar-container {
+  padding-top: 0.875rem !important;
 }
 
 /* ─── Search keyword highlight ─── */

@@ -16,8 +16,8 @@ interface DocSubmenuContextType {
 const DocSubmenuContext = createContext<DocSubmenuContextType>({
   toc: [],
   activeHeadingId: '',
-  setDocTOC: () => {},
-  setActiveHeadingId: () => {},
+  setDocTOC: () => undefined,
+  setActiveHeadingId: () => undefined,
 });
 
 export const DocSubmenuProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

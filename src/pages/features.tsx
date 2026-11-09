@@ -28,7 +28,7 @@ function GetToKnowPodmanSection() {
             return (
               <article
                 key={index}
-                className="group flex h-full flex-col overflow-hidden rounded-xl border border-purple-100/60 bg-white p-6 text-center shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#232326] dark:shadow-none dark:hover:border-white/20 sm:p-7">
+                className="group flex h-full flex-col overflow-hidden rounded-xl border border-black/[0.03] bg-white p-6 transition-all duration-300 hover:-translate-y-1 dark:border-white/10 dark:bg-[#232326] sm:p-7">
                 {/* Graphic Container */}
                 <div className="relative mb-4 flex h-44 w-full items-center justify-center sm:h-48">
                   <img
@@ -39,13 +39,13 @@ function GetToKnowPodmanSection() {
                 </div>
 
                 {/* Card Body */}
-                <div className="flex flex-1 flex-col justify-start">
+                <div className="flex flex-1 flex-col justify-start text-center">
                   <h3 className="mb-3 whitespace-nowrap text-center text-lg font-bold tracking-tight text-gray-900 transition-colors group-hover:text-[#892CA0] dark:text-white dark:group-hover:text-purple-300 sm:text-lg lg:text-xl">
                     {card.title}
                   </h3>
                   <Markdown
                     text={card.description}
-                    styles="w-full text-justify [text-justify:inter-word] text-base leading-relaxed text-gray-600 dark:text-gray-300 [&_p]:!text-[15px] sm:[&_p]:!text-base lg:[&_p]:!text-base [&_p]:!leading-relaxed [&_p]:!text-justify [&_p]:[text-justify:inter-word] [&_p]:!m-0 [&_a]:!text-[15px] sm:[&_a]:!text-base lg:[&_a]:!text-base [&_a]:!leading-relaxed [&_a]:!font-medium [&_a]:!text-[#892CA0] [&_a]:!underline [&_a]:!underline-offset-4 hover:[&_a]:!text-[#77218d] dark:[&_a]:!text-purple-400 dark:hover:[&_a]:!text-purple-300"
+                    styles="w-full text-center text-base leading-relaxed text-gray-600 dark:text-gray-300 [&_p]:!text-[15px] sm:[&_p]:!text-base lg:[&_p]:!text-base [&_p]:!leading-relaxed [&_p]:!text-center [&_p]:!m-0 [&_a]:!text-[15px] sm:[&_a]:!text-base lg:[&_a]:!text-base [&_a]:!leading-relaxed [&_a]:!font-medium [&_a]:!text-[#892CA0] [&_a]:!underline [&_a]:!underline-offset-4 hover:[&_a]:!text-[#77218d] dark:[&_a]:!text-purple-400 dark:hover:[&_a]:!text-purple-300"
                   />
                 </div>
               </article>
@@ -101,7 +101,7 @@ const PodmanDesktopSection = () => {
 const ManageContainersUISection = () => {
   return (
     <section className="bg-gradient-to-b from-purple-100 to-purple-300 dark:from-black dark:to-gray-900 xl:flex xl:flex-row-reverse xl:py-16">
-      <div className="w-full flex-1 md:mx-auto md:my-16 md:w-4/5 lg:w-full xl:my-16">
+      <div className="w-full flex-1 md:mx-auto md:my-16 md:w-4/5 lg:w-full xl:my-16 xl:w-[47%] xl:flex-none">
         <PlayOnScroll
           vidFormat="video/mp4"
           url="video/ui/containers.mp4"
@@ -109,19 +109,19 @@ const ManageContainersUISection = () => {
           styles="rounded-lg w-full lg:w-3/4 lg:mx-auto xl:mr-0 xl:w-full max-w-[1200px] items-center md:rounded-3xl bg-cover md:bg-contain xl:rounded-r-none"
         />
       </div>
-      <div className="my-12 flex flex-1 items-center md:my-0">
+      <div className="my-12 flex flex-1 items-center md:my-0 xl:w-[53%] xl:flex-none">
         <div className="flex flex-col justify-center px-8 md:mx-auto md:w-4/5 lg:px-12 xl:p-16">
-          <h3 className="mb-6 text-3xl font-extrabold tracking-tight text-purple-900 dark:text-purple-300 sm:text-4xl lg:text-5xl">
+          <h3 className="mb-6 text-left text-3xl font-extrabold tracking-tight text-purple-700 dark:text-purple-700 sm:text-4xl lg:text-5xl">
             Manage containers (not just Podman.)
           </h3>
-          <p className="text-gray-800 mb-4 text-justify text-lg leading-relaxed [text-justify:inter-word] dark:text-gray-100 sm:text-xl">
+          <p className="text-gray-800 mb-4 text-left text-lg leading-relaxed dark:text-gray-100 sm:text-xl">
             Podman Desktop allows you to list, view, and manage containers from multiple supported container engines* in
             a single unified view.
           </p>
-          <p className="text-gray-800 mb-4 text-justify text-lg leading-relaxed [text-justify:inter-word] dark:text-gray-100 sm:text-xl">
+          <p className="text-gray-800 mb-4 text-left text-lg leading-relaxed dark:text-gray-100 sm:text-xl">
             Gain easy access to a shell inside the container, logs, and basic controls.
           </p>
-          <em className="mt-8 block text-justify text-sm not-italic leading-normal text-gray-700 [text-justify:inter-word] dark:text-gray-300 sm:text-base">
+          <em className="mt-8 block text-left text-sm not-italic leading-normal text-gray-700 dark:text-gray-300 sm:text-base">
             * Supported engines and orchestrators include Podman, Docker, Lima, kind, Red Hat OpenShift, Red Hat
             OpenShift Developer Sandbox.
           </em>
@@ -133,8 +133,8 @@ const ManageContainersUISection = () => {
 
 const BuildImagesUISection = () => {
   return (
-    <section className="bg-gradient-to-b from-purple-100 to-purple-300 dark:from-black dark:to-gray-900 xl:flex xl:flex-row xl:py-16 xl:dark:from-gray-900 xl:dark:to-black">
-      <div className="w-full flex-1 md:mx-auto md:my-16 md:w-4/5 lg:w-full xl:my-16">
+    <section className="bg-gradient-to-b from-purple-300 to-purple-100 dark:from-gray-900 dark:to-black xl:flex xl:flex-row xl:py-16">
+      <div className="w-full flex-1 md:mx-auto md:my-16 md:w-4/5 lg:w-full xl:my-16 xl:w-[53%] xl:flex-none">
         <PlayOnScroll
           vidFormat="video/mp4"
           url="video/ui/images.mp4"
@@ -142,15 +142,15 @@ const BuildImagesUISection = () => {
           styles="rounded-lg w-full lg:w-3/4 lg:mx-auto xl:ml-0 xl:w-full max-w-[1200px] items-center md:rounded-3xl bg-cover md:bg-contain xl:rounded-l-none"
         />
       </div>
-      <div className="my-12 flex flex-1 items-center md:my-0">
+      <div className="my-12 flex flex-1 items-center md:my-0 xl:w-[47%] xl:flex-none">
         <div className="flex flex-col justify-center px-8 md:mx-auto md:w-4/5 lg:px-12 xl:p-16">
-          <h3 className="mb-6 text-3xl font-extrabold tracking-tight text-purple-900 dark:text-purple-300 sm:text-4xl lg:text-5xl">
+          <h3 className="mb-6 text-left text-3xl font-extrabold tracking-tight text-purple-700 dark:text-purple-700 sm:text-4xl lg:text-5xl">
             Build, pull, and push images.
           </h3>
-          <p className="text-gray-800 mb-4 text-justify text-lg leading-relaxed [text-justify:inter-word] dark:text-gray-100 sm:text-xl">
+          <p className="text-gray-800 mb-4 text-left text-lg leading-relaxed dark:text-gray-100 sm:text-xl">
             Build containers from a Dockerfile / Containerfile, or pull images from remote repositories to run.
           </p>
-          <p className="text-gray-800 mb-4 text-justify text-lg leading-relaxed [text-justify:inter-word] dark:text-gray-100 sm:text-xl">
+          <p className="text-gray-800 mb-4 text-left text-lg leading-relaxed dark:text-gray-100 sm:text-xl">
             Manage accounts for and push your images to multiple container registries.
           </p>
         </div>
@@ -162,7 +162,7 @@ const BuildImagesUISection = () => {
 const CreatePodsUISection = () => {
   return (
     <section className="bg-gradient-to-b from-purple-100 to-purple-300 dark:from-black dark:to-gray-900 xl:flex xl:flex-row-reverse xl:py-16">
-      <div className="w-full flex-1 md:mx-auto md:my-16 md:w-4/5 lg:w-full xl:my-16">
+      <div className="w-full flex-1 md:mx-auto md:my-16 md:w-4/5 lg:w-full xl:my-16 xl:w-[47%] xl:flex-none">
         <PlayOnScroll
           vidFormat="video/mp4"
           url="video/ui/podify.mp4"
@@ -170,16 +170,16 @@ const CreatePodsUISection = () => {
           styles="rounded-lg w-full lg:w-3/4 lg:mx-auto xl:mr-0 xl:w-full max-w-[1200px] items-center md:rounded-3xl bg-cover md:bg-contain xl:rounded-r-none"
         />
       </div>
-      <div className="my-12 flex flex-1 items-center md:my-0">
+      <div className="my-12 flex flex-1 items-center md:my-0 xl:w-[53%] xl:flex-none">
         <div className="flex flex-col justify-center px-8 md:mx-auto md:w-4/5 lg:px-12 xl:p-16">
-          <h3 className="mb-6 text-3xl font-extrabold tracking-tight text-purple-900 dark:text-purple-300 sm:text-4xl lg:text-5xl">
+          <h3 className="mb-6 text-left text-3xl font-extrabold tracking-tight text-purple-700 dark:text-purple-700 sm:text-4xl lg:text-5xl">
             Podify containers into pods.
           </h3>
-          <p className="text-gray-800 mb-4 text-justify text-lg leading-relaxed [text-justify:inter-word] dark:text-gray-100 sm:text-xl">
+          <p className="text-gray-800 mb-4 text-left text-lg leading-relaxed dark:text-gray-100 sm:text-xl">
             Create pods by selecting containers to run together. View unified logs for your pods and inspect the
             containers inside each.
           </p>
-          <p className="text-gray-800 mb-4 text-justify text-lg leading-relaxed [text-justify:inter-word] dark:text-gray-100 sm:text-xl">
+          <p className="text-gray-800 mb-4 text-left text-lg leading-relaxed dark:text-gray-100 sm:text-xl">
             Play Kubernetes YAML locally, without Kubernetes, and generate Kubernetes YAML from Pods.
           </p>
         </div>
@@ -190,8 +190,8 @@ const CreatePodsUISection = () => {
 
 const DeployToKubernetesUISection = () => {
   return (
-    <section className="bg-gradient-to-b from-purple-100 to-purple-300 dark:from-black dark:to-gray-900 md:pb-32 xl:flex xl:flex-row xl:py-16 xl:dark:from-gray-900 xl:dark:to-black">
-      <div className="w-full flex-1 md:mx-auto md:my-16 md:w-4/5 lg:w-full xl:my-16">
+    <section className="bg-gradient-to-b from-purple-300 to-purple-100 dark:from-gray-900 dark:to-black md:pb-32 xl:flex xl:flex-row xl:py-16">
+      <div className="w-full flex-1 md:mx-auto md:my-16 md:w-4/5 lg:w-full xl:my-16 xl:w-[53%] xl:flex-none">
         <PlayOnScroll
           vidFormat="video/mp4"
           url="video/ui/kubernetes.mp4"
@@ -199,12 +199,12 @@ const DeployToKubernetesUISection = () => {
           styles="rounded-lg w-full lg:w-3/4 lg:mx-auto xl:ml-0 xl:w-full max-w-[1200px] items-center md:rounded-3xl bg-cover md:bg-contain xl:rounded-l-none"
         />
       </div>
-      <div className="my-12 flex flex-1 items-center md:my-0">
+      <div className="my-12 flex flex-1 items-center md:my-0 xl:w-[47%] xl:flex-none">
         <div className="flex flex-col justify-center px-8 md:mx-auto md:w-4/5 lg:px-12 xl:p-16">
-          <h3 className="mb-6 text-3xl font-extrabold tracking-tight text-purple-900 dark:text-purple-300 sm:text-4xl lg:text-5xl">
+          <h3 className="mb-6 text-left text-3xl font-extrabold tracking-tight text-purple-700 dark:text-purple-700 sm:text-4xl lg:text-5xl">
             Deploy to Kubernetes.
           </h3>
-          <p className="text-gray-800 mb-4 text-justify text-lg leading-relaxed [text-justify:inter-word] dark:text-gray-100 sm:text-xl">
+          <p className="text-gray-800 mb-4 text-left text-lg leading-relaxed dark:text-gray-100 sm:text-xl">
             Deploy pods from Podman Desktop to local or remote Kubernetes contexts using automatically-generated YAML
             config.
           </p>
@@ -216,17 +216,8 @@ const DeployToKubernetesUISection = () => {
 
 const PodmanCLISection = () => {
   return (
-    <section className="py-12 sm:py-16">
-      <SectionHeader
-        title="Podman Command-Line"
-        textColor="text-blue-700 dark:text-blue-500"
-        fontWeight="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight"
-        layout="mb-4 sm:mb-6 lg:mb-8"
-        description="Find, run, build, and share containers with a familiar, daemonless CLI — no background daemon required."
-      />
-      <div className="mt-6 sm:mt-8 lg:mt-12">
-        <FeaturesCarousel />
-      </div>
+    <section id="podman-cli">
+      <FeaturesCarousel />
     </section>
   );
 };
@@ -236,7 +227,7 @@ const LearnMoreSection = () => {
     <section className="my-12 xl:my-20">
       <SectionHeader
         title={learnMore.title}
-        textColor="text-purple-700 dark:text-purple-400"
+        textColor="text-purple-700 dark:text-purple-700"
         fontWeight="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight"
         layout="mb-4 sm:mb-6 lg:mb-8"
       />
@@ -267,7 +258,7 @@ const LearnMoreSection = () => {
 function Features() {
   return (
     <Layout>
-      <PageHeader title={header.title} description={header.subtitle} />
+      <PageHeader title={header.title} description={header.subtitle} image={header.image} />
       <GetToKnowPodmanSection />
       <PodmanDesktopSection />
       <ManageContainersUISection />

@@ -9,7 +9,6 @@ interface ZoneConfig {
   timeZone: string;
   icon: string;
   tzCode: string;
-  utcOffset: string;
 }
 
 const ZONES: ZoneConfig[] = [
@@ -20,7 +19,6 @@ const ZONES: ZoneConfig[] = [
     timeZone: 'Europe/Paris',
     icon: 'material-symbols:public-rounded',
     tzCode: 'CET',
-    utcOffset: 'UTC+1',
   },
   {
     id: 'et',
@@ -29,9 +27,30 @@ const ZONES: ZoneConfig[] = [
     timeZone: 'America/New_York',
     icon: 'material-symbols:map-rounded',
     tzCode: 'ET',
-    utcOffset: 'UTC-5',
   },
 ];
+
+function getUtcOffset(timeZone: string, date: Date): string {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      timeZoneName: 'longOffset',
+    }).formatToParts(date);
+    const offsetPart = parts.find(p => p.type === 'timeZoneName')?.value;
+    if (offsetPart) {
+      const match = offsetPart.match(/GMT([+-])(\d{1,2}):?(\d{2})?/);
+      if (match) {
+        const sign = match[1];
+        const hours = parseInt(match[2], 10);
+        const mins = match[3] ? parseInt(match[3], 10) : 0;
+        return mins ? `UTC${sign}${hours}:${match[3]}` : `UTC${sign}${hours}`;
+      }
+    }
+  } catch {
+    // fallback if Intl longOffset is not supported
+  }
+  return '';
+}
 
 function getTimeData(zone: ZoneConfig) {
   const now = new Date();
@@ -58,7 +77,9 @@ function getTimeData(zone: ZoneConfig) {
     tzName = rawTz.includes('Daylight') || rawTz === 'EDT' || rawTz === 'GMT-4' ? 'EDT' : 'EST';
   }
 
-  return { time, date, tzName };
+  const utcOffset = getUtcOffset(zone.timeZone, now);
+
+  return { time, date, tzName, utcOffset };
 }
 
 function TimeZoneBlock({ zone }: { zone: ZoneConfig }): JSX.Element {
@@ -75,7 +96,7 @@ function TimeZoneBlock({ zone }: { zone: ZoneConfig }): JSX.Element {
     <div className="flex flex-col gap-5 py-2 sm:flex-row sm:items-center sm:justify-between sm:py-4">
       {/* Left: Icon, Region, Hubs & Date */}
       <div className="flex items-center gap-4">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#892CA0] text-white shadow-md">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#892CA0] text-white shadow-md dark:shadow-none">
           <Icon icon={zone.icon} className="text-3xl text-white" />
         </div>
         <div>
@@ -91,11 +112,11 @@ function TimeZoneBlock({ zone }: { zone: ZoneConfig }): JSX.Element {
           <span className="font-mono text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
             {data.time}
           </span>
-          <span className="shadow-xs rounded-lg bg-purple-100 px-2.5 py-1 font-mono text-xs font-bold text-[#892CA0] dark:bg-white/10 dark:text-purple-300 sm:text-sm">
+          <span className="shadow-xs rounded-lg bg-purple-100 px-2.5 py-1 font-mono text-xs font-bold text-[#892CA0] dark:bg-white/10 dark:text-purple-300 dark:shadow-none sm:text-sm">
             {data.tzName}
           </span>
         </div>
-        <span className="dark:text-gray-400 mt-1 text-xs font-medium text-gray-500">{zone.utcOffset}</span>
+        <span className="dark:text-gray-400 mt-1 text-xs font-medium text-gray-500">{data.utcOffset}</span>
       </div>
     </div>
   );
@@ -103,7 +124,7 @@ function TimeZoneBlock({ zone }: { zone: ZoneConfig }): JSX.Element {
 
 function DateTimeBox(): JSX.Element {
   return (
-    <div className="w-full rounded-3xl bg-white p-8 shadow-xl shadow-purple-900/10 dark:bg-[#1e172a] sm:p-12">
+    <div className="w-full rounded-3xl bg-white p-8 shadow-xl shadow-purple-900/10 dark:bg-[#1e172a] dark:shadow-none sm:p-12">
       <BrowserOnly fallback={<div className="h-80 animate-pulse rounded-2xl bg-purple-100/50 dark:bg-white/5" />}>
         {() => (
           <>

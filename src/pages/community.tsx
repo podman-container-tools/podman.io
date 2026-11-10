@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '@theme/Layout';
-import useBaseUrl from '@docusaurus/useBaseUrl';
+import useBaseUrl, { useBaseUrlUtils } from '@docusaurus/useBaseUrl';
 import { Icon } from '@iconify/react';
 import WaveBorder from '@site/src/components/shapes/WaveBorder';
 import CommunityMeetingsCardGrid from '@site/src/components/layout/CommunityMeetingsCardGrid';
-import { communityMeetings, mailingList, submittingIssues } from '@site/static/data/community';
+import { communityChat, communityMeetings, mailingList, submittingIssues } from '@site/static/data/community';
 import sponsorData from '@site/src/components/content/ThankYouSection/data';
 import DateTimeBox from '@site/src/components/content/DateTimeBox';
 
@@ -75,32 +75,26 @@ function ActionDropdown({
 /* -------------------------------------------------------------------------- */
 /* Social & Chat Channels (Circular Purple Containers with White Icons)       */
 /* -------------------------------------------------------------------------- */
-const chatChannels = [
-  {
-    name: 'Matrix',
-    handle: '#podman:matrix.org',
-    url: 'https://matrix.to/#/#podman:fedoraproject.org',
-    icon: 'simple-icons:matrix',
-  },
-  {
-    name: 'Discord',
-    handle: 'discord.gg/podman',
-    url: 'https://discord.gg/vwpj7K6gW5',
-    icon: 'simple-icons:discord',
-  },
-  {
-    name: 'Libera IRC',
-    handle: '#podman',
-    url: 'https://web.libera.chat/#podman-desktop',
-    icon: 'material-symbols:terminal-rounded',
-  },
-  {
-    name: 'Discussions',
-    handle: 'containers/podman',
-    url: 'https://github.com/containers/podman/discussions',
-    icon: 'simple-icons:github',
-  },
-];
+/** Display name + icon only; URL/handle come from communityChat.links */
+const chatChannelMeta: Record<string, { name: string; icon: string }> = {
+  'https://matrix.to/#/#podman:fedoraproject.org': { name: 'Matrix', icon: 'simple-icons:matrix' },
+  'https://web.libera.chat/#podman': { name: 'Libera IRC', icon: 'material-symbols:terminal-rounded' },
+  'https://github.com/containers/podman/discussions': { name: 'Discussions', icon: 'simple-icons:github' },
+  'https://discord.gg/vwpj7K6gW5': { name: 'Discord', icon: 'simple-icons:discord' },
+};
+
+const chatChannels = communityChat.links.map(link => {
+  const meta = chatChannelMeta[link.path] ?? {
+    name: link.text,
+    icon: 'material-symbols:forum-rounded',
+  };
+  return {
+    name: meta.name,
+    handle: link.text,
+    url: link.path,
+    icon: meta.icon,
+  };
+});
 
 /* -------------------------------------------------------------------------- */
 /* Optically Balanced Supporting Organization Logos (Larger Scale)           */
@@ -119,6 +113,10 @@ const sponsorLogos = [
 /* Community Page — Modern, Balanced, Matches downloads.tsx & meetings.tsx    */
 /* -------------------------------------------------------------------------- */
 export default function Community(): JSX.Element {
+  const { withBaseUrl } = useBaseUrlUtils();
+  const desktopLogoSrc = useBaseUrl('logos/optimized/podman-desktop-logo-200w-198h.webp');
+  const mailingListImageSrc = useBaseUrl(mailingList.extraInfo.image.path);
+
   return (
     <Layout
       title="Podman Community Hub"
@@ -309,7 +307,7 @@ export default function Community(): JSX.Element {
                 className="group relative shrink-0 overflow-hidden rounded-full bg-[#f9f4ff] p-1 transition-all duration-300 ease-out hover:z-30 hover:-translate-y-2 hover:scale-110 dark:bg-[#161222] sm:p-1.5">
                 <div className="p-4.5 shadow-purple-950/20 flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-md dark:bg-[#1e172a] dark:shadow-none sm:h-28 sm:w-28 sm:p-5 md:h-32 md:w-32 md:p-6 lg:h-36 lg:w-36">
                   <img
-                    src={useBaseUrl(sponsor.src)}
+                    src={withBaseUrl(sponsor.src)}
                     alt={sponsor.alt}
                     className="max-h-[82%] max-w-[82%] object-contain transition-all duration-200 dark:opacity-85 dark:brightness-0 dark:invert"
                   />
@@ -355,7 +353,7 @@ export default function Community(): JSX.Element {
           <div className="flex flex-col justify-between gap-6 rounded-2xl bg-purple-100 p-6 shadow-md dark:bg-[#1e172a] sm:flex-row sm:items-center sm:p-8">
             <div className="flex items-start gap-4 sm:items-center">
               <img
-                src={useBaseUrl('logos/optimized/podman-desktop-logo-200w-198h.webp')}
+                src={desktopLogoSrc}
                 alt="Podman Desktop Logo"
                 className="h-14 w-14 shrink-0 object-contain sm:h-16 sm:w-16"
               />
@@ -539,7 +537,7 @@ export default function Community(): JSX.Element {
                   {/* Screenshot Image with controlled height */}
                   <div className="shadow-2xs overflow-hidden rounded-2xl border border-black/5 dark:border-white/10">
                     <img
-                      src={useBaseUrl(mailingList.extraInfo.image.path)}
+                      src={mailingListImageSrc}
                       alt={mailingList.extraInfo.image.alt}
                       className="h-36 w-full object-cover object-top sm:h-40"
                     />

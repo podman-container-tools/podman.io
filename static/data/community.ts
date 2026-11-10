@@ -25,7 +25,7 @@ const communityChat = {
     },
     {
       text: '#podman on libera.chat',
-      path: 'https://web.libera.chat/#podman-desktop',
+      path: 'https://web.libera.chat/#podman',
       textLogo: 'IRC',
     },
     {

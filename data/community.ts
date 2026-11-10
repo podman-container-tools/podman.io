@@ -181,7 +181,7 @@ const submittingIssues = [
     ],
   },
   {
-    title: 'Submitting Pull Requets',
+    title: 'Submitting Pull Requests',
     subtitle:
       "No Pull Request (PR) is too small! Typos, additional comments in the code, new test cases, bug fixes, new features, more documentation, **...it's all welcome!** ",
     description: [

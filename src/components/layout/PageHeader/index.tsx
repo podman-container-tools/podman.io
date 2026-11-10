@@ -39,21 +39,21 @@ type InstructionsProps = PageHeaderProps & {
 const TextBox = ({ grid, display, layout, title, description }: PageHeaderProps): JSX.Element => {
   return (
     <div className={`${grid} ${display} ${layout}`}>
-      <h1 className="mb-6 max-w-sm text-purple-700 dark:text-purple-500 lg:max-w-lg">{title}</h1>
+      <h1 className="mb-6 max-w-sm text-purple-700 dark:text-purple-700 lg:max-w-lg">{title}</h1>
       <Markdown text={description} styles="leading-relaxed" />
     </div>
   );
 };
 
 const Image = ({
-  grid,
-  display,
-  layout, // if array then {[key:string]: any}[];
+  grid = '',
+  display = '',
+  layout = '',
   image = { path: 'images/optimized/podman-2-196w-172h.webp', alt: 'Podman Logo' },
 }: ImageSectionProps) => {
   return (
-    <div>
-      <img src={image.path} alt={image.alt} className={`${grid} ${display} ${layout}`} />
+    <div className="flex w-full items-center justify-center">
+      <img src={image.path} alt={image.alt} className={`mx-auto block ${grid} ${display} ${layout}`} />
     </div>
   );
 };
@@ -106,7 +106,7 @@ function PageHeader({
           <TextBox title={title} description={description} layout="mt-12 lg:mt-0 mb-8" />
           <Instructions instructions={instructions} />
         </div>
-        <div className="ml-24 w-[50%]">
+        <div className="flex w-full items-center justify-center md:ml-12 md:w-[50%] md:justify-center lg:ml-24">
           <PageHeaderSupplementalInfo basicResources={basicResources} image={image} />
         </div>
       </div>

@@ -23,7 +23,7 @@ const knowPodman = {
     {
       title: "Join Podman's Community",
       description:
-        'Podman has an active chat and mailing list, and regular open community meetings. Users and aspiring contributors are most welcome in all of these venues. Join us!',
+        'Hop into our [Community](/community) to chat, join the mailing list, and participate in open [community meetings](/community/meetings) Welcome!',
       image: {
         path: 'images/optimized/characters/seals-swimming-205w-238h.webp',
         alt: 'A group of seals swimming.',

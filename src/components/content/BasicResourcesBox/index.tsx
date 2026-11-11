@@ -12,7 +12,7 @@ const RESOURCE_ITEMS = [
     subtitle: 'Setup Podman on Linux, macOS, or Windows',
     path: 'https://podman.io/docs/installation',
     icon: 'material-symbols:download-for-offline-rounded',
-    isExternal: false,
+    isExternal: true,
   },
   {
     title: 'Documentation',

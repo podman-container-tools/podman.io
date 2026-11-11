@@ -86,7 +86,7 @@ const BlogArticlesList: React.FC<BlogArticlesListProps> = ({
               href="https://blog.podman.io"
               target="_blank"
               rel="noopener noreferrer"
-              className="dark:text-purple-400 text-sm font-medium text-purple-700 underline underline-offset-4 transition-colors hover:text-purple-900 dark:hover:text-purple-300">
+              className="text-sm font-medium text-purple-700 underline underline-offset-4 transition-colors hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300">
               on our Blog!
             </a>
           </p>

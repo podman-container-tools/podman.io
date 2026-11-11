@@ -1,43 +1,35 @@
 # Podman Community Meeting Notes
-
 ## Oct 6, 2026 11:00 a.m. Eastern (UTC-4)
 
 ### Attendees
-
 Joshua Arrevillaga, Paul Holzinger, Nalin Dahyabhai, Matt Heon, Ashley Cui
 
 ### Meeting Notes
-
 Video [Recording](https://www.youtube.com/watch?v=L1uitNecNLA)
 
 Meeting start: 11:03 a.m. EDT (UTC-4)
 
 #### Quick Recap
-
 The Podman Meeting for October 6, 2026 was held to recap a discussion about moving the Podman Office Hours meetings. Matt reported that the team had agreed to move the half-hour office hours meetings later after a vote in the Podman repository, primarily to accommodate the new maintainer from Seuss, though this change had not been implemented yet. The meeting also discussed whether to move the Podman Community meeting time, with Paul raising concerns about the timing conflicting with lunch and dinner times in different regions, and the group ultimately decided to keep the current meeting time as it is.
 
 #### Next Steps
-
-- Matt: Ensure that all documentation and social media announcements regarding the new Podman Office Hours time are updated and published.
-- Nalin: Monitor for any future desire in the community to change the time of this Podman Meeting, and bring it up for discussion in the community repo if needed.
+ * Matt: Ensure that all documentation and social media announcements regarding the new Podman Office Hours time are updated and published.
+ * Nalin: Monitor for any future desire in the community to change the time of this Podman Meeting, and bring it up for discussion in the community repo if needed.
 
 ### Topics
-
-#### Office Hours Meeting Start Time - Matt Heon ([00:14](https://www.youtube.com/watch?v=L1uitNecNLA&t=14s) in the video)
-
+#### Office Hours Meeting Start Time - Matt Heon  ([00:14](https://www.youtube.com/watch?v=L1uitNecNLA&t=14s) in the video)
 Matt announced that the existing time slot for maintainers' meetings needed to be changed due to scheduling conflicts with a new maintainer from Suse. After a vote on the Podman repository, the meetings were moved half an hour later, and all documentation and social media have been updated to reflect the change. The new meeting times are published on the website and README, and Matt clarified that only the office hours meetings were moved, not the community meetings.
 
 #### Open discussion
-
-1.  Change the start time of this meeting too?
+ 1. Change the start time of this meeting too?
 
 The team discussed whether to move this community meeting to accommodate Danish's schedule, but decided to keep the current timing after considering concerns about overlapping with lunch and dinner times in different time zones. While the decision was made to maintain the current meeting time, Nalin noted that the topic could be revisited in a community discussion if needed.
 
 ### Next Community Meeting: Tuesday, December 6, 2026, 11:00 a.m. EST (UTC-5)
 
 #### Possible Topics:
+ 1. None Discussed
 
-1.  None Discussed
 
 Meeting finished 11:07 a.m.
 
@@ -46,7 +38,7 @@ The first 4 minutes and 43 seconds of the meeting's recording were cut, so the t
 ### Raw Meeting Chat:
 
 ```
-None
+None 
 ```
 
 ### Raw Zoom Meet Transcript

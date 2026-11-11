@@ -712,21 +712,21 @@ mark.search-highlight {
   color: #ffffff;
 }
 
-/* ─── Get Started Page: Colored glass sections text styling (on blue/purple gradient backgrounds) ─── */
-.colored-glass-section h3,
-.colored-glass-section h4 {
+/* ─── Get Started Page: Colored glass sections text styling in dark theme ─── */
+[data-theme='dark'] .colored-glass-section h3,
+[data-theme='dark'] .colored-glass-section h4 {
   color: #ffffff !important;
 }
 
-.colored-glass-section p {
+[data-theme='dark'] .colored-glass-section p {
   color: rgba(255, 255, 255, 0.9) !important;
 }
 
-.colored-glass-section strong {
+[data-theme='dark'] .colored-glass-section strong {
   color: #ffffff !important;
 }
 
-.colored-glass-section :not(pre) > code {
+[data-theme='dark'] .colored-glass-section :not(pre) > code {
   color: #ffffff !important;
 }
 

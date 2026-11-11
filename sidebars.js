@@ -31,7 +31,7 @@ const sidebars = {
     {
       type: 'link',
       label: 'Network',
-      href: 'https://github.com/containers/podman/blob/main/docs/tutorials/basic_networking.md',
+      href: 'https://github.com/podman-container-tools/podman/blob/main/docs/tutorials/basic_networking.md',
     },
     {
       type: 'link',

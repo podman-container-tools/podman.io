@@ -9,6 +9,10 @@ type CommunityMeetingsCardProps = {
   subtitle: string;
   date: string;
   timeZone: string;
+  badge?: {
+    icon: string;
+    label: string;
+  };
   isPaused?: boolean;
   statusNote?: string;
   buttons: Array<{
@@ -19,7 +23,7 @@ type CommunityMeetingsCardProps = {
 
 const CARD_META = [
   { icon: 'material-symbols:groups-rounded', label: 'Community Meeting' },
-  { icon: 'material-symbols:shield-rounded', label: 'Cabal Meeting' },
+  { icon: 'material-symbols:forum-rounded', label: 'Office Hours' },
 ];
 
 /** Converts **bold** markdown to inline <strong> — avoids block-level <p> breaking flex layouts */
@@ -49,7 +53,7 @@ function MeetingCard({
   index: number;
   isSingle?: boolean;
 }) {
-  const meta = CARD_META[index] ?? CARD_META[0];
+  const meta = card.badge ?? CARD_META[index] ?? CARD_META[0];
 
   return (
     <div
@@ -102,7 +106,9 @@ function MeetingCard({
               icon={
                 btn.text.toLowerCase().includes('join')
                   ? 'material-symbols:video-camera-front-rounded'
-                  : 'material-symbols:article-outline-rounded'
+                  : btn.text.toLowerCase().includes('calendar')
+                    ? 'material-symbols:calendar-month-rounded'
+                    : 'material-symbols:article-outline-rounded'
               }
               className="text-sm"
             />

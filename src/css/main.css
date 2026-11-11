@@ -169,10 +169,20 @@
   align-items: center !important;
 }
 
-.dropdown {
-  position: relative !important;
-  display: flex !important;
-  align-items: center !important;
+@media (min-width: 997px) {
+  .dropdown {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+}
+
+@media (max-width: 996px) {
+  .navbar__item,
+  .navbar__item.dropdown,
+  .navbar__items .dropdown {
+    display: none !important;
+  }
 }
 
 /* Keep navbar dropdown trigger text crisp white and aligned with other navbar links */
@@ -272,11 +282,11 @@
   text-decoration: none !important;
 }
 
-/* Whole dropdown menu background turns purple when active page item is present */
-.dropdown__menu:has(.dropdown__link--active),
-.dropdown__menu:has([aria-current='page']),
-[data-theme='dark'] .dropdown__menu:has(.dropdown__link--active),
-[data-theme='dark'] .dropdown__menu:has([aria-current='page']) {
+/* When it's only one item in the dropdown (e.g. Community), the whole menu container turns purple when active */
+.dropdown__menu:has(> li:only-child .dropdown__link--active),
+.dropdown__menu:has(> li:only-child [aria-current='page']),
+[data-theme='dark'] .dropdown__menu:has(> li:only-child .dropdown__link--active),
+[data-theme='dark'] .dropdown__menu:has(> li:only-child [aria-current='page']) {
   background-color: #892ca0 !important;
   border-color: #77218d !important;
   box-shadow: none !important;
@@ -327,7 +337,6 @@
 .meeting-accordion-content {
   animation: accordionSlideDown 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
 /* ------------------ */
 /* Font Configuration */
 /* ------------------ */
@@ -641,7 +650,15 @@
 .meetings-year-menu::-webkit-scrollbar,
 .meetings-sessions-container::-webkit-scrollbar,
 .transcript-dialogue-list::-webkit-scrollbar,
-.chat-log-list::-webkit-scrollbar {
+.chat-log-list::-webkit-scrollbar,
+.navbar-sidebar::-webkit-scrollbar,
+.navbar-sidebar__items::-webkit-scrollbar,
+.navbar-sidebar__item::-webkit-scrollbar,
+.theme-doc-sidebar-container::-webkit-scrollbar,
+.theme-doc-sidebar-menu::-webkit-scrollbar,
+aside[class*='docSidebarContainer']::-webkit-scrollbar,
+nav[aria-label='Documentation Navigation']::-webkit-scrollbar,
+nav[aria-label='Docs sidebar']::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
@@ -654,9 +671,23 @@
 .meetings-year-menu,
 .meetings-sessions-container,
 .transcript-dialogue-list,
-.chat-log-list {
+.chat-log-list,
+.navbar-sidebar,
+.navbar-sidebar__items,
+.navbar-sidebar__item,
+.theme-doc-sidebar-container,
+.theme-doc-sidebar-menu,
+aside[class*='docSidebarContainer'],
+nav[aria-label='Documentation Navigation'],
+nav[aria-label='Docs sidebar'] {
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
+}
+
+/* When navbar hides on scroll, leave clean breathing space at top */
+html:has(nav[class*='navbarHidden']) .doc-sidebar-container,
+body:has(nav[class*='navbarHidden']) .doc-sidebar-container {
+  padding-top: 0.875rem !important;
 }
 
 /* ─── Search keyword highlight ─── */
@@ -820,4 +851,217 @@ mark.search-highlight {
     0 8px 24px -2px rgba(0, 0, 0, 0.35),
     inset 0 1px 1px 0 rgba(255, 255, 255, 0.25) !important;
   transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Documentation UI - Modern Left Sidebar Navigation
+   ========================================================================== */
+
+:root {
+  --doc-sidebar-width: 290px !important;
+  --doc-sidebar-hidden-width: 30px !important;
+}
+
+/* Sidebar container styling */
+aside[class*='docSidebarContainer'] {
+  border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+  background: #ffffff !important;
+  transition:
+    width 0.25s ease-in-out,
+    opacity 0.25s ease-in-out !important;
+}
+
+[data-theme='dark'] aside[class*='docSidebarContainer'] {
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: #111113 !important;
+}
+
+/* Remove default clumsy top margin on menu__list in docs */
+aside[class*='docSidebarContainer'] .menu__list {
+  margin-top: 0 !important;
+}
+
+/* Ensure doc main content has pleasant reading spacing */
+@media (min-width: 997px) {
+  div[class*='docItemWrapper'] {
+    max-width: 1300px !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+}
+
+/* Remove right sidebar / Table of Contents completely so only the left sidebar exists */
+div[class*='docItemCol'] + div[class*='col--3'],
+div[class*='tocDesktop'] {
+  display: none !important;
+  width: 0 !important;
+  padding: 0 !important;
+}
+
+@media (min-width: 997px) {
+  .docItemCol,
+  div[class*='docItemCol'] {
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+}
+
+/* Sidebar links never underline on hover */
+aside[class*='docSidebarContainer'] a,
+aside[class*='docSidebarContainer'] a:hover,
+aside[class*='docSidebarContainer'] a:hover *,
+aside[class*='docSidebarContainer'] a * {
+  text-decoration: none !important;
+}
+
+/* Doc Sidebar Navigation Item Styles */
+.doc-nav-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.45rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  text-decoration: none !important;
+  background-color: transparent !important;
+  transition:
+    background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.doc-nav-title {
+  font-size: 0.835rem !important; /* ~13.5px */
+  line-height: 1.25 !important;
+  font-weight: 500 !important;
+}
+
+.doc-nav-item *,
+.doc-nav-item:hover *,
+.doc-nav-item-active * {
+  background-color: transparent !important;
+  text-decoration: none !important;
+}
+
+.doc-nav-item:hover {
+  background-color: rgba(137, 44, 160, 0.08) !important;
+  color: #892ca0 !important;
+  text-decoration: none !important;
+}
+
+.doc-nav-item:hover .doc-nav-title,
+.doc-nav-item:hover svg {
+  color: #892ca0 !important;
+}
+
+[data-theme='dark'] .doc-nav-item:hover {
+  background-color: rgba(189, 89, 221, 0.14) !important;
+  color: #d8b4fe !important;
+  text-decoration: none !important;
+}
+
+[data-theme='dark'] .doc-nav-item:hover .doc-nav-title,
+[data-theme='dark'] .doc-nav-item:hover svg {
+  color: #d8b4fe !important;
+}
+
+.doc-nav-item-active {
+  background-color: rgba(137, 44, 160, 0.12) !important;
+  color: #892ca0 !important;
+  font-weight: 600 !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+.doc-nav-item-active .doc-nav-title,
+.doc-nav-item-active svg {
+  color: #892ca0 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme='dark'] .doc-nav-item-active {
+  background-color: rgba(189, 89, 221, 0.2) !important;
+  color: #f3e8ff !important;
+  font-weight: 600 !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+[data-theme='dark'] .doc-nav-item-active .doc-nav-title,
+[data-theme='dark'] .doc-nav-item-active svg {
+  color: #f3e8ff !important;
+  font-weight: 600 !important;
+}
+
+/* ======================================================== */
+/* Doc Navigation Submenu Items                             */
+/* ======================================================== */
+
+.doc-submenu-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.doc-submenu-wrapper-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.doc-submenu-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.doc-submenu-tree {
+  border-left: 1.5px solid #e5e7eb !important; /* soft lightish gray in light mode */
+}
+
+[data-theme='dark'] .doc-submenu-tree {
+  border-left: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.doc-submenu-link {
+  text-decoration: none !important;
+  border: none !important;
+  outline: none !important;
+  background-color: transparent !important;
+  transition: color 0.15s ease-in-out !important;
+}
+
+.doc-submenu-link:hover {
+  text-decoration: none !important;
+  color: #892ca0 !important;
+  background-color: transparent !important;
+}
+
+[data-theme='dark'] .doc-submenu-link:hover {
+  color: #d8b4fe !important;
+  background-color: transparent !important;
+}
+
+.doc-submenu-link-active {
+  color: #892ca0 !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  background-color: transparent !important;
+}
+
+[data-theme='dark'] .doc-submenu-link-active {
+  color: #f3e8ff !important;
+  font-weight: 600 !important;
+  background-color: transparent !important;
+}
+
+/* Ensure section anchor links do not scroll behind fixed navbar */
+article h1[id],
+article h2[id],
+article h3[id],
+article h4[id] {
+  scroll-margin-top: 7.5rem;
 }

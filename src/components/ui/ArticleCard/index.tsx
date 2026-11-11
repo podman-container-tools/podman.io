@@ -60,19 +60,19 @@ function ArticleCard(props: ArticleCardProps) {
 
   if (props.altLayout) {
     return (
-      <article className="group my-4 overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none dark:hover:border-purple-500/30">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="relative flex h-48 items-center justify-center p-4">
+      <article className="group flex flex-1 flex-col overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#232326] dark:shadow-none dark:hover:border-white/20">
+        <div className="flex h-full flex-col md:grid md:grid-cols-2 md:items-center">
+          <div className="relative flex h-44 w-full items-center justify-center p-5 md:h-full">
             <img
               src={props.imgSrc || fallbackImage}
               alt={props.title || 'Article cover image'}
-              className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+              className="max-h-36 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105 md:max-h-40"
             />
           </div>
-          <div className="flex flex-col justify-between p-5">
+          <div className="flex h-full flex-1 flex-col justify-between p-5">
             <div>
-              <div className="mb-2 flex h-7 flex-col justify-end sm:h-8">
-                <h3 className="!m-0 line-clamp-1 !p-0 text-base font-bold leading-snug tracking-tight text-gray-900 dark:text-white sm:text-lg">
+              <div className="mb-2 flex min-h-[3rem] flex-col justify-center sm:min-h-[3.25rem]">
+                <h3 className="!m-0 line-clamp-2 !p-0 text-base font-bold leading-normal tracking-tight text-gray-900 dark:text-white sm:text-lg">
                   <a
                     href={props.path}
                     target="_blank"
@@ -83,8 +83,8 @@ function ArticleCard(props: ArticleCardProps) {
                   </a>
                 </h3>
               </div>
-              <div className="h-16 overflow-hidden sm:h-20">
-                <p className="!m-0 line-clamp-3 !p-0 text-justify text-xs leading-relaxed text-gray-700 [text-justify:inter-word] dark:text-gray-300 sm:text-sm">
+              <div className="overflow-hidden">
+                <p className="!m-0 line-clamp-3 !p-0 text-left text-xs leading-relaxed text-gray-700 dark:text-gray-300 sm:text-sm md:text-justify md:[text-justify:inter-word]">
                   {cleanSubtitle}
                 </p>
               </div>
@@ -126,7 +126,7 @@ function ArticleCard(props: ArticleCardProps) {
 
   // Normal Layout
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none dark:hover:border-purple-500/30">
+    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#232326] dark:shadow-none dark:hover:border-white/20">
       {/* Graphic Container */}
       <div className="relative flex h-44 w-full items-center justify-center p-4 sm:h-48">
         <img

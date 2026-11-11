@@ -85,7 +85,7 @@ const BasicResourcesBox: React.FC<BasicResourcesBoxProps> = ({ compact = false }
             href="https://docs.podman.io"
             target="_blank"
             rel="noopener noreferrer"
-            className="dark:text-purple-400 font-medium text-purple-700 underline underline-offset-4 transition-colors hover:text-purple-900 dark:hover:text-purple-300">
+            className="dark:text-purple-400 text-sm font-medium text-purple-700 underline underline-offset-4 transition-colors hover:text-purple-900 dark:hover:text-purple-300">
             Documentation!
           </a>
         </p>

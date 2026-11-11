@@ -50,14 +50,14 @@ const TextBox = ({ grid, display, layout, title, description }: PageHeaderProps)
 };
 
 const Image = ({
-  grid,
-  display,
-  layout,
+  grid = '',
+  display = '',
+  layout = '',
   image = { path: 'images/optimized/podman-2-196w-172h.webp', alt: 'Podman Logo' },
 }: ImageSectionProps) => {
   return (
-    <div className="flex justify-center">
-      <img src={image.path} alt={image.alt} className={`${grid || ''} ${display || ''} ${layout || ''}`} />
+    <div className="flex w-full items-center justify-center">
+      <img src={image.path} alt={image.alt} className={`mx-auto block ${grid} ${display} ${layout}`} />
     </div>
   );
 };

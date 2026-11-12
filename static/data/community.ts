@@ -25,7 +25,7 @@ const communityChat = {
     },
     {
       text: '#podman on libera.chat',
-      path: 'https://web.libera.chat/#podman-desktop',
+      path: 'https://web.libera.chat/#podman',
       textLogo: 'IRC',
     },
     {
@@ -194,7 +194,7 @@ const submittingIssues = [
       'Documentation changes.',
     ],
     button: {
-      text: 'More PR Submission Details',
+      text: 'PR Submission Guidelines',
       path: 'https://github.com/containers/podman/blob/main/CONTRIBUTING.md#submitting-pull-requests',
     },
   },

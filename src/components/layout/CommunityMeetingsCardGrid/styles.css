@@ -46,26 +46,26 @@ dialog {
 /* Card Container */
 .meeting-card {
   background-color: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: none !important;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease-in-out;
 }
 
 .meeting-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(0, 0, 0, 0.12);
+  border: none !important;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
 }
 
 [data-theme='dark'] .meeting-card {
   background-color: #242328 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border: none !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
 }
 
 [data-theme='dark'] .meeting-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  border: none !important;
   box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5) !important;
 }
 
@@ -167,20 +167,20 @@ dialog {
 .meeting-btn-agenda {
   background-color: #f7eafd;
   color: #892ca0 !important;
-  border: 1px solid rgba(137, 44, 160, 0.2);
+  border: none !important;
   transition: all 0.2s ease-in-out;
 }
 
 .meeting-btn-agenda:hover {
   background-color: #ebd5ff;
-  border-color: #892ca0;
+  border: none !important;
   color: #5f246b !important;
 }
 
 [data-theme='dark'] .meeting-btn-agenda {
   background-color: rgba(255, 255, 255, 0.05) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(227, 180, 243, 0.35) !important;
+  border: none !important;
 }
 
 [data-theme='dark'] .meeting-btn-agenda svg {
@@ -189,7 +189,7 @@ dialog {
 
 [data-theme='dark'] .meeting-btn-agenda:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(227, 180, 243, 0.6) !important;
+  border: none !important;
   color: #ffffff !important;
   box-shadow: none !important;
 }

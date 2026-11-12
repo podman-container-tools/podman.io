@@ -1,53 +1,121 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import Testimonial from '@site/src/components/ui/Testimonial';
 import SectionHeader from '@site/src/components/layout/SectionHeader';
 import { testimonials } from '@site/static/data/testimonials';
 
 function TestimonialSection() {
-  const slideLeft = () => {
-    const slider = document.getElementById('slider');
-    slider.scrollLeft = slider.scrollLeft - 500;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setItemsPerPage(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsPerPage(2);
+      } else {
+        setItemsPerPage(3);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const maxIndex = Math.max(0, testimonials.length - itemsPerPage);
+
+  useEffect(() => {
+    setCurrentIndex(i => Math.min(i, maxIndex));
+  }, [maxIndex]);
+
+  const canGoLeft = currentIndex > 0;
+  const canGoRight = currentIndex < maxIndex;
+
+  const prevSlide = () => {
+    if (canGoLeft) {
+      setCurrentIndex(prev => prev - 1);
+    }
   };
-  const slideRight = () => {
-    const slider = document.getElementById('slider');
-    slider.scrollLeft = slider.scrollLeft + 500;
+
+  const nextSlide = () => {
+    if (canGoRight) {
+      setCurrentIndex(prev => prev + 1);
+    }
   };
+
   return (
-    <section className="bg-gradient-to-b from-white to-purple-100 dark:from-gray-900 dark:via-gray-900 dark:to-purple-900">
-      <SectionHeader
-        title="What people are saying about Podman"
-        textGradient={true}
-        textGradientStops="from-blue-700 to-blue-500"
-      />
-      <div className="container relative mx-auto my-8 flex items-center justify-center">
-        <button
-          type="button"
-          onClick={slideLeft}
-          className="hidden shrink-0 p-2 sm:block"
-          aria-label="Previous testimonial">
-          <Icon
-            icon="fa-solid:arrow-circle-left"
-            className="text-4xl text-gray-500 opacity-25 transition duration-150 ease-linear hover:text-purple-900 hover:opacity-100 dark:hover:text-purple-700"
+    <section className="overflow-hidden bg-gradient-to-b from-white via-purple-100 to-white py-16 dark:from-[#1B1B1D] dark:via-purple-900/25 dark:to-[#1B1B1D] xl:py-24">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-6">
+          <SectionHeader
+            title="What people are saying about Podman"
+            textGradient={true}
+            textGradientStops="from-blue-700 to-blue-500"
           />
-        </button>
-        <div id="slider" className="h-full w-full overflow-x-scroll scroll-smooth whitespace-nowrap scrollbar">
-          <div className="mx-auto flex w-max gap-4">
-            {testimonials.map((testimonial, index) => {
-              return <Testimonial key={index} {...testimonial} />;
-            })}
+        </div>
+
+        {/* Carousel Wrapper */}
+        <div className="relative mx-auto w-full max-w-7xl px-11 sm:px-14 md:px-16">
+          {/* Left Side Arrow Button */}
+          <button
+            type="button"
+            onClick={prevSlide}
+            disabled={!canGoLeft}
+            aria-label="Previous testimonials"
+            title="Previous"
+            style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
+            className={`absolute left-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#892CA0] text-white shadow-md transition-all duration-200 sm:left-1 sm:h-11 sm:w-11 md:left-2 ${
+              canGoLeft
+                ? 'cursor-pointer hover:scale-105 hover:bg-[#77218d] active:scale-95'
+                : 'pointer-events-none opacity-25'
+            }`}>
+            <Icon icon="material-symbols:arrow-back-rounded" className="text-xl text-white sm:text-2xl" />
+          </button>
+
+          {/* Right Side Arrow Button */}
+          <button
+            type="button"
+            onClick={nextSlide}
+            disabled={!canGoRight}
+            aria-label="Next testimonials"
+            title="Next"
+            style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
+            className={`absolute right-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#892CA0] text-white shadow-md transition-all duration-200 sm:right-1 sm:h-11 sm:w-11 md:right-2 ${
+              canGoRight
+                ? 'cursor-pointer hover:scale-105 hover:bg-[#77218d] active:scale-95'
+                : 'pointer-events-none opacity-25'
+            }`}>
+            <Icon icon="material-symbols:arrow-forward-rounded" className="text-xl text-white sm:text-2xl" />
+          </button>
+
+          {/* Carousel Track Container */}
+          <div className="relative overflow-hidden py-10 sm:py-12">
+            <div
+              className="flex items-stretch transition-transform duration-500 ease-out"
+              style={{
+                transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)`,
+              }}>
+              {testimonials.map((testimonial, index) => {
+                const isOffscreen = index < currentIndex || index >= currentIndex + itemsPerPage;
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      width: `calc(100% / ${itemsPerPage} + 1px)`,
+                      opacity: isOffscreen ? 0 : 1,
+                      pointerEvents: isOffscreen ? 'none' : 'auto',
+                      transition: 'opacity 300ms ease',
+                    }}
+                    className="flex shrink-0 px-2 sm:px-3">
+                    <Testimonial {...testimonial} />
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={slideRight}
-          className="hidden shrink-0 p-2 sm:block"
-          aria-label="Next testimonial">
-          <Icon
-            icon="fa-solid:arrow-circle-right"
-            className="dark:hover-text-purple-700 text-4xl text-gray-500 opacity-25 transition duration-150 ease-linear hover:text-purple-900 hover:opacity-100"
-          />
-        </button>
       </div>
     </section>
   );

@@ -88,26 +88,6 @@ const carouselContent = [
 ];
 const learnMore = {
   title: 'Want to learn more?',
-  resources: {
-    title: 'Basic Podman Resources',
-    cards: [
-      {
-        text: 'Installation Instructions',
-        path: '#',
-        icon: 'fa6-solid:book',
-      },
-      {
-        text: 'Documentation',
-        path: 'https://docs.podman.io',
-        icon: 'fa6-solid:book',
-      },
-      {
-        text: 'Podman Troubleshooting',
-        path: 'https://github.com/containers/podman/blob/main/troubleshooting.md',
-        icon: 'fa6-solid:book',
-      },
-    ],
-  },
   blogPosts: {
     title: 'Recent Podman Blog Posts',
   },

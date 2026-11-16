@@ -58,8 +58,9 @@ export class PodmanMarkdownPreprocessor {
       return `\n## ${headingText.trim()}\n\n`;
     });
 
-    // Ensure tables have a blank line before them so GFM/CommonMark parsers recognize them as separate table blocks
-    content = content.replace(/([^\n])\r?\n(\|[^\n]+\|)\r?\n/g, '$1\n\n$2\n');
+    // Ensure tables have a blank line before and after them so GFM/CommonMark parsers recognize them as separate table blocks
+    content = content.replace(/(^[^|\r\n][^\r\n]*)\r?\n(\|[^\r\n]+\|)/gm, '$1\n\n$2');
+    content = content.replace(/(\|[^\r\n]+\|)\r?\n([^|\r\n])/gm, '$1\n\n$2');
 
     // 3. Resolve conditional blocks << if variable >> ... << endif >>
     content = this.renderConditionals(content, { is_quadlet: isQuadlet });

@@ -152,7 +152,7 @@ export default function DocsCommandsPage(): JSX.Element {
         <div className="relative hidden w-72 shrink-0 lg:flex">
           <aside
             className={clsx(
-              'doc-sidebar-aside sticky flex w-72 flex-col overflow-hidden border-r border-gray-100 transition-[top,height] duration-200 ease-out dark:border-zinc-800/60',
+              'doc-sidebar-aside sticky flex w-72 flex-col overflow-hidden transition-[top,height] duration-200 ease-out',
               navbarVisible
                 ? 'top-[var(--ifm-navbar-height,3.75rem)] h-[calc(100vh-var(--ifm-navbar-height,3.75rem))]'
                 : 'top-0 h-screen',

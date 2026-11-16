@@ -1149,8 +1149,9 @@ mark.search-highlight {
   --doc-sidebar-hidden-width: 30px !important;
 }
 
-/* Sidebar container styling */
-aside[class*='docSidebarContainer'] {
+/* Sidebar container styling - Identical for Guides and CLI */
+aside[class*='docSidebarContainer'],
+.doc-sidebar-aside {
   border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
   background: #ffffff !important;
   transition:
@@ -1219,7 +1220,8 @@ body:has(nav[class*='navbarHidden']) .doc-sidebar-container {
   padding-top: 0.5rem !important;
 }
 
-[data-theme='dark'] aside[class*='docSidebarContainer'] {
+[data-theme='dark'] aside[class*='docSidebarContainer'],
+[data-theme='dark'] .doc-sidebar-aside {
   border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
   background: #111113 !important;
 }
@@ -1480,7 +1482,7 @@ aside[class*='docSidebarContainer'] a * {
 .doc-submenu-link:visited:hover {
   text-decoration: none !important;
   color: #0284c7 !important;
-  background-color: rgba(2, 132, 199, 0.08) !important;
+  background-color: transparent !important;
 }
 
 .doc-submenu-link-active,
@@ -1489,7 +1491,7 @@ aside[class*='docSidebarContainer'] a * {
   color: #0284c7 !important;
   font-weight: 600 !important;
   text-decoration: none !important;
-  background-color: rgba(2, 132, 199, 0.08) !important;
+  background-color: transparent !important;
 }
 
 /* Dark mode submenu link: Cyan blue, never dull gray */
@@ -1503,7 +1505,7 @@ aside[class*='docSidebarContainer'] a * {
 [data-theme='dark'] .doc-submenu-link:hover,
 [data-theme='dark'] .doc-submenu-link:visited:hover {
   color: #83f1ff !important;
-  background-color: rgba(30, 204, 255, 0.12) !important;
+  background-color: transparent !important;
   opacity: 1 !important;
 }
 

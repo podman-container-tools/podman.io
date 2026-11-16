@@ -313,10 +313,10 @@ export class DocsService {
       return this.memoryDocCache.get(cacheKey)!;
     }
 
-    // Try reading from sessionStorage
+    // Try reading from sessionStorage (v4 with table fixes)
     if (typeof window !== 'undefined') {
       try {
-        const stored = window.sessionStorage.getItem(`podman_doc_${cacheKey}`);
+        const stored = window.sessionStorage.getItem(`podman_doc_v4_${cacheKey}`);
         if (stored) {
           const parsed: DocContent = JSON.parse(stored);
           this.memoryDocCache.set(cacheKey, parsed);
@@ -405,7 +405,7 @@ export class DocsService {
     this.memoryDocCache.set(cacheKey, processed);
     if (typeof window !== 'undefined') {
       try {
-        window.sessionStorage.setItem(`podman_doc_${cacheKey}`, JSON.stringify(processed));
+        window.sessionStorage.setItem(`podman_doc_v4_${cacheKey}`, JSON.stringify(processed));
       } catch {
         // Ignore storage limit
       }

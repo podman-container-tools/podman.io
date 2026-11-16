@@ -1,10 +1,11 @@
 import { PodmanMarkdownPreprocessor } from './podmanMarkdownPreprocessor';
 import type { DocManifest, DocContent, DocCategory, DocMetadata, SearchResult } from './docsTypes';
 
-const REPO_OWNER = 'podman-container-tools';
+const REPO_OWNER = 'containers';
 const REPO_NAME = 'podman';
 const BRANCH = 'main';
 const BASE_MARKDOWN_PATH = 'docs/source/markdown';
+const STATIC_DOCS_BASE = '/data/cli-docs';
 
 const GITHUB_COMMITS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=${BASE_MARKDOWN_PATH}&sha=${BRANCH}&per_page=1`;
 
@@ -301,41 +302,58 @@ export class DocsService {
       this.lastCommitCheckTime = Date.now();
       let detectedSha: string | null = null;
       try {
-        // Check API service first if available
-        const apiUrl = await this.getApiBaseUrl();
-        if (apiUrl !== null) {
-          const res = await fetch(`${apiUrl}/api/docs/health`);
-          if (res.ok) {
-            const info = await res.json();
-            detectedSha = info.commitSha || null;
-          }
-        } else {
-          // Direct GitHub commit check with conditional ETag headers (304 responses cost 0 GitHub rate limit quota)
-          const headers: Record<string, string> = {
-            Accept: 'application/vnd.github.v3+json',
-          };
-          const storage = this.getStorage();
-          const storedEtag = storage ? storage.getItem('podman_v5_commit_etag') : null;
-          if (storedEtag) {
-            headers['If-None-Match'] = storedEtag;
-          }
-
-          const res = await fetch(GITHUB_COMMITS_URL, { headers });
-          if (res.status === 304) {
-            // 304 Not Modified: Nothing has changed upstream
-            detectedSha = this.latestCommitSha;
-          } else if (res.ok) {
-            const etag = res.headers.get('ETag');
-            if (etag && storage) {
-              try {
-                storage.setItem('podman_v5_commit_etag', etag);
-              } catch {
-                // Ignore
+        // 1. Check static site manifest first (fast, zero GitHub API calls)
+        if (typeof window !== 'undefined' && window.location.protocol.startsWith('http')) {
+          try {
+            const staticRes = await fetch(`${STATIC_DOCS_BASE}/manifest.json`, { cache: 'no-cache' });
+            if (staticRes.ok) {
+              const staticManifest: DocManifest = await staticRes.json();
+              if (staticManifest && staticManifest.revision) {
+                detectedSha = staticManifest.revision;
               }
             }
-            const commits = await res.json();
-            if (Array.isArray(commits) && commits.length > 0 && commits[0].sha) {
-              detectedSha = commits[0].sha;
+          } catch {
+            // Static manifest not found, continue to API/GitHub check
+          }
+        }
+
+        // 2. Check API service if available and static manifest did not resolve
+        if (!detectedSha) {
+          const apiUrl = await this.getApiBaseUrl();
+          if (apiUrl !== null) {
+            const res = await fetch(`${apiUrl}/api/docs/health`);
+            if (res.ok) {
+              const info = await res.json();
+              detectedSha = info.commitSha || null;
+            }
+          } else {
+            // 3. Direct GitHub commit check with conditional ETag headers (304 responses cost 0 GitHub rate limit quota)
+            const headers: Record<string, string> = {
+              Accept: 'application/vnd.github.v3+json',
+            };
+            const storage = this.getStorage();
+            const storedEtag = storage ? storage.getItem('podman_v5_commit_etag') : null;
+            if (storedEtag) {
+              headers['If-None-Match'] = storedEtag;
+            }
+
+            const res = await fetch(GITHUB_COMMITS_URL, { headers });
+            if (res.status === 304) {
+              // 304 Not Modified: Nothing has changed upstream
+              detectedSha = this.latestCommitSha;
+            } else if (res.ok) {
+              const etag = res.headers.get('ETag');
+              if (etag && storage) {
+                try {
+                  storage.setItem('podman_v5_commit_etag', etag);
+                } catch {
+                  // Ignore
+                }
+              }
+              const commits = await res.json();
+              if (Array.isArray(commits) && commits.length > 0 && commits[0].sha) {
+                detectedSha = commits[0].sha;
+              }
             }
           }
         }
@@ -463,16 +481,40 @@ export class DocsService {
   }
 
   /**
-   * Fetches fresh manifest from deployed API (if available) or directly from GitHub
+   * Fetches fresh manifest from static build bundle, deployed API, or GitHub fallback
    */
   private async fetchFreshManifest(): Promise<DocManifest> {
+    // Strategy A: Load static build-time generated manifest (zero GitHub API dependency)
+    if (typeof window !== 'undefined' && window.location.protocol.startsWith('http')) {
+      try {
+        const staticRes = await fetch(`${STATIC_DOCS_BASE}/manifest.json`, { cache: 'no-cache' });
+        if (staticRes.ok) {
+          const staticManifest: DocManifest = await staticRes.json();
+          if (staticManifest && Array.isArray(staticManifest.categories)) {
+            if (staticManifest.revision) {
+              this.latestCommitSha = staticManifest.revision;
+              try {
+                this.getStorage()?.setItem('podman_v5_latest_sha', staticManifest.revision);
+              } catch {
+                // Ignore
+              }
+            }
+            this.saveManifestCache(staticManifest);
+            return staticManifest;
+          }
+        }
+      } catch {
+        // Static manifest unavailable, proceed to fallback
+      }
+    }
+
     if (typeof window !== 'undefined' && !this.latestCommitSha) {
       this.checkUpstreamChanges().catch(() => undefined);
     }
 
     const apiUrl = await this.getApiBaseUrl();
 
-    // Strategy A: Call deployed documentation service
+    // Strategy B: Call deployed documentation service if configured
     if (apiUrl !== null) {
       try {
         const res = await fetch(`${apiUrl}/api/docs/manifest`);
@@ -503,7 +545,7 @@ export class DocsService {
       }
     }
 
-    // Strategy B: Direct GitHub API with conditional ETag support (304 costs 0 rate limit)
+    // Strategy C: Direct GitHub API with conditional ETag support (304 costs 0 rate limit)
     try {
       const storage = this.getStorage();
       const headers: Record<string, string> = {
@@ -720,13 +762,32 @@ export class DocsService {
   }
 
   /**
-   * Fetches fresh document from deployed API or directly from GitHub
+   * Fetches fresh document from static build bundle, deployed API, or GitHub fallback
    */
   private async fetchFreshDocument(slug: string): Promise<DocContent> {
     const cacheKey = slug.toLowerCase();
+
+    // Strategy A: Load static build-time preprocessed JSON (zero GitHub API dependency)
+    if (typeof window !== 'undefined' && window.location.protocol.startsWith('http')) {
+      try {
+        const staticRes = await fetch(`${STATIC_DOCS_BASE}/commands/${encodeURIComponent(cacheKey)}.json`, {
+          cache: 'no-cache',
+        });
+        if (staticRes.ok) {
+          const staticDoc: DocContent = await staticRes.json();
+          if (staticDoc && staticDoc.markdown) {
+            this.saveDocCache(cacheKey, staticDoc);
+            return staticDoc;
+          }
+        }
+      } catch {
+        // Static command JSON unavailable, proceed to fallback
+      }
+    }
+
     const apiUrl = await this.getApiBaseUrl();
 
-    // Strategy A: Call deployed documentation service
+    // Strategy B: Call deployed documentation service if configured
     if (apiUrl !== null) {
       try {
         const res = await fetch(`${apiUrl}/api/docs/content?slug=${encodeURIComponent(slug)}`);
@@ -759,7 +820,7 @@ export class DocsService {
       }
     }
 
-    // Strategy B: Direct GitHub Raw Fetch with Preprocessing
+    // Strategy C: Direct GitHub Raw Fetch with Preprocessing
     const manifest = await this.getManifest();
     let targetMeta: DocMetadata | undefined;
 

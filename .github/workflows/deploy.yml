@@ -5,8 +5,21 @@ on:
   push:
     branches: [main]
 
+  # Periodically check if upstream containers/podman CLI documentation changed
+  schedule:
+    - cron: '0 */6 * * *'
+
+  # Allow upstream containers/podman webhook to trigger a documentation rebuild directly
+  repository_dispatch:
+    types: [upstream-docs-updated]
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      podman_docs_ref:
+        description: 'Optional upstream containers/podman commit SHA or ref to build docs from'
+        required: false
+        type: string
 
 # Set workflow-level permissions to read-only by default
 permissions: {}
@@ -18,10 +31,75 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  check_upstream_docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      should_build: ${{ steps.check.outputs.should_build }}
+      target_ref: ${{ steps.check.outputs.target_ref }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Resolve upstream Podman documentation revision
+        id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_REF: ${{ inputs.podman_docs_ref }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PINNED_REV=""
+          if [ -f .podman-docs-revision ]; then
+            PINNED_REV=$(tr -d '[:space:]' < .podman-docs-revision)
+          fi
+
+          # Query latest upstream commit touching docs/source/markdown in containers/podman
+          UPSTREAM_SHA=$(curl -sSf -H "Authorization: Bearer ${GH_TOKEN}" \
+            "https://api.github.com/repos/containers/podman/commits?path=docs/source/markdown&sha=main&per_page=1" \
+            | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(d);console.log(j[0]?.sha||'')}catch{console.log('')}})" || true)
+
+          if [ -z "$UPSTREAM_SHA" ]; then
+            UPSTREAM_SHA=$(git ls-remote https://github.com/containers/podman.git refs/heads/main | awk '{print $1}')
+          fi
+
+          # Check currently deployed revision on podman.io (if available)
+          DEPLOYED_REV=$(curl -sSf "https://podman.io/data/cli-docs/manifest.json" \
+            | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(d);console.log(j.revision||'')}catch{console.log('')}})" || true)
+
+          BASELINE_REV="${DEPLOYED_REV:-$PINNED_REV}"
+
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            if [ -n "$UPSTREAM_SHA" ] && [ "$UPSTREAM_SHA" != "$BASELINE_REV" ]; then
+              echo "Upstream Podman docs changed ($BASELINE_REV -> $UPSTREAM_SHA). Triggering rebuild."
+              echo "should_build=true" >> "$GITHUB_OUTPUT"
+              echo "target_ref=$UPSTREAM_SHA" >> "$GITHUB_OUTPUT"
+            else
+              echo "No upstream Podman docs changes detected (revision: $BASELINE_REV). Skipping scheduled build."
+              echo "should_build=false" >> "$GITHUB_OUTPUT"
+              echo "target_ref=$PINNED_REV" >> "$GITHUB_OUTPUT"
+            fi
+          elif [ "$EVENT_NAME" = "repository_dispatch" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "target_ref=${UPSTREAM_SHA:-$PINNED_REV}" >> "$GITHUB_OUTPUT"
+          elif [ -n "$INPUT_REF" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "target_ref=$INPUT_REF" >> "$GITHUB_OUTPUT"
+          else
+            # Standard push to main: use pinned revision for reproducible builds
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "target_ref=${PINNED_REV:-$UPSTREAM_SHA}" >> "$GITHUB_OUTPUT"
+          fi
+
   setup_and_build:
+    needs: check_upstream_docs
+    if: needs.check_upstream_docs.outputs.should_build == 'true'
     permissions:
       contents: read
     uses: ./.github/workflows/setup_and_build.yml
+    with:
+      podman_docs_ref: ${{ needs.check_upstream_docs.outputs.target_ref }}
   deploy:
     needs: setup_and_build
     # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages

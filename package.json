@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
+    "fetch-docs": "node scripts/fetch-podman-docs.js",
+    "start": "node scripts/fetch-podman-docs.js && docusaurus start",
+    "build": "node scripts/fetch-podman-docs.js --strict && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",

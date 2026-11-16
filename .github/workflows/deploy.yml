@@ -21,7 +21,7 @@ jobs:
   setup_and_build:
     permissions:
       contents: read
-    uses: $/.github/workflows/setup_and_build.yml
+    uses: ./.github/workflows/setup_and_build.yml
   deploy:
     needs: setup_and_build
     # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages

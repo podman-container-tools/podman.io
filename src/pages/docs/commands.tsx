@@ -72,18 +72,36 @@ export default function DocsCommandsPage(): JSX.Element {
     setCurrentSlug(cmd);
   }, [location.search, getQueryCmd]);
 
-  // Load manifest once
+  // Load manifest and listen for upstream updates
   useEffect(() => {
     let mounted = true;
     docsService.getManifest().then(m => {
       if (mounted) setManifest(m);
     });
+
+    const handleManifestUpdate = (e: CustomEvent<DocManifest>) => {
+      if (mounted && e.detail) setManifest(e.detail);
+    };
+
+    const handleInvalidation = () => {
+      if (mounted) {
+        docsService.getManifest(true).then(m => {
+          if (mounted) setManifest(m);
+        });
+      }
+    };
+
+    window.addEventListener('podman-docs-manifest-updated', handleManifestUpdate as EventListener);
+    window.addEventListener('podman-docs-invalidated', handleInvalidation as EventListener);
+
     return () => {
       mounted = false;
+      window.removeEventListener('podman-docs-manifest-updated', handleManifestUpdate as EventListener);
+      window.removeEventListener('podman-docs-invalidated', handleInvalidation as EventListener);
     };
   }, []);
 
-  // Fetch document whenever currentSlug changes
+  // Fetch document whenever currentSlug changes, with live update listener
   useEffect(() => {
     if (!currentSlug || currentSlug === 'overview') {
       setDocContent(null);
@@ -109,8 +127,35 @@ export default function DocsCommandsPage(): JSX.Element {
         if (mounted) setLoading(false);
       });
 
+    // Listen for live background SWR document updates
+    const handleDocUpdate = (e: CustomEvent<{ slug: string; content: DocContentType }>) => {
+      if (mounted && e.detail && e.detail.slug.toLowerCase() === currentSlug.toLowerCase()) {
+        setDocContent(e.detail.content);
+        setLoading(false);
+      }
+    };
+
+    const handleDocInvalidation = () => {
+      if (mounted) {
+        docsService
+          .getDocument(currentSlug, true)
+          .then(doc => {
+            if (mounted) {
+              setDocContent(doc);
+              setLoading(false);
+            }
+          })
+          .catch(() => undefined);
+      }
+    };
+
+    window.addEventListener('podman-doc-updated', handleDocUpdate as EventListener);
+    window.addEventListener('podman-docs-invalidated', handleDocInvalidation as EventListener);
+
     return () => {
       mounted = false;
+      window.removeEventListener('podman-doc-updated', handleDocUpdate as EventListener);
+      window.removeEventListener('podman-docs-invalidated', handleDocInvalidation as EventListener);
     };
   }, [currentSlug]);
 

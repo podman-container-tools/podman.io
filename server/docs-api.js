@@ -24,7 +24,19 @@ let cachedManifest = null;
 let cachedDocs = new Map();
 let cachedOptions = new Map();
 let latestCommitSha = '';
+let latestCommitEtag = '';
 let lastRefreshedAt = null;
+
+function getAuthHeaders(extraHeaders = {}) {
+  const base = {
+    'User-Agent': 'Podman-Docs-API/1.0',
+    ...extraHeaders,
+  };
+  if (process.env.GITHUB_TOKEN) {
+    base['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
+  }
+  return base;
+}
 
 function fetchUrl(targetUrl, headers = {}) {
   return new Promise((resolve, reject) => {
@@ -33,10 +45,7 @@ function fetchUrl(targetUrl, headers = {}) {
       {
         hostname: parsed.hostname,
         path: parsed.pathname + parsed.search,
-        headers: {
-          'User-Agent': 'Podman-Docs-API/1.0',
-          ...headers,
-        },
+        headers: getAuthHeaders(headers),
       },
       res => {
         if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
@@ -58,22 +67,188 @@ function fetchUrl(targetUrl, headers = {}) {
 }
 
 async function checkLatestCommitSha() {
-  try {
-    const raw = await fetchUrl(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits/${BRANCH}`);
-    const data = JSON.parse(raw);
-    return data.sha;
-  } catch (err) {
-    console.warn('[Docs-API] Could not check commit SHA:', err.message);
-    return null;
+  return new Promise(resolve => {
+    const targetUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=docs/source/markdown&sha=${BRANCH}&per_page=1`;
+    const parsed = new url.URL(targetUrl);
+    const headers = getAuthHeaders({ Accept: 'application/vnd.github.v3+json' });
+    if (latestCommitEtag) {
+      headers['If-None-Match'] = latestCommitEtag;
+    }
+
+    const req = https.get(
+      {
+        hostname: parsed.hostname,
+        path: parsed.pathname + parsed.search,
+        headers,
+      },
+      res => {
+        if (res.statusCode === 304) {
+          res.resume();
+          return resolve(latestCommitSha);
+        }
+        let data = '';
+        res.on('data', chunk => (data += chunk));
+        res.on('end', () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            try {
+              if (res.headers.etag) {
+                latestCommitEtag = res.headers.etag;
+              }
+              const parsedData = JSON.parse(data);
+              if (Array.isArray(parsedData) && parsedData.length > 0 && parsedData[0].sha) {
+                return resolve(parsedData[0].sha);
+              }
+            } catch {
+              // Ignore parse error
+            }
+          }
+          resolve(null);
+        });
+      },
+    );
+    req.on('error', err => {
+      console.warn('[Docs-API] Could not check commit SHA:', err.message);
+      resolve(null);
+    });
+  });
+}
+
+function categorizeCommand(title, section) {
+  if (section === '5') return 'Quadlet & Systemd (Section 5)';
+  if (section === '7') return 'Guides & Troubleshooting (Section 7)';
+
+  const lower = title.toLowerCase();
+  if (lower === 'podman' || lower === 'podman-remote' || lower === 'podman-help' || lower === 'podman-version') {
+    return 'Core CLI';
   }
+  if (lower.startsWith('podman-pod') || lower.startsWith('podman-kube') || lower === 'podman-play-kube') {
+    return 'Pods & Kubernetes';
+  }
+  if (
+    lower.startsWith('podman-image') ||
+    lower.startsWith('podman-manifest') ||
+    [
+      'podman-build',
+      'podman-pull',
+      'podman-push',
+      'podman-images',
+      'podman-rmi',
+      'podman-tag',
+      'podman-untag',
+      'podman-save',
+      'podman-load',
+      'podman-import',
+      'podman-history',
+      'podman-search',
+    ].includes(lower)
+  ) {
+    return 'Images';
+  }
+  if (lower.startsWith('podman-network') || lower.startsWith('podman-volume')) {
+    return 'Networks & Volumes';
+  }
+  if (
+    lower.startsWith('podman-system') ||
+    lower.startsWith('podman-machine') ||
+    lower.startsWith('podman-secret') ||
+    lower.startsWith('podman-farm') ||
+    lower.startsWith('podman-artifact') ||
+    [
+      'podman-info',
+      'podman-events',
+      'podman-login',
+      'podman-logout',
+      'podman-completion',
+      'podman-auto-update',
+      'podman-generate',
+      'podman-healthcheck',
+    ].includes(lower)
+  ) {
+    return 'System & Machine';
+  }
+  if (
+    lower.startsWith('podman-container') ||
+    [
+      'podman-run',
+      'podman-exec',
+      'podman-ps',
+      'podman-start',
+      'podman-stop',
+      'podman-restart',
+      'podman-rm',
+      'podman-kill',
+      'podman-logs',
+      'podman-inspect',
+      'podman-top',
+      'podman-stats',
+      'podman-cp',
+      'podman-attach',
+      'podman-commit',
+      'podman-create',
+      'podman-diff',
+      'podman-export',
+      'podman-init',
+      'podman-mount',
+      'podman-unmount',
+      'podman-pause',
+      'podman-unpause',
+      'podman-port',
+      'podman-rename',
+      'podman-update',
+      'podman-wait',
+    ].includes(lower)
+  ) {
+    return 'Containers';
+  }
+  return 'Other Commands';
+}
+
+function buildCategories(items) {
+  const categoryOrder = [
+    'Core CLI',
+    'Containers',
+    'Pods & Kubernetes',
+    'Images',
+    'Networks & Volumes',
+    'System & Machine',
+    'Quadlet & Systemd (Section 5)',
+    'Guides & Troubleshooting (Section 7)',
+    'Other Commands',
+  ];
+  const categoryMap = new Map();
+  for (const cat of categoryOrder) {
+    categoryMap.set(cat, []);
+  }
+  for (const item of items) {
+    const list = categoryMap.get(item.category) || [];
+    list.push(item);
+    categoryMap.set(item.category, list);
+  }
+  const categories = [];
+  for (const name of categoryOrder) {
+    const list = categoryMap.get(name) || [];
+    if (list.length > 0) {
+      list.sort((a, b) => a.title.localeCompare(b.title));
+      categories.push({
+        id: name.toLowerCase().replace(/[^\w]/g, '-'),
+        name,
+        items: list,
+      });
+    }
+  }
+  return categories;
 }
 
 async function refreshCache() {
   console.log('[Docs-API] Refreshing documentation cache...');
   try {
+    const sha = await checkLatestCommitSha();
+    if (sha) latestCommitSha = sha;
+    const ref = latestCommitSha || BRANCH;
+
     // 1. Fetch options directory
     const optionsRaw = await fetchUrl(
-      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/docs/source/markdown/options?ref=${BRANCH}`,
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/docs/source/markdown/options?ref=${ref}`,
     );
     const optionItems = JSON.parse(optionsRaw);
     for (const item of optionItems) {
@@ -90,7 +265,7 @@ async function refreshCache() {
 
     // 2. Fetch markdown files listing
     const mdRaw = await fetchUrl(
-      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/docs/source/markdown?ref=${BRANCH}`,
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/docs/source/markdown?ref=${ref}`,
     );
     const items = JSON.parse(mdRaw);
     const docs = items.filter(i => i.type === 'file' && (i.name.endsWith('.md') || i.name.endsWith('.md.in')));
@@ -103,11 +278,15 @@ async function refreshCache() {
       const secMatch = doc.name.match(/\.(1|5|7)(?:\.md|\.md\.in)?$/);
       if (secMatch) section = secMatch[1];
 
+      const category = categorizeCommand(cleanSlug, section);
       manifestItems.push({
         slug: cleanSlug,
         title: cleanSlug,
         section,
+        description: `Podman CLI reference documentation for ${cleanSlug}`,
         filename: doc.name,
+        category,
+        isTemplate: doc.name.endsWith('.md.in'),
         downloadUrl: doc.download_url,
       });
     }
@@ -115,6 +294,9 @@ async function refreshCache() {
     cachedManifest = {
       revision: latestCommitSha || 'main',
       generatedAt: new Date().toISOString(),
+      categories: buildCategories(manifestItems),
+      aliases: {},
+      totalCount: manifestItems.length,
       total: manifestItems.length,
       items: manifestItems,
     };
@@ -125,7 +307,31 @@ async function refreshCache() {
   }
 }
 
+function deriveSubcommand(filename, full = false) {
+  let name = filename.replace(/\.(1|5|7)(\.md|\.md\.in)?$/, '');
+  if (!full && name.startsWith('podman-pod-')) {
+    name = name.slice('podman-pod-'.length);
+  } else if (name.startsWith('podman-')) {
+    name = name.slice('podman-'.length);
+  }
+  return name.replace(/-/g, ' ');
+}
+
+function renderConditionals(text, context) {
+  const ifRegex = /<<\s*if\s+(not\s+)?([a-zA-Z0-9_]+)\s*>>([\s\S]*?)<<\s*endif\s*>>/g;
+  return text.replace(ifRegex, (_, notToken, varName, body) => {
+    const isNot = Boolean(notToken);
+    const val = Boolean(context[varName]);
+    const condition = isNot ? !val : val;
+    const elseParts = body.split(/<<\s*else\s*>>/);
+    return condition ? elseParts[0] || '' : elseParts[1] || '';
+  });
+}
+
 function preprocessMarkdown(filename, rawContent) {
+  const isPod = filename.includes('-pod-') || filename.includes('-kube-');
+  const isQuadlet = filename.endsWith('.unit.5.md.in') || filename.endsWith('.unit.5.md');
+
   let content = rawContent;
   let title = filename.replace(/\.(1|5|7)(\.md|\.md\.in)?$/, '');
   let section = '1';
@@ -137,18 +343,43 @@ function preprocessMarkdown(filename, rawContent) {
     content = content.replace(/^%[^\n]*\n+/m, '');
   }
 
+  let description = '';
+  const nameMatch = content.match(/(?:##\s*NAME|(?:\r?\n|^)NAME\r?\n[=-]+)\s*\r?\n+([^\r\n]+)/i);
+  if (nameMatch) {
+    const rawNameLine = nameMatch[1].replace(/\\-/g, '-').trim();
+    const parts = rawNameLine.split(/\s+-\s+/);
+    description = parts.length > 1 ? parts.slice(1).join(' - ').trim() : rawNameLine;
+    content = content.replace(/(?:##\s*NAME|(?:\r?\n|^)NAME\r?\n[=-]+)\s*\r?\n+[^\r\n]+\r?\n*/i, '');
+  }
+
+  // Convert setext headings to ATX
+  content = content.replace(/^([A-Z0-9_ -]+)\r?\n([=-]{3,})\s*$/gm, (_, headingText) => {
+    return `\n## ${headingText.trim()}\n\n`;
+  });
+
+  // Ensure tables have blank lines before and after
+  content = content.replace(/(^[^|\r\n][^\r\n]*)\r?\n(\|[^\r\n]+\|)/gm, '$1\n\n$2');
+  content = content.replace(/(\|[^\r\n]+\|)\r?\n([^|\r\n])/gm, '$1\n\n$2');
+
+  // Resolve conditional blocks
+  content = renderConditionals(content, { is_quadlet: isQuadlet });
+
   // Expand @@option
   content = content.replace(/^@@option\s+([^\s\n]+)/gm, (_, optName) => {
     const key = optName.endsWith('.md') ? optName : `${optName}.md`;
     const snippet = cachedOptions.get(key) || '';
+    if (!snippet) return `<!-- Option [${optName}] included at build time -->`;
     return snippet.replace(/^####>[^\n]*\n?/gm, '').trim();
   });
 
   // Resolve <<pod|container>>
-  const isPod = filename.includes('-pod-') || filename.includes('-kube-');
   content = content.replace(/<<([^|>]*)\|([^|>]*)>>/g, (_, podPart, containerPart) => {
     return isPod ? podPart : containerPart;
   });
+
+  // Resolve <<subcommand>> and <<fullsubcommand>>
+  content = content.replace(/<<subcommand>>/g, deriveSubcommand(filename, false));
+  content = content.replace(/<<fullsubcommand>>/g, deriveSubcommand(filename, true));
 
   // Rewrite links
   content = content.replace(
@@ -158,8 +389,21 @@ function preprocessMarkdown(filename, rawContent) {
       return `[${text}](/docs/commands?cmd=${target}${a})`;
     },
   );
+  content = content.replace(
+    /\[([^\]]+)\]\(([^)]*?)podman\.(1|5|7)(?:\.md|\.md\.in)?(?:#([a-zA-Z0-9_-]+))?\)/g,
+    (_, text, _p, _s, anchor) => {
+      const a = anchor ? `#${anchor}` : '';
+      return `[${text}](/docs/commands?cmd=podman${a})`;
+    },
+  );
 
-  return { title, section, markdown: content };
+  return {
+    title,
+    section,
+    description: description || `Podman CLI reference documentation for ${title}`,
+    filename,
+    markdown: content,
+  };
 }
 
 const server = http.createServer(async (req, res) => {
@@ -219,15 +463,52 @@ const server = http.createServer(async (req, res) => {
     }
 
     try {
-      const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/docs/source/markdown/${slug}.1.md`;
-      let rawText;
-      let usedFilename = `${slug}.1.md`;
-      try {
-        rawText = await fetchUrl(rawUrl);
-      } catch {
-        const inUrl = `${rawUrl}.in`;
-        rawText = await fetchUrl(inUrl);
-        usedFilename = `${slug}.1.md.in`;
+      if (!cachedManifest) {
+        await refreshCache();
+      }
+
+      // Look up slug in cachedManifest to find the exact recorded filename and section
+      let targetDoc = null;
+      if (cachedManifest && cachedManifest.items) {
+        targetDoc = cachedManifest.items.find(i => i.slug.toLowerCase() === slug);
+      }
+
+      let rawText = '';
+      let usedFilename = targetDoc ? targetDoc.filename : null;
+      const ref = latestCommitSha || BRANCH;
+
+      if (targetDoc && targetDoc.downloadUrl) {
+        rawText = await fetchUrl(targetDoc.downloadUrl);
+      } else if (usedFilename) {
+        rawText = await fetchUrl(
+          `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${ref}/docs/source/markdown/${usedFilename}`,
+        );
+      } else {
+        // Fallback across all possible section extensions (1, 5, 7) and .in templates
+        const candidateFiles = [
+          `${slug}.1.md`,
+          `${slug}.1.md.in`,
+          `${slug}.5.md`,
+          `${slug}.5.md.in`,
+          `${slug}.7.md`,
+          `${slug}.7.md.in`,
+        ];
+        let found = false;
+        for (const candidate of candidateFiles) {
+          try {
+            rawText = await fetchUrl(
+              `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${ref}/docs/source/markdown/${candidate}`,
+            );
+            usedFilename = candidate;
+            found = true;
+            break;
+          } catch {
+            // try next candidate
+          }
+        }
+        if (!found) {
+          throw new Error(`Document ${slug} not found`);
+        }
       }
 
       const processed = preprocessMarkdown(usedFilename, rawText);
@@ -235,6 +516,8 @@ const server = http.createServer(async (req, res) => {
         slug,
         title: processed.title,
         section: processed.section,
+        description: processed.description,
+        filename: processed.filename || usedFilename,
         markdown: processed.markdown,
         cachedAt: new Date().toISOString(),
       };

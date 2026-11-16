@@ -156,7 +156,7 @@ export class PodmanMarkdownPreprocessor {
     });
   }
 
-  private extractTOC(markdown: string): TOCHeading[] {
+  public extractTOC(markdown: string): TOCHeading[] {
     const headings: TOCHeading[] = [];
     const lines = markdown.split(/\r?\n/);
     const codeBlockRegex = /^```/;

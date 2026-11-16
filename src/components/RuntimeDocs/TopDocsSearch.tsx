@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import clsx from 'clsx';
 import { useHistory } from '@docusaurus/router';
 import { docsService } from '@site/src/services/docsService';
-import type { DocManifest, DocMetadata } from '@site/src/services/docsTypes';
+import type { DocManifest } from '@site/src/services/docsTypes';
 
 interface SearchItem {
   id: string;

@@ -340,7 +340,7 @@ export default function ModernDocSidebar({
     return (params.get('cmd') || '').toLowerCase();
   }, [currentCommandSlug, location.search]);
 
-  // Load manifest once
+  // Load manifest and listen for live updates
   useEffect(() => {
     let mounted = true;
     docsService.getManifest().then(m => {
@@ -348,8 +348,26 @@ export default function ModernDocSidebar({
         setManifest(m);
       }
     });
+
+    const handleManifestUpdate = (e: CustomEvent<DocManifest>) => {
+      if (mounted && e.detail) setManifest(e.detail);
+    };
+
+    const handleInvalidation = () => {
+      if (mounted) {
+        docsService.getManifest(true).then(m => {
+          if (mounted) setManifest(m);
+        });
+      }
+    };
+
+    window.addEventListener('podman-docs-manifest-updated', handleManifestUpdate as EventListener);
+    window.addEventListener('podman-docs-invalidated', handleInvalidation as EventListener);
+
     return () => {
       mounted = false;
+      window.removeEventListener('podman-docs-manifest-updated', handleManifestUpdate as EventListener);
+      window.removeEventListener('podman-docs-invalidated', handleInvalidation as EventListener);
     };
   }, []);
 

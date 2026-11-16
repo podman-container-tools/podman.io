@@ -11,8 +11,7 @@ up Podman and perform some basic commands.
 
 ## Podman Documentation
 
-The documentation for Podman is located
-[here](https://docs.podman.io).
+The complete CLI command and API reference documentation is available directly in the [Podman CLI Reference](/docs/commands).
 
 ## Installing Podman
 

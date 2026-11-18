@@ -21,13 +21,20 @@ const OUTPUT_DIR = path.join(ROOT_DIR, 'static', 'data', 'cli-docs');
 const COMMANDS_DIR = path.join(OUTPUT_DIR, 'commands');
 const MANIFEST_PATH = path.join(OUTPUT_DIR, 'manifest.json');
 
+function assertSafeGitRef(ref) {
+  if (!ref || ref.startsWith('-') || ref.includes('..') || !/^[A-Za-z0-9._/-]+$/.test(ref)) {
+    throw new Error(`Invalid or unsafe git revision: "${ref}"`);
+  }
+  return ref;
+}
+
 function resolveTargetRevision() {
   if (process.env.PODMAN_DOCS_REF && process.env.PODMAN_DOCS_REF.trim()) {
-    return process.env.PODMAN_DOCS_REF.trim();
+    return assertSafeGitRef(process.env.PODMAN_DOCS_REF.trim());
   }
   if (fs.existsSync(REVISION_FILE)) {
     const rev = fs.readFileSync(REVISION_FILE, 'utf8').trim();
-    if (rev) return rev;
+    if (rev) return assertSafeGitRef(rev);
   }
   try {
     const out = execFileSync('git', ['ls-remote', REPO_URL, 'refs/heads/main'], {
@@ -35,7 +42,7 @@ function resolveTargetRevision() {
       stdio: ['ignore', 'pipe', 'ignore'],
     });
     const sha = out.split(/\s+/)[0];
-    if (sha) return sha;
+    if (sha) return assertSafeGitRef(sha);
   } catch {
     // Fallback to branch name
   }
@@ -395,7 +402,8 @@ function main() {
       const docContent = preprocessMarkdown(filename, rawContent, optionsMap, resolvedSha);
       metadataList.push(docContent.metadata);
 
-      const outPath = path.join(COMMANDS_DIR, `${docContent.metadata.slug.toLowerCase()}.json`);
+      const safeSlug = path.basename(docContent.metadata.slug.toLowerCase()).replace(/[^a-z0-9._-]/g, '-');
+      const outPath = path.join(COMMANDS_DIR, `${safeSlug}.json`);
       fs.writeFileSync(outPath, JSON.stringify(docContent));
     }
 

@@ -147,7 +147,7 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
       <header className="mb-8">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="rounded-full border border-slate-200/80 bg-slate-100 px-2.5 py-0.5 font-mono text-[11px] font-semibold tracking-wide text-slate-700 dark:border-transparent dark:bg-blue-500/[0.12] dark:text-blue-300">
+            <span className="rounded-full bg-[#0284c7]/10 px-2.5 py-0.5 font-mono text-[11px] font-semibold tracking-wide text-[#0284c7] dark:bg-[#1ECCFF]/[0.18] dark:text-[#1ECCFF]">
               Section {metadata.section}
             </span>
             <span className="text-xs font-medium text-gray-500 dark:text-blue-500/80">{metadata.category}</span>

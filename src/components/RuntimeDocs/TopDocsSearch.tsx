@@ -203,8 +203,8 @@ export default function TopDocsSearch({ className, onSelectCommand }: TopDocsSea
 
       {/* Floating Results Dropdown */}
       {isOpen && query.trim() && (
-        <div className="no-scrollbar border-gray-200 animate-in fade-in slide-in-from-top-1 absolute right-0 top-full z-50 mt-2 max-h-[26rem] w-full overflow-y-auto rounded-2xl border bg-white p-2 shadow-2xl duration-150 dark:border-zinc-800 dark:bg-zinc-900 sm:w-80 md:w-96">
-          <div className="text-gray-400 mb-1 flex items-center justify-between border-b border-gray-100 px-3 py-2 text-[11px] font-semibold uppercase tracking-wider dark:border-zinc-800/80 dark:text-zinc-500">
+        <div className="no-scrollbar animate-in fade-in slide-in-from-top-1 absolute right-0 top-full z-50 mt-2 max-h-[26rem] w-full overflow-y-auto rounded-2xl border border-slate-200/90 bg-white p-2 shadow-xl duration-150 dark:border-zinc-800 dark:bg-zinc-900 sm:w-80 md:w-96">
+          <div className="mb-1 flex items-center justify-between border-b border-slate-100 px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:border-zinc-800/80 dark:text-zinc-500">
             <span>Commands & Guides</span>
             <span>
               {results.length} result{results.length === 1 ? '' : 's'}
@@ -212,9 +212,9 @@ export default function TopDocsSearch({ className, onSelectCommand }: TopDocsSea
           </div>
 
           {results.length === 0 ? (
-            <div className="px-4 py-8 text-center text-xs text-gray-500 dark:text-zinc-400">
+            <div className="px-4 py-8 text-center text-xs text-slate-500 dark:text-zinc-400">
               No matching commands or documentation found for{' '}
-              <strong className="text-gray-900 dark:text-white">"{query}"</strong>.
+              <strong className="text-slate-900 dark:text-white">"{query}"</strong>.
             </div>
           ) : (
             <ul className="m-0 list-none space-y-1 p-0">
@@ -223,21 +223,21 @@ export default function TopDocsSearch({ className, onSelectCommand }: TopDocsSea
                   <button
                     type="button"
                     onClick={() => handleSelect(item)}
-                    className="group flex w-full cursor-pointer flex-col gap-1 rounded-xl border-0 bg-transparent p-2.5 text-left transition-colors hover:bg-gray-100/80 dark:hover:bg-zinc-800/80 sm:p-3">
-                    <div className="flex items-center justify-between gap-2">
+                    className="group flex w-full cursor-pointer flex-col gap-1 rounded-xl border-0 bg-transparent p-2.5 text-left transition-colors hover:bg-slate-100/80 dark:hover:bg-zinc-800/80 sm:p-3">
+                    <div className="flex w-full items-center justify-between gap-2">
                       <span
                         className={clsx(
-                          'text-xs font-semibold text-gray-900 transition-colors group-hover:text-gray-900 dark:text-white dark:group-hover:text-white sm:text-sm',
+                          'truncate text-xs font-semibold text-slate-900 transition-colors dark:text-white sm:text-sm',
                           item.type === 'command' && 'font-mono',
                         )}>
                         {item.title}
                       </span>
-                      <span className="font-sans shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-zinc-800 dark:text-zinc-400">
+                      <span className="font-sans shrink-0 rounded-full bg-[#0284c7]/10 px-2.5 py-0.5 text-[10px] font-semibold text-[#0284c7] dark:bg-[#1eccff]/20 dark:text-[#1eccff]">
                         {item.category}
                       </span>
                     </div>
                     {item.description && (
-                      <p className="m-0 line-clamp-1 text-[11px] text-gray-500 dark:text-zinc-400 sm:text-xs">
+                      <p className="m-0 line-clamp-1 text-[11px] text-slate-500 dark:text-zinc-400 sm:text-xs">
                         {item.description}
                       </p>
                     )}

@@ -278,7 +278,7 @@ export default function DocsCommandsPage(): JSX.Element {
                 <>
                   <span className="text-gray-500 dark:text-[#1ECCFF]">Overview</span>
                   <span className="text-gray-400 dark:text-[#1ECCFF]/60">›</span>
-                  <span className="rounded-full border border-slate-200/80 bg-slate-100 px-2.5 py-0.5 font-medium text-slate-800 dark:border-transparent dark:bg-[#1ECCFF]/[0.18] dark:text-[#1ECCFF]">
+                  <span className="rounded-full bg-[#0284c7]/10 px-2.5 py-0.5 font-medium text-[#0284c7] dark:bg-[#1ECCFF]/[0.18] dark:text-[#1ECCFF]">
                     What is Podman?
                   </span>
                 </>
@@ -292,7 +292,7 @@ export default function DocsCommandsPage(): JSX.Element {
                     </>
                   )}
                   <span className="text-gray-400 dark:text-[#1ECCFF]/60">›</span>
-                  <span className="rounded-full border border-slate-200/80 bg-slate-100 px-2.5 py-0.5 font-mono font-medium text-slate-800 dark:border-transparent dark:bg-[#1ECCFF]/[0.18] dark:text-[#1ECCFF]">
+                  <span className="rounded-full bg-[#0284c7]/10 px-2.5 py-0.5 font-mono font-medium text-[#0284c7] dark:bg-[#1ECCFF]/[0.18] dark:text-[#1ECCFF]">
                     {currentSlug}
                   </span>
                 </>

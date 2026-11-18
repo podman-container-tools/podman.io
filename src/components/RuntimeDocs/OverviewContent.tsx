@@ -55,6 +55,19 @@ curl http://localhost:8080`;
           What is Podman?
         </h1>
 
+        <div className="mb-6">
+          <img
+            src="/logos/optimized/podman-logo-orig-884w-293h.webp"
+            alt="Podman logo"
+            className="block h-auto max-w-full dark:hidden"
+          />
+          <img
+            src="/logos/optimized/podman-logo-dark-884w-293h.webp"
+            alt="Podman logo"
+            className="hidden h-auto max-w-full dark:block"
+          />
+        </div>
+
         <p className="text-gray-800 mb-4 text-base leading-relaxed dark:text-zinc-200 sm:text-lg">
           <strong>Podman</strong> (the POD MANager) is a daemonless, open source, Linux native tool designed to make it
           easy to find, run, build, share and deploy applications using Open Containers Initiative (OCI) Containers and

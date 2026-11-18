@@ -7,7 +7,7 @@ on:
 
   # Periodically check if upstream containers/podman CLI documentation changed
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 */4 * * *'
 
   # Allow upstream containers/podman webhook to trigger a documentation rebuild directly
   repository_dispatch:
@@ -51,29 +51,49 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
+          validate_ref() {
+            case "$1" in
+              ""|-*|*..*|*[![:alnum:]._/-]*) return 1 ;;
+              *) return 0 ;;
+            esac
+          }
+
           PINNED_REV=""
           if [ -f .podman-docs-revision ]; then
-            PINNED_REV=$(tr -d '[:space:]' < .podman-docs-revision)
+            RAW_PIN=$(tr -d '[:space:]' < .podman-docs-revision)
+            if validate_ref "$RAW_PIN"; then
+              PINNED_REV="$RAW_PIN"
+            fi
           fi
 
           # Query latest upstream commit touching docs/source/markdown in containers/podman
-          UPSTREAM_SHA=$(curl -sSf -H "Authorization: Bearer ${GH_TOKEN}" \
+          RAW_UPSTREAM=$(curl -sSf -H "Authorization: Bearer ${GH_TOKEN}" \
             "https://api.github.com/repos/containers/podman/commits?path=docs/source/markdown&sha=main&per_page=1" \
             | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(d);console.log(j[0]?.sha||'')}catch{console.log('')}})" || true)
 
-          if [ -z "$UPSTREAM_SHA" ]; then
-            UPSTREAM_SHA=$(git ls-remote https://github.com/containers/podman.git refs/heads/main | awk '{print $1}')
+          if [ -z "$RAW_UPSTREAM" ]; then
+            RAW_UPSTREAM=$(git ls-remote https://github.com/containers/podman.git refs/heads/main | awk '{print $1}')
+          fi
+
+          UPSTREAM_SHA=""
+          if validate_ref "$RAW_UPSTREAM"; then
+            UPSTREAM_SHA="$RAW_UPSTREAM"
           fi
 
           # Check currently deployed revision from gh-pages branch (with fallback to live site)
-          DEPLOYED_REV=$(curl -sSf -H "Authorization: Bearer ${GH_TOKEN}" \
+          RAW_DEPLOYED=$(curl -sSf -H "Authorization: Bearer ${GH_TOKEN}" \
             -H "Accept: application/vnd.github.raw+json" \
             "https://api.github.com/repos/${GH_REPO}/contents/data/cli-docs/manifest.json?ref=gh-pages" \
             | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(d);console.log(j.revision||'')}catch{console.log('')}})" || true)
 
-          if [ -z "$DEPLOYED_REV" ]; then
-            DEPLOYED_REV=$(curl -sSf "https://podman.io/data/cli-docs/manifest.json" \
+          if [ -z "$RAW_DEPLOYED" ]; then
+            RAW_DEPLOYED=$(curl -sSf "https://podman.io/data/cli-docs/manifest.json" \
               | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(d);console.log(j.revision||'')}catch{console.log('')}})" || true)
+          fi
+
+          DEPLOYED_REV=""
+          if validate_ref "$RAW_DEPLOYED"; then
+            DEPLOYED_REV="$RAW_DEPLOYED"
           fi
 
           BASELINE_REV="${DEPLOYED_REV:-$PINNED_REV}"
@@ -90,6 +110,10 @@ jobs:
               echo "target_ref=$BASELINE_REV" >> "$GITHUB_OUTPUT"
             fi
           elif [ -n "$INPUT_REF" ]; then
+            if ! validate_ref "$INPUT_REF"; then
+              echo "Invalid podman_docs_ref input: $INPUT_REF" >&2
+              exit 1
+            fi
             echo "should_build=true" >> "$GITHUB_OUTPUT"
             echo "target_ref=$INPUT_REF" >> "$GITHUB_OUTPUT"
           else
@@ -160,9 +184,12 @@ jobs:
           CURRENT_PIN=$(printf '%s' "$FILE_JSON" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(d);console.log(Buffer.from(j.content||'', 'base64').toString('utf8').trim())}catch{console.log('')}})")
           FILE_SHA=$(printf '%s' "$FILE_JSON" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(d);console.log(j.sha||'')}catch{console.log('')}})")
           if [ -n "$FILE_SHA" ] && [ "$CURRENT_PIN" != "$DEPLOYED_REF" ]; then
+            export B64_CONTENT
             B64_CONTENT=$(printf '%s\n' "$DEPLOYED_REF" | base64 | tr -d '\n')
+            export FILE_SHA
+            PAYLOAD=$(node -e "process.stdout.write(JSON.stringify({message:'chore: sync .podman-docs-revision to ' + process.env.DEPLOYED_REF + ' [skip ci]',content:process.env.B64_CONTENT,sha:process.env.FILE_SHA,branch:'main'}))")
             curl -sSf -X PUT -H "Authorization: Bearer ${GH_TOKEN}" \
               -H "Accept: application/vnd.github+json" \
               "https://api.github.com/repos/${GH_REPO}/contents/.podman-docs-revision" \
-              -d "{\"message\":\"chore: sync .podman-docs-revision to ${DEPLOYED_REF} [skip ci]\",\"content\":\"${B64_CONTENT}\",\"sha\":\"${FILE_SHA}\",\"branch\":\"main\"}" > /dev/null || true
+              -d "$PAYLOAD" > /dev/null || true
           fi

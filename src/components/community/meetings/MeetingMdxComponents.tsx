@@ -125,6 +125,39 @@ const MeetingAnchor: React.FC<React.AnchorHTMLAttributes<HTMLAnchorElement>> = (
 
 const IsInsidePreContext = React.createContext(false);
 
+function MeetingCodeBlock({ rawText, children, ...props }: React.HTMLAttributes<HTMLPreElement> & { rawText: string }) {
+  const [copied, setCopied] = React.useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(rawText.replace(/\n$/, ''));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="group relative my-4 overflow-hidden rounded-xl border border-black/[0.08] bg-gray-900 shadow-sm dark:border-white/10">
+      <button
+        type="button"
+        onClick={handleCopy}
+        title={copied ? 'Copied!' : 'Copy to clipboard'}
+        aria-label="Copy code"
+        className="absolute right-2.5 top-2.5 z-10 flex cursor-pointer items-center gap-1.5 rounded-lg border-0 bg-gray-900/80 px-2 py-1.5 text-zinc-400 transition-all hover:bg-white/10 hover:text-zinc-100">
+        {copied ? (
+          <>
+            <Icon icon="material-symbols:check-rounded" className="h-4 w-4 text-emerald-400" />
+            <span className="font-sans text-[11px] font-medium text-emerald-400">Copied!</span>
+          </>
+        ) : (
+          <Icon icon="material-symbols:content-copy-outline" className="h-4 w-4" />
+        )}
+      </button>
+      <pre className="max-h-96 overflow-auto p-5 pr-14 font-mono text-xs leading-relaxed text-gray-100" {...props}>
+        <IsInsidePreContext.Provider value={true}>{children}</IsInsidePreContext.Provider>
+      </pre>
+    </div>
+  );
+}
+
 export const meetingMdxComponents = {
   h1: () => null,
   h2: () => null,
@@ -202,11 +235,9 @@ export const meetingMdxComponents = {
     }
 
     return (
-      <div className="relative my-4 overflow-hidden rounded-xl border border-black/[0.08] bg-gray-900 shadow-sm dark:border-white/10">
-        <pre className="max-h-96 overflow-auto p-5 font-mono text-xs leading-relaxed text-gray-100" {...props}>
-          <IsInsidePreContext.Provider value={true}>{children}</IsInsidePreContext.Provider>
-        </pre>
-      </div>
+      <MeetingCodeBlock rawText={rawText} {...props}>
+        {children}
+      </MeetingCodeBlock>
     );
   },
   code: ({ children, className, ...props }: React.HTMLAttributes<HTMLElement>) => {

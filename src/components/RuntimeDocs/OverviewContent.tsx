@@ -51,7 +51,7 @@ curl http://localhost:8080`;
     <div className="space-y-10">
       {/* Title & Introduction */}
       <div>
-        <h1 className="mb-4 !border-b-0 !border-none text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+        <h1 className="mb-4 !border-b-0 !border-none !text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white md:!text-4xl">
           What is Podman?
         </h1>
 
@@ -68,13 +68,13 @@ curl http://localhost:8080`;
           />
         </div>
 
-        <p className="text-gray-800 mb-4 text-base leading-relaxed dark:text-zinc-200 sm:text-lg">
+        <p className="text-gray-800 mb-4 !text-[15px] leading-relaxed dark:text-zinc-200 sm:!text-base">
           <strong>Podman</strong> (the POD MANager) is a daemonless, open source, Linux native tool designed to make it
           easy to find, run, build, share and deploy applications using Open Containers Initiative (OCI) Containers and
           Container Images.
         </p>
 
-        <p className="text-sm leading-relaxed text-gray-700 dark:text-zinc-300 sm:text-base">
+        <p className="!text-[15px] leading-relaxed text-gray-700 dark:text-zinc-300 sm:!text-base">
           Podman provides a command-line interface (CLI) familiar to anyone who has used the Docker Container Engine.
           Most users can simply alias Docker to Podman (<code className="inline-code-var">alias docker=podman</code>)
           without issues. Similar to other common Container Engines, Podman relies on an OCI-compliant Container Runtime
@@ -85,11 +85,11 @@ curl http://localhost:8080`;
 
       {/* Architecture Highlights */}
       <div>
-        <h2 className="mb-4 !border-b-0 !border-none text-xl font-bold text-gray-900 dark:text-white">
+        <h2 className="mb-4 !border-b-0 !border-none !text-xl font-bold tracking-tight text-gray-900 dark:text-white sm:!text-2xl">
           Architecture & Key Features
         </h2>
 
-        <div className="space-y-3 text-sm leading-relaxed text-gray-700 dark:text-zinc-300">
+        <div className="space-y-3 text-gray-700 dark:text-zinc-300 [&_p]:!text-[15px] [&_p]:leading-relaxed sm:[&_p]:!text-base">
           <p>
             <strong className="text-gray-900 dark:text-white">Daemonless Architecture:</strong> Unlike Docker, Podman
             does not require a running background daemon (like <code className="inline-code-var">dockerd</code>) to
@@ -123,8 +123,10 @@ curl http://localhost:8080`;
 
       {/* Quick Start Example */}
       <div>
-        <h2 className="mb-3 !border-b-0 !border-none text-xl font-bold text-gray-900 dark:text-white">Quick Start</h2>
-        <p className="text-gray-600 mb-4 text-sm dark:text-zinc-400">
+        <h2 className="mb-3 !border-b-0 !border-none !text-xl font-bold tracking-tight text-gray-900 dark:text-white sm:!text-2xl">
+          Quick Start
+        </h2>
+        <p className="text-gray-600 mb-4 !text-[15px] leading-relaxed dark:text-zinc-400 sm:!text-base">
           Start your first container in seconds without needing a daemon:
         </p>
         <div className="shadow-2xs group relative overflow-hidden rounded-lg border border-[#e2e8f0] bg-[#f8fafc] font-mono text-xs text-slate-800 transition-colors hover:border-[#cbd5e1] dark:border-[#27272a] dark:bg-[#18181b] dark:text-zinc-100 dark:hover:border-[#3f3f46] sm:rounded-xl sm:text-[13px]">
@@ -181,7 +183,7 @@ curl http://localhost:8080`;
       {/* Common Commands Reference Table */}
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="m-0 !border-b-0 !border-none text-xl font-bold text-gray-900 dark:text-white">
+          <h2 className="m-0 !border-b-0 !border-none !text-xl font-bold tracking-tight text-gray-900 dark:text-white sm:!text-2xl">
             Common Commands
           </h2>
           {manifest && (

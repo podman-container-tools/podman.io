@@ -232,13 +232,21 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
         <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white md:text-4xl">
           {metadata.title}
         </h1>
-        <p className="text-gray-600 m-0 text-base font-normal leading-relaxed dark:text-zinc-400">
-          {metadata.description}
+        <p className="text-gray-600 m-0 !text-[15px] font-normal leading-relaxed dark:text-zinc-400 sm:!text-base">
+          {metadata.description.split(/(`[^`]+`)/g).map((part, idx) =>
+            part.startsWith('`') && part.endsWith('`') ? (
+              <code key={idx} className="inline-code-var">
+                {part.slice(1, -1)}
+              </code>
+            ) : (
+              part
+            ),
+          )}
         </p>
       </header>
 
       {/* Markdown Content */}
-      <div className="text-gray-800 space-y-4 text-base leading-relaxed dark:text-zinc-200">
+      <div className="text-gray-800 space-y-4 !text-[15px] leading-relaxed dark:text-zinc-200 sm:!text-base">
         <BrowserOnly fallback={<div className="h-40 animate-pulse rounded-xl bg-gray-100 dark:bg-zinc-800" />}>
           {() => (
             <Suspense fallback={<div className="h-40 animate-pulse rounded-xl bg-gray-100 dark:bg-zinc-800" />}>
@@ -251,7 +259,7 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
                     return (
                       <h1
                         id={id}
-                        className="group mb-4 mt-10 scroll-mt-20 !border-b-0 !border-none !pb-0 text-2xl font-bold text-gray-900 dark:text-white">
+                        className="group mb-4 mt-10 scroll-mt-20 !border-b-0 !border-none !pb-0 !text-2xl font-bold text-gray-900 dark:text-white sm:!text-3xl">
                         <a
                           href={`#${id}`}
                           className="text-gray-900 no-underline hover:text-sky-600 dark:text-white dark:hover:text-blue-500">
@@ -269,7 +277,7 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
                     return (
                       <h2
                         id={id}
-                        className="group mb-3 mt-10 scroll-mt-20 !border-b-0 !border-none !pb-0 text-xl font-bold text-gray-900 dark:text-white">
+                        className="group mb-3 mt-10 scroll-mt-20 !border-b-0 !border-none !pb-0 !text-xl font-bold tracking-tight text-gray-900 dark:text-white sm:!text-2xl">
                         <a
                           href={`#${id}`}
                           className="text-gray-900 no-underline hover:text-sky-600 dark:text-white dark:hover:text-blue-500">
@@ -287,7 +295,7 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
                     return (
                       <h3
                         id={id}
-                        className="group mb-2 mt-8 scroll-mt-20 !border-b-0 !border-none !pb-0 text-lg font-semibold text-gray-900 dark:text-white">
+                        className="group mb-2 mt-8 scroll-mt-20 !border-b-0 !border-none !pb-0 !text-lg font-semibold text-gray-900 dark:text-white sm:!text-xl">
                         <a
                           href={`#${id}`}
                           className="text-gray-900 no-underline hover:text-sky-600 dark:text-white dark:hover:text-blue-500">
@@ -304,13 +312,17 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
                     return (
                       <h4
                         id={id}
-                        className="mb-1 mt-6 scroll-mt-20 font-mono text-sm font-semibold text-sky-700 dark:text-blue-300">
+                        className="mb-1 mt-6 scroll-mt-20 font-mono !text-sm font-semibold text-sky-700 dark:text-blue-300 sm:!text-base">
                         {children}
                       </h4>
                     );
                   },
                   p({ children }) {
-                    return <p className="my-3 leading-relaxed text-gray-700 dark:text-zinc-300">{children}</p>;
+                    return (
+                      <p className="my-3 !text-[15px] leading-relaxed text-gray-700 dark:text-zinc-300 sm:!text-base">
+                        {children}
+                      </p>
+                    );
                   },
                   pre({ children }) {
                     return <>{children}</>;

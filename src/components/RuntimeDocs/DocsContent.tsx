@@ -131,7 +131,7 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
   }
 
   const { metadata, markdown } = content;
-  const upstreamUrl = `https://github.com/podman-container-tools/podman/blob/main/docs/source/markdown/${metadata.filename}`;
+  const upstreamUrl = `https://github.com/containers/podman/blob/main/docs/source/markdown/${metadata.filename}`;
 
   const copyPageLink = () => {
     if (typeof window !== 'undefined') {

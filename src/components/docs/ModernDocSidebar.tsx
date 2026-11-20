@@ -21,7 +21,7 @@ function formatHeadingTitle(value: string): string {
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
+    .replace(/&#39;/g, String.fromCharCode(39))
     .trim();
 }
 
@@ -112,7 +112,7 @@ const RESOURCE_ITEMS: NavLinkItem[] = [
   {
     id: 'network',
     label: 'Basic Networking',
-    href: 'https://github.com/podman-container-tools/podman/blob/main/docs/tutorials/basic_networking.md',
+    href: 'https://github.com/containers/podman/blob/main/docs/tutorials/basic_networking.md',
     isExternal: true,
     icon: () => (
       <svg

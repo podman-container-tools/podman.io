@@ -611,7 +611,9 @@ export default function ModernDocSidebar({
                   )}>
                   <div className="flex min-w-0 items-center gap-2.5">
                     {getCategoryIcon(cat.id)}
-                    <span className="doc-nav-title truncate">{cat.name}</span>
+                    <span className="doc-nav-title truncate" title={cat.name}>
+                      {cat.name}
+                    </span>
                   </div>
 
                   <div className="flex shrink-0 items-center gap-2">

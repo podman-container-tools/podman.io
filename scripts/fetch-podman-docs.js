@@ -55,7 +55,7 @@ function categorizeCommand(title, section) {
 
   const lower = title.toLowerCase();
   if (lower === 'podman' || lower === 'podman-remote' || lower === 'podman-help' || lower === 'podman-version') {
-    return 'Core CLI';
+    return 'Core CLI (Man Pages)';
   }
   if (lower.startsWith('podman-pod') || lower.startsWith('podman-kube') || lower === 'podman-play-kube') {
     return 'Pods & Kubernetes';
@@ -191,7 +191,7 @@ function extractTOC(markdown) {
 
       headings.push({
         id,
-        value: cleanText,
+        text: cleanText,
         level,
       });
     }
@@ -295,7 +295,7 @@ function preprocessMarkdown(filename, rawContent, optionsMap, revision) {
 
 function buildManifest(items, revision) {
   const categoryOrder = [
-    'Core CLI',
+    'Core CLI (Man Pages)',
     'Containers',
     'Pods & Kubernetes',
     'Images',

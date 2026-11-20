@@ -147,22 +147,31 @@ div[class*='codeBlockContainer'] pre code {
 }
 
 /* Copy button inside Docusaurus classic theme code blocks */
+.theme-code-block div[class*='buttonGroup'],
+div[class*='codeBlockContainer'] div[class*='buttonGroup'] {
+  top: 0.65rem !important;
+  right: 0.65rem !important;
+  z-index: 10 !important;
+}
+
+.theme-code-block div[class*='buttonGroup'] button,
 div[class*='codeBlockContainer'] button[class*='copyButton'],
 div[class*='codeBlockContainer'] div[class*='buttonGroup'] button {
   background: transparent !important;
   border: none !important;
-  color: #94a3b8 !important;
-  top: 0.65rem !important;
-  right: 0.65rem !important;
+  color: #64748b !important;
   padding: 0.35rem 0.5rem !important;
-  border-radius: 0.375rem !important;
-  opacity: 0.75 !important;
+  border-radius: 0.5rem !important;
+  opacity: 1 !important;
+  line-height: 1 !important;
   transition:
     opacity 0.15s ease,
     color 0.15s ease,
     background-color 0.15s ease !important;
 }
 
+.theme-code-block:hover div[class*='buttonGroup'] button,
+.theme-code-block div[class*='buttonGroup'] button:hover,
 div[class*='codeBlockContainer']:hover button[class*='copyButton'],
 div[class*='codeBlockContainer'] button[class*='copyButton']:hover {
   opacity: 1 !important;
@@ -170,10 +179,12 @@ div[class*='codeBlockContainer'] button[class*='copyButton']:hover {
   background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
+[data-theme='dark'] .theme-code-block div[class*='buttonGroup'] button,
 [data-theme='dark'] div[class*='codeBlockContainer'] button[class*='copyButton'] {
-  color: #71717a !important;
+  color: #a1a1aa !important;
 }
 
+[data-theme='dark'] .theme-code-block div[class*='buttonGroup'] button:hover,
 [data-theme='dark'] div[class*='codeBlockContainer'] button[class*='copyButton']:hover {
   color: #f1f5f9 !important;
   background-color: rgba(255, 255, 255, 0.08) !important;

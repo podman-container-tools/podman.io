@@ -35,13 +35,3 @@ export interface DocManifest {
   aliases: Record<string, string>;
   totalCount: number;
 }
-
-export interface SearchResult {
-  title: string;
-  slug: string;
-  category: string;
-  section: string;
-  description: string;
-  matchedText?: string;
-  matchType: 'title' | 'description' | 'option' | 'content';
-}

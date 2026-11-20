@@ -1,5 +1,5 @@
 import { PodmanMarkdownPreprocessor } from './podmanMarkdownPreprocessor';
-import type { DocManifest, DocContent, DocCategory, DocMetadata, SearchResult } from './docsTypes';
+import type { DocManifest, DocContent, DocCategory, DocMetadata } from './docsTypes';
 
 const REPO_OWNER = 'containers';
 const REPO_NAME = 'podman';
@@ -18,7 +18,6 @@ interface CacheEntry<T> {
   commitSha?: string;
 }
 
-// Fallback top core commands in case GitHub API rate limits in client browser
 const CORE_COMMANDS_FALLBACK: { slug: string; filename: string; title: string; section: string; desc: string }[] = [
   {
     slug: 'podman',
@@ -170,11 +169,11 @@ export class DocsService {
   private manifestCache: CacheEntry<DocManifest> | null = null;
   private optionsCache: Map<string, string> = new Map();
 
-  // API backend connection (if deployed or configured)
-  private apiBaseUrl: string | null = null;
-  private apiChecked = false;
+  // In-flight request deduplication so simultaneous mounts share a single fetch
+  private manifestPromise: Promise<DocManifest> | null = null;
+  private docPromises: Map<string, Promise<DocContent>> = new Map();
 
-  // Change detection state
+  // Revision tracking & revalidation
   private latestCommitSha: string | null = null;
   private lastCommitCheckTime = 0;
   private commitCheckPromise: Promise<boolean> | null = null;
@@ -209,9 +208,6 @@ export class DocsService {
     }
   }
 
-  /**
-   * Remove old non-versioned or stale session/local storage keys
-   */
   private cleanLegacyCaches(): void {
     if (typeof window === 'undefined') return;
     try {
@@ -220,13 +216,17 @@ export class DocsService {
         const keysToRemove: string[] = [];
         for (let i = 0; i < store.length; i++) {
           const k = store.key(i);
-          if (k && (k.startsWith('podman_doc_') || k.startsWith('podman_docs_')) && !k.startsWith('podman_v5_')) {
+          if (
+            k &&
+            (k.startsWith('podman_doc_') || k.startsWith('podman_docs_') || k.startsWith('podman_v5_')) &&
+            !k.startsWith('podman_v6_')
+          ) {
             keysToRemove.push(k);
           }
         }
         keysToRemove.forEach(k => store.removeItem(k));
       }
-      const savedSha = this.getStorage()?.getItem('podman_v5_latest_sha');
+      const savedSha = this.getStorage()?.getItem('podman_v6_latest_sha');
       if (savedSha) {
         this.latestCommitSha = savedSha;
       }
@@ -236,60 +236,11 @@ export class DocsService {
   }
 
   /**
-   * Determine if a dedicated docs API service is deployed and available
-   */
-  public async getApiBaseUrl(): Promise<string | null> {
-    if (this.apiChecked) return this.apiBaseUrl;
-    this.apiChecked = true;
-
-    // 1. Explicit window global injection (e.g. from environment or script tag)
-    if (typeof window !== 'undefined') {
-      const win = window as unknown as { __DOCS_API_URL__?: string };
-      if (win.__DOCS_API_URL__) {
-        this.apiBaseUrl = String(win.__DOCS_API_URL__).replace(/\/+$/, '');
-        return this.apiBaseUrl;
-      }
-    }
-
-    // 2. Build-time environment variable
-    if (typeof process !== 'undefined' && process.env) {
-      const envUrl = process.env.DOCS_API_URL || process.env.REACT_APP_DOCS_API_URL;
-      if (envUrl) {
-        this.apiBaseUrl = String(envUrl).replace(/\/+$/, '');
-        return this.apiBaseUrl;
-      }
-    }
-
-    // 3. Auto-detect relative endpoint (e.g. if reverse-proxied /api/docs/health)
-    if (typeof window !== 'undefined' && window.location.protocol.startsWith('http')) {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 1200);
-        const res = await fetch('/api/docs/health', { signal: controller.signal });
-        clearTimeout(timeoutId);
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.status === 'ok') {
-            this.apiBaseUrl = ''; // Use current origin
-            return this.apiBaseUrl;
-          }
-        }
-      } catch {
-        // No local/reverse-proxied API found; fallback to client GitHub change detection
-      }
-    }
-
-    this.apiBaseUrl = null;
-    return null;
-  }
-
-  /**
-   * Checks whether GitHub's upstream branch has new commits for markdown docs.
-   * If a new commit SHA is detected, all stale caches are invalidated.
+   * Checks whether a newer static build or upstream commit revision is available.
+   * If the revision changed, invalidates all cached entries immediately.
    */
   public async checkUpstreamChanges(bypassThrottle = false): Promise<boolean> {
     const now = Date.now();
-    // Throttle commit check to once every 60 seconds unless explicitly bypassed on TTL expiry
     if (!bypassThrottle && now - this.lastCommitCheckTime < 60000 && this.latestCommitSha) {
       return false;
     }
@@ -313,56 +264,44 @@ export class DocsService {
               }
             }
           } catch {
-            // Static manifest not found, continue to API/GitHub check
+            // Static manifest unavailable, fall back to GitHub commit check
           }
         }
 
-        // 2. Check API service if available and static manifest did not resolve
+        // 2. Fallback: GitHub commit check with conditional ETag (304 costs 0 rate limit)
         if (!detectedSha) {
-          const apiUrl = await this.getApiBaseUrl();
-          if (apiUrl !== null) {
-            const res = await fetch(`${apiUrl}/api/docs/health`);
-            if (res.ok) {
-              const info = await res.json();
-              detectedSha = info.commitSha || null;
-            }
-          } else {
-            // 3. Direct GitHub commit check with conditional ETag headers (304 responses cost 0 GitHub rate limit quota)
-            const headers: Record<string, string> = {
-              Accept: 'application/vnd.github.v3+json',
-            };
-            const storage = this.getStorage();
-            const storedEtag = storage ? storage.getItem('podman_v5_commit_etag') : null;
-            if (storedEtag) {
-              headers['If-None-Match'] = storedEtag;
-            }
+          const headers: Record<string, string> = {
+            Accept: 'application/vnd.github.v3+json',
+          };
+          const storage = this.getStorage();
+          const storedEtag = storage ? storage.getItem('podman_v6_commit_etag') : null;
+          if (storedEtag) {
+            headers['If-None-Match'] = storedEtag;
+          }
 
-            const res = await fetch(GITHUB_COMMITS_URL, { headers });
-            if (res.status === 304) {
-              // 304 Not Modified: Nothing has changed upstream
-              detectedSha = this.latestCommitSha;
-            } else if (res.ok) {
-              const etag = res.headers.get('ETag');
-              if (etag && storage) {
-                try {
-                  storage.setItem('podman_v5_commit_etag', etag);
-                } catch {
-                  // Ignore
-                }
+          const res = await fetch(GITHUB_COMMITS_URL, { headers });
+          if (res.status === 304) {
+            detectedSha = this.latestCommitSha;
+          } else if (res.ok) {
+            const etag = res.headers.get('ETag');
+            if (etag && storage) {
+              try {
+                storage.setItem('podman_v6_commit_etag', etag);
+              } catch {
+                // Ignore
               }
-              const commits = await res.json();
-              if (Array.isArray(commits) && commits.length > 0 && commits[0].sha) {
-                detectedSha = commits[0].sha;
-              }
+            }
+            const commits = await res.json();
+            if (Array.isArray(commits) && commits.length > 0 && commits[0].sha) {
+              detectedSha = commits[0].sha;
             }
           }
         }
       } catch {
-        // Ignore network failure; fallback to cached data
+        // Ignore network failure; keep existing cached data
       }
 
       if (detectedSha && this.latestCommitSha && detectedSha !== this.latestCommitSha) {
-        // UPSTREAM COMMIT CHANGED! Clear all cached documents and manifest immediately!
         this.invalidateAllCaches(detectedSha);
         return true;
       }
@@ -370,7 +309,7 @@ export class DocsService {
       if (detectedSha && !this.latestCommitSha) {
         this.latestCommitSha = detectedSha;
         try {
-          this.getStorage()?.setItem('podman_v5_latest_sha', detectedSha);
+          this.getStorage()?.setItem('podman_v6_latest_sha', detectedSha);
         } catch {
           // Ignore
         }
@@ -385,7 +324,7 @@ export class DocsService {
   }
 
   /**
-   * Immediately clears memory and storage caches when upstream changes are detected
+   * Immediately clears memory and storage caches when a newer revision is detected.
    */
   public invalidateAllCaches(newSha?: string): void {
     this.manifestCache = null;
@@ -400,16 +339,15 @@ export class DocsService {
           const keysToRemove: string[] = [];
           for (let i = 0; i < storage.length; i++) {
             const k = storage.key(i);
-            if (k && k.startsWith('podman_v5_') && k !== 'podman_v5_commit_etag') {
+            if (k && k.startsWith('podman_v6_') && k !== 'podman_v6_commit_etag') {
               keysToRemove.push(k);
             }
           }
           keysToRemove.forEach(k => storage.removeItem(k));
           if (newSha) {
-            storage.setItem('podman_v5_latest_sha', newSha);
+            storage.setItem('podman_v6_latest_sha', newSha);
           }
         }
-        // Notify components to update
         window.dispatchEvent(new CustomEvent('podman-docs-invalidated'));
       } catch {
         // Ignore
@@ -417,18 +355,14 @@ export class DocsService {
     }
   }
 
-  /**
-   * Revalidates the manifest in background only if upstream commits changed
-   */
   private async revalidateManifestInBackground(): Promise<void> {
     const changed = await this.checkUpstreamChanges(true);
     if (changed) {
       await this.fetchFreshManifest();
     } else if (this.manifestCache) {
-      // Nothing changed upstream — extend cache TTL without consuming API quota
       this.manifestCache.cachedAt = Date.now();
       try {
-        this.getStorage()?.setItem('podman_v5_manifest', JSON.stringify(this.manifestCache));
+        this.getStorage()?.setItem('podman_v6_manifest', JSON.stringify(this.manifestCache));
       } catch {
         // Ignore
       }
@@ -436,12 +370,11 @@ export class DocsService {
   }
 
   /**
-   * Fetches the complete manifest with Stale-While-Revalidate (SWR).
+   * Fetches the complete CLI docs manifest with Stale-While-Revalidate (SWR) and request deduplication.
    */
   public async getManifest(forceRefresh = false): Promise<DocManifest> {
     const now = Date.now();
 
-    // 1. Check in-memory cache
     if (this.manifestCache && !forceRefresh) {
       if (this.isEntryFresh(this.manifestCache, now)) {
         if (typeof window !== 'undefined') {
@@ -449,16 +382,14 @@ export class DocsService {
         }
         return this.manifestCache.data;
       }
-      // SWR: return stale data immediately, revalidate via commit check in background
       this.revalidateManifestInBackground().catch(() => undefined);
       return this.manifestCache.data;
     }
 
-    // 2. Check persistent storage
     const storage = this.getStorage();
     if (storage && !forceRefresh) {
       try {
-        const stored = storage.getItem('podman_v5_manifest');
+        const stored = storage.getItem('podman_v6_manifest');
         if (stored) {
           const entry: CacheEntry<DocManifest> = JSON.parse(stored);
           this.manifestCache = entry;
@@ -468,7 +399,6 @@ export class DocsService {
             }
             return entry.data;
           }
-          // SWR: return stale data immediately, revalidate via commit check in background
           this.revalidateManifestInBackground().catch(() => undefined);
           return entry.data;
         }
@@ -477,12 +407,16 @@ export class DocsService {
       }
     }
 
-    return this.fetchFreshManifest();
+    if (!forceRefresh && this.manifestPromise) {
+      return this.manifestPromise;
+    }
+
+    this.manifestPromise = this.fetchFreshManifest().finally(() => {
+      this.manifestPromise = null;
+    });
+    return this.manifestPromise;
   }
 
-  /**
-   * Fetches fresh manifest from static build bundle, deployed API, or GitHub fallback
-   */
   private async fetchFreshManifest(): Promise<DocManifest> {
     // Strategy A: Load static build-time generated manifest (zero GitHub API dependency)
     if (typeof window !== 'undefined' && window.location.protocol.startsWith('http')) {
@@ -494,7 +428,7 @@ export class DocsService {
             if (staticManifest.revision) {
               this.latestCommitSha = staticManifest.revision;
               try {
-                this.getStorage()?.setItem('podman_v5_latest_sha', staticManifest.revision);
+                this.getStorage()?.setItem('podman_v6_latest_sha', staticManifest.revision);
               } catch {
                 // Ignore
               }
@@ -504,7 +438,7 @@ export class DocsService {
           }
         }
       } catch {
-        // Static manifest unavailable, proceed to fallback
+        // Static manifest unavailable, proceed to GitHub fallback
       }
     }
 
@@ -512,46 +446,13 @@ export class DocsService {
       this.checkUpstreamChanges().catch(() => undefined);
     }
 
-    const apiUrl = await this.getApiBaseUrl();
-
-    // Strategy B: Call deployed documentation service if configured
-    if (apiUrl !== null) {
-      try {
-        const res = await fetch(`${apiUrl}/api/docs/manifest`);
-        if (res.ok) {
-          const rawData = await res.json();
-          let manifest: DocManifest;
-          if (rawData && Array.isArray(rawData.categories)) {
-            manifest = rawData;
-          } else if (rawData && Array.isArray(rawData.items)) {
-            const mappedItems: DocMetadata[] = rawData.items.map((item: Partial<DocMetadata> & { slug: string }) => ({
-              slug: item.slug,
-              title: item.title || item.slug,
-              section: item.section || '1',
-              description: item.description || `Podman CLI reference documentation for ${item.slug}`,
-              filename: item.filename || `${item.slug}.${item.section || '1'}.md`,
-              category: item.category || this.preprocessor.categorizeCommand(item.slug, item.section || '1'),
-              isTemplate: Boolean(item.isTemplate || (item.filename && item.filename.endsWith('.md.in'))),
-            }));
-            manifest = this.buildManifestStructure(mappedItems, rawData.aliases || {});
-          } else {
-            throw new Error('Malformed API manifest');
-          }
-          this.saveManifestCache(manifest);
-          return manifest;
-        }
-      } catch (err) {
-        console.warn('[DocsService] Deployed API manifest fetch failed, falling back to GitHub API:', err);
-      }
-    }
-
-    // Strategy C: Direct GitHub API with conditional ETag support (304 costs 0 rate limit)
+    // Strategy B: Direct GitHub API fallback with conditional ETag support
     try {
       const storage = this.getStorage();
       const headers: Record<string, string> = {
         Accept: 'application/vnd.github.v3+json',
       };
-      const storedManifestEtag = storage ? storage.getItem('podman_v5_manifest_etag') : null;
+      const storedManifestEtag = storage ? storage.getItem('podman_v6_manifest_etag') : null;
       if (storedManifestEtag && this.manifestCache) {
         headers['If-None-Match'] = storedManifestEtag;
       }
@@ -570,7 +471,7 @@ export class DocsService {
       const etag = response.headers.get('ETag');
       if (etag && storage) {
         try {
-          storage.setItem('podman_v5_manifest_etag', etag);
+          storage.setItem('podman_v6_manifest_etag', etag);
         } catch {
           // Ignore
         }
@@ -580,8 +481,6 @@ export class DocsService {
       const files = items.filter(i => i.type === 'file' && (i.name.endsWith('.md') || i.name.endsWith('.md.in')));
 
       const metadataList: DocMetadata[] = [];
-      const aliases: Record<string, string> = {};
-
       for (const file of files) {
         if (file.name === 'README.md' || file.name === '.gitignore') continue;
 
@@ -591,28 +490,24 @@ export class DocsService {
         const secMatch = file.name.match(/\.(1|5|7)(?:\.md|\.md\.in)?$/);
         if (secMatch) section = secMatch[1];
 
-        const title = cleanName;
-        const category = this.preprocessor.categorizeCommand(title, section);
-
         metadataList.push({
-          slug: title,
-          title,
+          slug: cleanName,
+          title: cleanName,
           section,
-          description: `Podman CLI reference documentation for ${title}`,
+          description: `Podman CLI reference documentation for ${cleanName}`,
           filename: file.name,
-          category,
+          category: this.preprocessor.categorizeCommand(cleanName, section),
           isTemplate,
         });
       }
 
-      const manifest = this.buildManifestStructure(metadataList, aliases);
+      const manifest = this.buildManifestStructure(metadataList, {});
       this.saveManifestCache(manifest);
       return manifest;
     } catch {
       if (this.manifestCache) {
         return this.manifestCache.data;
       }
-      // Fallback manifest if offline or rate-limited
       const fallbackList: DocMetadata[] = CORE_COMMANDS_FALLBACK.map(item => ({
         slug: item.slug,
         title: item.title,
@@ -639,7 +534,7 @@ export class DocsService {
 
     if (typeof window !== 'undefined') {
       try {
-        this.getStorage()?.setItem('podman_v5_manifest', JSON.stringify(entry));
+        this.getStorage()?.setItem('podman_v6_manifest', JSON.stringify(entry));
         window.dispatchEvent(new CustomEvent('podman-docs-manifest-updated', { detail: manifest }));
       } catch {
         // Storage limit reached
@@ -649,7 +544,7 @@ export class DocsService {
 
   private buildManifestStructure(items: DocMetadata[], aliases: Record<string, string>): DocManifest {
     const categoryOrder = [
-      'Core CLI',
+      'Core CLI (Man Pages)',
       'Containers',
       'Pods & Kubernetes',
       'Images',
@@ -693,9 +588,6 @@ export class DocsService {
     };
   }
 
-  /**
-   * Revalidates a document in background only if upstream commits changed
-   */
   private async revalidateDocumentInBackground(slug: string): Promise<void> {
     const cacheKey = slug.toLowerCase();
     const changed = await this.checkUpstreamChanges(true);
@@ -706,7 +598,7 @@ export class DocsService {
       if (entry) {
         entry.cachedAt = Date.now();
         try {
-          this.getStorage()?.setItem(`podman_v5_doc_${cacheKey}`, JSON.stringify(entry));
+          this.getStorage()?.setItem(`podman_v6_doc_${cacheKey}`, JSON.stringify(entry));
         } catch {
           // Ignore
         }
@@ -715,13 +607,12 @@ export class DocsService {
   }
 
   /**
-   * Fetches and pre-processes a specific documentation file by slug with Stale-While-Revalidate (SWR).
+   * Fetches a specific CLI documentation page by slug with SWR and request deduplication.
    */
   public async getDocument(slug: string, forceRefresh = false): Promise<DocContent> {
     const cacheKey = slug.toLowerCase();
     const now = Date.now();
 
-    // 1. Check in-memory cache
     const cachedEntry = this.memoryDocCache.get(cacheKey);
     if (!forceRefresh && cachedEntry) {
       if (this.isEntryFresh(cachedEntry, now)) {
@@ -730,16 +621,14 @@ export class DocsService {
         }
         return cachedEntry.data;
       }
-      // SWR: return stale data immediately, revalidate via commit check in background
       this.revalidateDocumentInBackground(slug).catch(() => undefined);
       return cachedEntry.data;
     }
 
-    // 2. Check persistent storage
     const storage = this.getStorage();
     if (!forceRefresh && storage) {
       try {
-        const stored = storage.getItem(`podman_v5_doc_${cacheKey}`);
+        const stored = storage.getItem(`podman_v6_doc_${cacheKey}`);
         if (stored) {
           const entry: CacheEntry<DocContent> = JSON.parse(stored);
           this.memoryDocCache.set(cacheKey, entry);
@@ -749,7 +638,6 @@ export class DocsService {
             }
             return entry.data;
           }
-          // SWR: return stale data immediately, revalidate via commit check in background
           this.revalidateDocumentInBackground(slug).catch(() => undefined);
           return entry.data;
         }
@@ -758,12 +646,18 @@ export class DocsService {
       }
     }
 
-    return this.fetchFreshDocument(slug);
+    const inFlight = this.docPromises.get(cacheKey);
+    if (!forceRefresh && inFlight) {
+      return inFlight;
+    }
+
+    const promise = this.fetchFreshDocument(slug).finally(() => {
+      this.docPromises.delete(cacheKey);
+    });
+    this.docPromises.set(cacheKey, promise);
+    return promise;
   }
 
-  /**
-   * Fetches fresh document from static build bundle, deployed API, or GitHub fallback
-   */
   private async fetchFreshDocument(slug: string): Promise<DocContent> {
     const cacheKey = slug.toLowerCase();
 
@@ -781,46 +675,11 @@ export class DocsService {
           }
         }
       } catch {
-        // Static command JSON unavailable, proceed to fallback
+        // Static command JSON unavailable, proceed to GitHub raw fallback
       }
     }
 
-    const apiUrl = await this.getApiBaseUrl();
-
-    // Strategy B: Call deployed documentation service if configured
-    if (apiUrl !== null) {
-      try {
-        const res = await fetch(`${apiUrl}/api/docs/content?slug=${encodeURIComponent(slug)}`);
-        if (res.ok) {
-          const apiDoc = await res.json();
-          const sec = apiDoc.section || '1';
-          const fname = apiDoc.filename || `${slug}.${sec}.md`;
-          // Convert to DocContent structure
-          const docContent: DocContent = {
-            metadata: {
-              slug,
-              title: apiDoc.title || slug,
-              section: sec,
-              description: apiDoc.description || `Podman CLI reference documentation for ${slug}`,
-              filename: fname,
-              category: this.preprocessor.categorizeCommand(slug, sec),
-              isTemplate: fname.endsWith('.md.in'),
-            },
-            markdown: apiDoc.markdown,
-            toc: this.preprocessor.extractTOC(apiDoc.markdown),
-            revision: this.latestCommitSha || 'main',
-            fetchedAt: new Date().toISOString(),
-          };
-
-          this.saveDocCache(cacheKey, docContent);
-          return docContent;
-        }
-      } catch (err) {
-        console.warn(`[DocsService] Deployed API fetch failed for ${slug}, falling back to GitHub raw:`, err);
-      }
-    }
-
-    // Strategy C: Direct GitHub Raw Fetch with Preprocessing
+    // Strategy B: Direct GitHub Raw Fetch with Preprocessing fallback
     const manifest = await this.getManifest();
     let targetMeta: DocMetadata | undefined;
 
@@ -832,11 +691,7 @@ export class DocsService {
       }
     }
 
-    let filename = targetMeta?.filename;
-    if (!filename) {
-      filename = `${slug}.1.md`;
-    }
-
+    const filename = targetMeta?.filename || `${slug}.1.md`;
     let rawMarkdown = '';
     let usedFilename = filename;
     const rawBaseUrl = this.getRawBaseUrl();
@@ -844,7 +699,6 @@ export class DocsService {
     try {
       const rawRes = await fetch(`${rawBaseUrl}/${filename}`);
       if (!rawRes.ok && filename.endsWith('.md')) {
-        // Try .md.in
         const inRes = await fetch(`${rawBaseUrl}/${filename}.in`);
         if (inRes.ok) {
           rawMarkdown = await inRes.text();
@@ -853,7 +707,6 @@ export class DocsService {
           throw new Error(`Document ${slug} not found`);
         }
       } else if (!rawRes.ok && filename.endsWith('.md.in')) {
-        // Try removing .in
         const mdRes = await fetch(`${rawBaseUrl}/${filename.replace(/\.in$/, '')}`);
         if (mdRes.ok) {
           rawMarkdown = await mdRes.text();
@@ -868,7 +721,6 @@ export class DocsService {
       rawMarkdown = `# ${slug}\n\nUnable to fetch latest documentation for \`${slug}\` from GitHub. Please check your network connection or view the source on GitHub.\n\n[View ${slug} on GitHub](https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${BRANCH}/${BASE_MARKDOWN_PATH})`;
     }
 
-    // If file has @@option directives, fetch option snippets
     const optionMatches = rawMarkdown.match(/^@@option\s+([^\s\n]+)/gm);
     if (optionMatches && optionMatches.length > 0) {
       const optionNames = Array.from(new Set(optionMatches.map(m => m.replace(/^@@option\s+/, '').trim())));
@@ -907,7 +759,7 @@ export class DocsService {
     this.memoryDocCache.set(cacheKey, entry);
     if (typeof window !== 'undefined') {
       try {
-        this.getStorage()?.setItem(`podman_v5_doc_${cacheKey}`, JSON.stringify(entry));
+        this.getStorage()?.setItem(`podman_v6_doc_${cacheKey}`, JSON.stringify(entry));
         window.dispatchEvent(
           new CustomEvent('podman-doc-updated', {
             detail: { slug: cacheKey, content: processed },
@@ -917,38 +769,6 @@ export class DocsService {
         // Ignore storage limit
       }
     }
-  }
-
-  /**
-   * Search across commands and options
-   */
-  public async search(query: string): Promise<SearchResult[]> {
-    if (!query || query.trim().length === 0) return [];
-    const q = query.toLowerCase().trim();
-
-    const manifest = await this.getManifest();
-    const results: SearchResult[] = [];
-
-    for (const cat of manifest.categories) {
-      for (const item of cat.items) {
-        const titleMatch = item.title.toLowerCase().includes(q);
-        const descMatch = item.description.toLowerCase().includes(q);
-
-        if (titleMatch || descMatch) {
-          results.push({
-            title: item.title,
-            slug: item.slug,
-            category: item.category,
-            section: item.section,
-            description: item.description,
-            matchedText: titleMatch ? item.title : item.description,
-            matchType: titleMatch ? 'title' : 'description',
-          });
-        }
-      }
-    }
-
-    return results;
   }
 }
 

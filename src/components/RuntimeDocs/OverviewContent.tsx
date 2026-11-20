@@ -152,10 +152,9 @@ curl http://localhost:8080`;
             ) : (
               <svg
                 className="h-4 w-4 text-slate-400 transition-colors group-hover:text-slate-600 dark:text-zinc-400 dark:group-hover:text-zinc-200"
-                viewBox="0 0 20 20"
+                viewBox="0 0 24 24"
                 fill="currentColor">
-                <path d="M7 3.5A1.5 1.5 0 018.5 2h3.879a1.5 1.5 0 011.06.44l3.122 3.12A1.5 1.5 0 0117 6.622V12.5a1.5 1.5 0 01-1.5 1.5h-1v-3.379a3 3 0 00-.879-2.121L10.5 5.379A3 3 0 008.379 4.5H7v-1z" />
-                <path d="M4.5 6A1.5 1.5 0 003 7.5v9A1.5 1.5 0 004.5 18h7a1.5 1.5 0 001.5-1.5v-5.879a1.5 1.5 0 00-.44-1.06l-3.12-3.122A1.5 1.5 0 008.378 6H4.5z" />
+                <path d="M15 1H4c-1.1 0-2 .9-2 2v13c0 .55.45 1 1 1s1-.45 1-1V3h11c.55 0 1-.45 1-1s-.45-1-1-1zm4 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z" />
               </svg>
             )}
           </button>
@@ -196,12 +195,12 @@ curl http://localhost:8080`;
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left text-xs">
             <thead>
-              <tr className="border-b border-gray-100 dark:border-zinc-800/60">
+              <tr className="border-b border-slate-200 dark:border-zinc-800">
                 <th className="w-48 py-2.5 pr-6 font-semibold text-gray-900 dark:text-white">Command</th>
                 <th className="py-2.5 font-semibold text-gray-900 dark:text-white">Description</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100/60 dark:divide-zinc-800/40">
+            <tbody className="divide-y divide-slate-100 dark:divide-zinc-800/50">
               {COMMON_COMMANDS.map(item => (
                 <tr key={item.slug} className="group transition-colors hover:bg-slate-50 dark:hover:bg-blue-500/[0.06]">
                   <td className="py-2.5 pr-6 font-mono">

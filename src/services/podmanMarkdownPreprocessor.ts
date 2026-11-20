@@ -205,7 +205,7 @@ export class PodmanMarkdownPreprocessor {
       return 'Guides & Troubleshooting (Section 7)';
     }
     if (slug === 'podman' || slug === 'podmansh') {
-      return 'Core CLI';
+      return 'Core CLI (Man Pages)';
     }
     if (
       slug.startsWith('podman-container') ||

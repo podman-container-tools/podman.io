@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   setup_and_build:
-    uses: ./.github/workflows/setup_and_build.yml
+    uses: $/.github/workflows/setup_and_build.yml
   test:
     needs: setup_and_build
     runs-on: ubuntu-latest

@@ -128,7 +128,7 @@ jobs:
     if: needs.check_upstream_docs.outputs.should_build == 'true'
     permissions:
       contents: read
-    uses: ./.github/workflows/setup_and_build.yml
+    uses: $/.github/workflows/setup_and_build.yml
     with:
       podman_docs_ref: ${{ needs.check_upstream_docs.outputs.target_ref }}
   deploy:

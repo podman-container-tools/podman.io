@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
+    "fetch-docs": "node scripts/fetch-podman-docs.js",
+    "start": "node scripts/fetch-podman-docs.js && docusaurus start",
+    "build": "node scripts/fetch-podman-docs.js --strict && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -32,6 +33,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-markdown": "^8.0.5",
+    "remark-gfm": "^3.0.1",
     "tailwindcss": "^3.2.4"
   },
   "devDependencies": {

@@ -1,5 +1,59 @@
 import type { DocMetadata, DocContent, TOCHeading } from './docsTypes';
 
+// Keep in sync with scripts/fetch-podman-docs.js (build-time categorizer)
+const CORE_COMMANDS = ['podman', 'podman-remote', 'podman-help', 'podman-version', 'podmansh'];
+const QUADLET_COMMANDS = ['podman-generate-systemd', 'podman-auto-update'];
+const SYSTEM_COMMANDS = ['podman-info', 'podman-events', 'podman-completion', 'podman-unshare'];
+const IMAGE_COMMANDS = [
+  'podman-build',
+  'podman-pull',
+  'podman-push',
+  'podman-images',
+  'podman-rmi',
+  'podman-tag',
+  'podman-untag',
+  'podman-save',
+  'podman-load',
+  'podman-import',
+  'podman-history',
+  'podman-search',
+  'podman-login',
+  'podman-logout',
+];
+const CONTAINER_COMMANDS = [
+  'podman-run',
+  'podman-exec',
+  'podman-ps',
+  'podman-start',
+  'podman-stop',
+  'podman-restart',
+  'podman-rm',
+  'podman-kill',
+  'podman-logs',
+  'podman-inspect',
+  'podman-top',
+  'podman-stats',
+  'podman-cp',
+  'podman-attach',
+  'podman-commit',
+  'podman-create',
+  'podman-diff',
+  'podman-export',
+  'podman-init',
+  'podman-mount',
+  'podman-unmount',
+  'podman-pause',
+  'podman-unpause',
+  'podman-port',
+  'podman-rename',
+  'podman-update',
+  'podman-wait',
+  'podman-checkpoint',
+  'podman-restore',
+  'podman-generate',
+  'podman-generate-spec',
+];
+
 export class PodmanMarkdownPreprocessor {
   private optionsCache: Map<string, string>;
 
@@ -198,57 +252,33 @@ export class PodmanMarkdownPreprocessor {
   }
 
   public categorizeCommand(slug: string, section: string): string {
-    if (section === '5' || slug.includes('unit') || slug.includes('quadlet')) {
-      return 'Quadlet & Systemd (Section 5)';
+    const name = slug.toLowerCase();
+    const startsWithAny = (prefixes: string[]) =>
+      prefixes.some(prefix => name === prefix || name.startsWith(`${prefix}-`));
+
+    // Quadlet / systemd integration (all section 5 unit files, quadlet guides & commands)
+    if (section === '5' || name.endsWith('.unit') || name.includes('quadlet') || QUADLET_COMMANDS.includes(name)) {
+      return 'Quadlet & Systemd';
     }
-    if (section === '7') {
-      return 'Guides & Troubleshooting (Section 7)';
-    }
-    if (slug === 'podman' || slug === 'podmansh') {
+    if (CORE_COMMANDS.includes(name)) {
       return 'Core CLI (Man Pages)';
     }
-    if (
-      slug.startsWith('podman-container') ||
-      slug === 'podman-run' ||
-      slug === 'podman-exec' ||
-      slug === 'podman-ps' ||
-      slug === 'podman-start' ||
-      slug === 'podman-stop' ||
-      slug === 'podman-rm' ||
-      slug === 'podman-wait' ||
-      slug === 'podman-attach' ||
-      slug === 'podman-commit' ||
-      slug === 'podman-cp' ||
-      slug === 'podman-logs' ||
-      slug === 'podman-top'
-    ) {
-      return 'Containers';
-    }
-    if (slug.startsWith('podman-pod') || slug.startsWith('podman-kube')) {
+    if (startsWithAny(['podman-pod', 'podman-kube', 'podman-compose']) || name === 'podman-play-kube') {
       return 'Pods & Kubernetes';
     }
     if (
-      slug.startsWith('podman-image') ||
-      slug === 'podman-build' ||
-      slug === 'podman-images' ||
-      slug === 'podman-pull' ||
-      slug === 'podman-push' ||
-      slug === 'podman-rmi' ||
-      slug === 'podman-tag' ||
-      slug === 'podman-save' ||
-      slug === 'podman-load'
+      startsWithAny(['podman-image', 'podman-manifest', 'podman-artifact', 'podman-farm']) ||
+      IMAGE_COMMANDS.includes(name)
     ) {
       return 'Images';
     }
-    if (slug.startsWith('podman-network') || slug.startsWith('podman-volume')) {
+    if (startsWithAny(['podman-network', 'podman-volume'])) {
       return 'Networks & Volumes';
     }
-    if (
-      slug.startsWith('podman-machine') ||
-      slug.startsWith('podman-system') ||
-      slug.startsWith('podman-secret') ||
-      slug.startsWith('podman-artifact')
-    ) {
+    if (startsWithAny(['podman-container', 'podman-healthcheck']) || CONTAINER_COMMANDS.includes(name)) {
+      return 'Containers';
+    }
+    if (startsWithAny(['podman-system', 'podman-machine', 'podman-secret']) || SYSTEM_COMMANDS.includes(name)) {
       return 'System & Machine';
     }
     return 'Other Commands';

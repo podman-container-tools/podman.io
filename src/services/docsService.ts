@@ -184,12 +184,12 @@ export class DocsService {
   }
 
   private getRawBaseUrl(): string {
-    const ref = this.latestCommitSha || BRANCH;
+    const ref = (this.latestCommitSha || BRANCH).split(':')[0];
     return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${ref}/${BASE_MARKDOWN_PATH}`;
   }
 
   private getManifestApiUrl(): string {
-    const ref = this.latestCommitSha || BRANCH;
+    const ref = (this.latestCommitSha || BRANCH).split(':')[0];
     return `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${BASE_MARKDOWN_PATH}?ref=${ref}`;
   }
 
@@ -218,15 +218,18 @@ export class DocsService {
           const k = store.key(i);
           if (
             k &&
-            (k.startsWith('podman_doc_') || k.startsWith('podman_docs_') || k.startsWith('podman_v5_')) &&
-            !k.startsWith('podman_v6_')
+            (k.startsWith('podman_doc_') ||
+              k.startsWith('podman_docs_') ||
+              k.startsWith('podman_v5_') ||
+              k.startsWith('podman_v6_')) &&
+            !k.startsWith('podman_v7_')
           ) {
             keysToRemove.push(k);
           }
         }
         keysToRemove.forEach(k => store.removeItem(k));
       }
-      const savedSha = this.getStorage()?.getItem('podman_v6_latest_sha');
+      const savedSha = this.getStorage()?.getItem('podman_v7_latest_sha');
       if (savedSha) {
         this.latestCommitSha = savedSha;
       }
@@ -260,7 +263,9 @@ export class DocsService {
             if (staticRes.ok) {
               const staticManifest: DocManifest = await staticRes.json();
               if (staticManifest && staticManifest.revision) {
-                detectedSha = staticManifest.revision;
+                detectedSha = staticManifest.generatorVersion
+                  ? `${staticManifest.revision}:${staticManifest.generatorVersion}`
+                  : staticManifest.revision;
               }
             }
           } catch {
@@ -274,7 +279,7 @@ export class DocsService {
             Accept: 'application/vnd.github.v3+json',
           };
           const storage = this.getStorage();
-          const storedEtag = storage ? storage.getItem('podman_v6_commit_etag') : null;
+          const storedEtag = storage ? storage.getItem('podman_v7_commit_etag') : null;
           if (storedEtag) {
             headers['If-None-Match'] = storedEtag;
           }
@@ -286,7 +291,7 @@ export class DocsService {
             const etag = res.headers.get('ETag');
             if (etag && storage) {
               try {
-                storage.setItem('podman_v6_commit_etag', etag);
+                storage.setItem('podman_v7_commit_etag', etag);
               } catch {
                 // Ignore
               }
@@ -309,7 +314,7 @@ export class DocsService {
       if (detectedSha && !this.latestCommitSha) {
         this.latestCommitSha = detectedSha;
         try {
-          this.getStorage()?.setItem('podman_v6_latest_sha', detectedSha);
+          this.getStorage()?.setItem('podman_v7_latest_sha', detectedSha);
         } catch {
           // Ignore
         }
@@ -339,13 +344,13 @@ export class DocsService {
           const keysToRemove: string[] = [];
           for (let i = 0; i < storage.length; i++) {
             const k = storage.key(i);
-            if (k && k.startsWith('podman_v6_') && k !== 'podman_v6_commit_etag') {
+            if (k && k.startsWith('podman_v7_') && k !== 'podman_v7_commit_etag') {
               keysToRemove.push(k);
             }
           }
           keysToRemove.forEach(k => storage.removeItem(k));
           if (newSha) {
-            storage.setItem('podman_v6_latest_sha', newSha);
+            storage.setItem('podman_v7_latest_sha', newSha);
           }
         }
         window.dispatchEvent(new CustomEvent('podman-docs-invalidated'));
@@ -362,7 +367,7 @@ export class DocsService {
     } else if (this.manifestCache) {
       this.manifestCache.cachedAt = Date.now();
       try {
-        this.getStorage()?.setItem('podman_v6_manifest', JSON.stringify(this.manifestCache));
+        this.getStorage()?.setItem('podman_v7_manifest', JSON.stringify(this.manifestCache));
       } catch {
         // Ignore
       }
@@ -389,7 +394,7 @@ export class DocsService {
     const storage = this.getStorage();
     if (storage && !forceRefresh) {
       try {
-        const stored = storage.getItem('podman_v6_manifest');
+        const stored = storage.getItem('podman_v7_manifest');
         if (stored) {
           const entry: CacheEntry<DocManifest> = JSON.parse(stored);
           this.manifestCache = entry;
@@ -426,9 +431,12 @@ export class DocsService {
           const staticManifest: DocManifest = await staticRes.json();
           if (staticManifest && Array.isArray(staticManifest.categories)) {
             if (staticManifest.revision) {
-              this.latestCommitSha = staticManifest.revision;
+              const fingerprint = staticManifest.generatorVersion
+                ? `${staticManifest.revision}:${staticManifest.generatorVersion}`
+                : staticManifest.revision;
+              this.latestCommitSha = fingerprint;
               try {
-                this.getStorage()?.setItem('podman_v6_latest_sha', staticManifest.revision);
+                this.getStorage()?.setItem('podman_v7_latest_sha', fingerprint);
               } catch {
                 // Ignore
               }
@@ -452,7 +460,7 @@ export class DocsService {
       const headers: Record<string, string> = {
         Accept: 'application/vnd.github.v3+json',
       };
-      const storedManifestEtag = storage ? storage.getItem('podman_v6_manifest_etag') : null;
+      const storedManifestEtag = storage ? storage.getItem('podman_v7_manifest_etag') : null;
       if (storedManifestEtag && this.manifestCache) {
         headers['If-None-Match'] = storedManifestEtag;
       }
@@ -471,7 +479,7 @@ export class DocsService {
       const etag = response.headers.get('ETag');
       if (etag && storage) {
         try {
-          storage.setItem('podman_v6_manifest_etag', etag);
+          storage.setItem('podman_v7_manifest_etag', etag);
         } catch {
           // Ignore
         }
@@ -534,7 +542,7 @@ export class DocsService {
 
     if (typeof window !== 'undefined') {
       try {
-        this.getStorage()?.setItem('podman_v6_manifest', JSON.stringify(entry));
+        this.getStorage()?.setItem('podman_v7_manifest', JSON.stringify(entry));
         window.dispatchEvent(new CustomEvent('podman-docs-manifest-updated', { detail: manifest }));
       } catch {
         // Storage limit reached
@@ -550,8 +558,7 @@ export class DocsService {
       'Images',
       'Networks & Volumes',
       'System & Machine',
-      'Quadlet & Systemd (Section 5)',
-      'Guides & Troubleshooting (Section 7)',
+      'Quadlet & Systemd',
       'Other Commands',
     ];
 
@@ -598,7 +605,7 @@ export class DocsService {
       if (entry) {
         entry.cachedAt = Date.now();
         try {
-          this.getStorage()?.setItem(`podman_v6_doc_${cacheKey}`, JSON.stringify(entry));
+          this.getStorage()?.setItem(`podman_v7_doc_${cacheKey}`, JSON.stringify(entry));
         } catch {
           // Ignore
         }
@@ -628,7 +635,7 @@ export class DocsService {
     const storage = this.getStorage();
     if (!forceRefresh && storage) {
       try {
-        const stored = storage.getItem(`podman_v6_doc_${cacheKey}`);
+        const stored = storage.getItem(`podman_v7_doc_${cacheKey}`);
         if (stored) {
           const entry: CacheEntry<DocContent> = JSON.parse(stored);
           this.memoryDocCache.set(cacheKey, entry);
@@ -759,7 +766,7 @@ export class DocsService {
     this.memoryDocCache.set(cacheKey, entry);
     if (typeof window !== 'undefined') {
       try {
-        this.getStorage()?.setItem(`podman_v6_doc_${cacheKey}`, JSON.stringify(entry));
+        this.getStorage()?.setItem(`podman_v7_doc_${cacheKey}`, JSON.stringify(entry));
         window.dispatchEvent(
           new CustomEvent('podman-doc-updated', {
             detail: { slug: cacheKey, content: processed },

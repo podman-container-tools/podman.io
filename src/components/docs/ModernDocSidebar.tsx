@@ -274,6 +274,7 @@ function getCategoryIcon(catId: string) {
           <line x1="12" y1="17" x2="12" y2="21" />
         </svg>
       );
+    case 'quadlet---systemd':
     case 'quadlet---systemd--section-5-':
     case 'quadlet-systemd':
       return (

@@ -30,6 +30,7 @@ export interface DocCategory {
 
 export interface DocManifest {
   revision: string;
+  generatorVersion?: string;
   generatedAt: string;
   categories: DocCategory[];
   aliases: Record<string, string>;

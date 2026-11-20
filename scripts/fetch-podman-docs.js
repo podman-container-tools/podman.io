@@ -11,7 +11,12 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const crypto = require('crypto');
 const { execFileSync } = require('child_process');
+
+// Fingerprint of this script: any change to the fetch/categorize logic forces a regeneration,
+// even when the upstream revision is unchanged.
+const GENERATOR_VERSION = crypto.createHash('sha256').update(fs.readFileSync(__filename)).digest('hex').slice(0, 12);
 
 const REPO_URL = 'https://github.com/containers/podman.git';
 const MARKDOWN_SUBPATH = 'docs/source/markdown';
@@ -49,92 +54,103 @@ function resolveTargetRevision() {
   return 'main';
 }
 
-function categorizeCommand(title, section) {
-  if (section === '5') return 'Quadlet & Systemd (Section 5)';
-  if (section === '7') return 'Guides & Troubleshooting (Section 7)';
+const CATEGORY_ORDER = [
+  'Core CLI (Man Pages)',
+  'Containers',
+  'Pods & Kubernetes',
+  'Images',
+  'Networks & Volumes',
+  'System & Machine',
+  'Quadlet & Systemd',
+  'Other Commands',
+];
 
-  const lower = title.toLowerCase();
-  if (lower === 'podman' || lower === 'podman-remote' || lower === 'podman-help' || lower === 'podman-version') {
-    return 'Core CLI (Man Pages)';
+const CORE_COMMANDS = ['podman', 'podman-remote', 'podman-help', 'podman-version', 'podmansh'];
+
+const CONTAINER_COMMANDS = [
+  'podman-run',
+  'podman-exec',
+  'podman-ps',
+  'podman-start',
+  'podman-stop',
+  'podman-restart',
+  'podman-rm',
+  'podman-kill',
+  'podman-logs',
+  'podman-inspect',
+  'podman-top',
+  'podman-stats',
+  'podman-cp',
+  'podman-attach',
+  'podman-commit',
+  'podman-create',
+  'podman-diff',
+  'podman-export',
+  'podman-init',
+  'podman-mount',
+  'podman-unmount',
+  'podman-pause',
+  'podman-unpause',
+  'podman-port',
+  'podman-rename',
+  'podman-update',
+  'podman-wait',
+  'podman-checkpoint',
+  'podman-restore',
+  'podman-generate',
+  'podman-generate-spec',
+];
+
+const IMAGE_COMMANDS = [
+  'podman-build',
+  'podman-pull',
+  'podman-push',
+  'podman-images',
+  'podman-rmi',
+  'podman-tag',
+  'podman-untag',
+  'podman-save',
+  'podman-load',
+  'podman-import',
+  'podman-history',
+  'podman-search',
+  'podman-login',
+  'podman-logout',
+];
+
+const SYSTEM_COMMANDS = ['podman-info', 'podman-events', 'podman-completion', 'podman-unshare'];
+
+const QUADLET_COMMANDS = ['podman-generate-systemd', 'podman-auto-update'];
+
+const startsWithAny = (name, prefixes) => prefixes.some(prefix => name === prefix || name.startsWith(`${prefix}-`));
+
+/**
+ * Places each command in the group it is related to, based on what it manages.
+ * Unknown future commands fall back to "Other Commands" so nothing is ever dropped.
+ */
+function categorizeCommand(title, section) {
+  const name = title.toLowerCase();
+
+  // Quadlet / systemd integration (all section 5 unit files, quadlet guides & commands)
+  if (section === '5' || name.endsWith('.unit') || name.includes('quadlet') || QUADLET_COMMANDS.includes(name)) {
+    return 'Quadlet & Systemd';
   }
-  if (lower.startsWith('podman-pod') || lower.startsWith('podman-kube') || lower === 'podman-play-kube') {
+  if (CORE_COMMANDS.includes(name)) return 'Core CLI (Man Pages)';
+  if (startsWithAny(name, ['podman-pod', 'podman-kube', 'podman-compose']) || name === 'podman-play-kube') {
     return 'Pods & Kubernetes';
   }
   if (
-    lower.startsWith('podman-image') ||
-    lower.startsWith('podman-manifest') ||
-    [
-      'podman-build',
-      'podman-pull',
-      'podman-push',
-      'podman-images',
-      'podman-rmi',
-      'podman-tag',
-      'podman-untag',
-      'podman-save',
-      'podman-load',
-      'podman-import',
-      'podman-history',
-      'podman-search',
-    ].includes(lower)
+    startsWithAny(name, ['podman-image', 'podman-manifest', 'podman-artifact', 'podman-farm']) ||
+    IMAGE_COMMANDS.includes(name)
   ) {
     return 'Images';
   }
-  if (lower.startsWith('podman-network') || lower.startsWith('podman-volume')) {
-    return 'Networks & Volumes';
-  }
-  if (
-    lower.startsWith('podman-system') ||
-    lower.startsWith('podman-machine') ||
-    lower.startsWith('podman-secret') ||
-    lower.startsWith('podman-farm') ||
-    lower.startsWith('podman-artifact') ||
-    [
-      'podman-info',
-      'podman-events',
-      'podman-login',
-      'podman-logout',
-      'podman-completion',
-      'podman-auto-update',
-      'podman-generate',
-      'podman-healthcheck',
-    ].includes(lower)
-  ) {
-    return 'System & Machine';
-  }
-  if (
-    lower.startsWith('podman-container') ||
-    [
-      'podman-run',
-      'podman-exec',
-      'podman-ps',
-      'podman-start',
-      'podman-stop',
-      'podman-restart',
-      'podman-rm',
-      'podman-kill',
-      'podman-logs',
-      'podman-inspect',
-      'podman-top',
-      'podman-stats',
-      'podman-cp',
-      'podman-attach',
-      'podman-commit',
-      'podman-create',
-      'podman-diff',
-      'podman-export',
-      'podman-init',
-      'podman-mount',
-      'podman-unmount',
-      'podman-pause',
-      'podman-unpause',
-      'podman-port',
-      'podman-rename',
-      'podman-update',
-      'podman-wait',
-    ].includes(lower)
-  ) {
+  if (startsWithAny(name, ['podman-network', 'podman-volume'])) return 'Networks & Volumes';
+  if (startsWithAny(name, ['podman-container', 'podman-healthcheck']) || CONTAINER_COMMANDS.includes(name)) {
     return 'Containers';
+  }
+  if (startsWithAny(name, ['podman-system', 'podman-machine', 'podman-secret']) || SYSTEM_COMMANDS.includes(name)) {
+    return 'System & Machine';
   }
   return 'Other Commands';
 }
@@ -294,17 +310,7 @@ function preprocessMarkdown(filename, rawContent, optionsMap, revision) {
 }
 
 function buildManifest(items, revision) {
-  const categoryOrder = [
-    'Core CLI (Man Pages)',
-    'Containers',
-    'Pods & Kubernetes',
-    'Images',
-    'Networks & Volumes',
-    'System & Machine',
-    'Quadlet & Systemd (Section 5)',
-    'Guides & Troubleshooting (Section 7)',
-    'Other Commands',
-  ];
+  const categoryOrder = CATEGORY_ORDER;
 
   const categoryMap = new Map();
   for (const cat of categoryOrder) {
@@ -331,6 +337,7 @@ function buildManifest(items, revision) {
 
   return {
     revision,
+    generatorVersion: GENERATOR_VERSION,
     generatedAt: new Date().toISOString(),
     categories,
     aliases: {},
@@ -346,7 +353,12 @@ function main() {
   if (!force && fs.existsSync(MANIFEST_PATH)) {
     try {
       const existing = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
-      if (existing && existing.revision === revision && existing.totalCount > 50) {
+      if (
+        existing &&
+        existing.revision === revision &&
+        existing.generatorVersion === GENERATOR_VERSION &&
+        existing.totalCount > 50
+      ) {
         console.log(
           `[fetch-podman-docs] Static CLI docs already up-to-date for revision ${revision} (${existing.totalCount} commands).`,
         );
@@ -388,7 +400,11 @@ function main() {
     }
     console.log(`[fetch-podman-docs] Loaded ${optionsMap.size} option snippets.`);
 
-    fs.mkdirSync(COMMANDS_DIR, { recursive: true });
+    // Write into a staging folder first, then swap it in. This removes docs that were
+    // deleted/renamed upstream and never leaves a half-written folder behind on failure.
+    const stagingDir = path.join(OUTPUT_DIR, '.commands-staging');
+    fs.rmSync(stagingDir, { recursive: true, force: true });
+    fs.mkdirSync(stagingDir, { recursive: true });
 
     const entries = fs.readdirSync(mdRoot, { withFileTypes: true });
     const docFiles = entries
@@ -403,9 +419,16 @@ function main() {
       metadataList.push(docContent.metadata);
 
       const safeSlug = path.basename(docContent.metadata.slug.toLowerCase()).replace(/[^a-z0-9._-]/g, '-');
-      const outPath = path.join(COMMANDS_DIR, `${safeSlug}.json`);
+      const outPath = path.join(stagingDir, `${safeSlug}.json`);
       fs.writeFileSync(outPath, JSON.stringify(docContent));
     }
+
+    if (metadataList.length === 0) {
+      throw new Error(`No markdown docs found under ${MARKDOWN_SUBPATH} at ${resolvedSha}`);
+    }
+
+    fs.rmSync(COMMANDS_DIR, { recursive: true, force: true });
+    fs.renameSync(stagingDir, COMMANDS_DIR);
 
     const manifest = buildManifest(metadataList, resolvedSha);
     fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
@@ -429,4 +452,8 @@ function main() {
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { categorizeCommand, CATEGORY_ORDER };

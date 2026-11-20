@@ -12,7 +12,6 @@ const ITEM_ICONS: Record<string, string> = {
   Discord: 'simple-icons:discord',
   Blog: 'material-symbols:article-outline-rounded',
   'Mailing List': 'material-symbols:mail-outline-rounded',
-  'RSS Feed': 'material-symbols:rss-feed-rounded',
   'Podman GitHub': 'simple-icons:github',
   'Podman Desktop GitHub': 'simple-icons:github',
   'Podman Website GitHub': 'simple-icons:github',
@@ -40,14 +39,11 @@ const SOCIAL_LINKS = [
     href: 'https://lists.podman.io',
     icon: 'material-symbols:mail-outline-rounded',
   },
-  {
-    label: 'Podman Blog RSS Feed',
-    href: 'https://blog.podman.io/feed/',
-    icon: 'material-symbols:rss-feed-rounded',
-  },
 ];
 
 const CURRENT_YEAR = new Date().getFullYear();
+
+const LINK_RESET = 'no-underline hover:no-underline';
 
 function FooterLink({ item }: { item: FooterLinkItem }): JSX.Element {
   const { to, href, label, prependBaseUrlToHref, ...props } = item;
@@ -57,7 +53,7 @@ function FooterLink({ item }: { item: FooterLinkItem }): JSX.Element {
 
   return (
     <Link
-      className="inline-flex items-center gap-2 text-sm text-white/90 no-underline hover:text-white/90 hover:no-underline dark:text-white/90 dark:hover:text-white/90"
+      className={`group inline-flex items-center gap-2.5 text-sm text-white/85 transition-all duration-150 hover:translate-x-0.5 hover:text-purple-300 dark:text-white/85 dark:hover:text-purple-300 ${LINK_RESET}`}
       {...(href
         ? {
             href: prependBaseUrlToHref ? normalizedHref : href,
@@ -66,7 +62,13 @@ function FooterLink({ item }: { item: FooterLinkItem }): JSX.Element {
             to: toUrl,
           })}
       {...props}>
-      {iconName && <Icon icon={iconName} className="h-4 w-4 shrink-0 text-white" aria-hidden="true" />}
+      {iconName && (
+        <Icon
+          icon={iconName}
+          className="h-4 w-4 shrink-0 text-white transition-colors duration-150 group-hover:text-purple-300"
+          aria-hidden="true"
+        />
+      )}
       <span>{label}</span>
     </Link>
   );
@@ -85,29 +87,31 @@ function Footer(): JSX.Element | null {
   const columns = rawLinks.filter((col): col is { title?: string; items: FooterLinkItem[] } => 'items' in col);
 
   return (
-    <footer className="bg-purple-700 text-white">
-      <div className="mx-auto max-w-7xl px-6 pb-8 pt-12 sm:px-8 lg:px-10">
-        {/* Top Section: Brand + Navigation Columns */}
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-4">
+    <footer className="border-t border-white/20 bg-purple-700 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
+      <div className="mx-auto max-w-7xl px-5 pb-8 pt-10 sm:px-8 sm:pt-14 lg:px-10">
+        {/* Top Section: Brand & Navigation Columns */}
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-12">
+          <div className="lg:col-span-5">
             <Link
               to="/"
-              className="inline-flex items-center gap-3 text-white no-underline hover:text-white hover:no-underline dark:text-white dark:hover:text-white">
+              className={`inline-flex items-center gap-3 text-white hover:text-white dark:text-white dark:hover:text-white sm:gap-3.5 ${LINK_RESET}`}>
               <img
                 src={podmanLogoUrl}
                 alt="Podman Logo"
-                width={42}
-                height={40}
-                className="h-10 w-auto"
+                width={67}
+                height={64}
+                className="h-14 w-auto sm:h-16"
                 loading="lazy"
                 decoding="async"
               />
-              <span className="font-display text-2xl font-bold tracking-tight text-white">podman</span>
+              <span className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">podman</span>
             </Link>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-purple-100/80 dark:text-purple-100/80">
+
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/80 dark:text-white/80">
               A daemonless, open-source, Linux-native container engine for developing, managing, and running OCI
               Containers.
             </p>
+
             <div className="mt-5 flex items-center gap-4">
               {SOCIAL_LINKS.map(social => (
                 <a
@@ -117,18 +121,20 @@ function Footer(): JSX.Element | null {
                   rel="noopener noreferrer"
                   aria-label={social.label}
                   title={social.label}
-                  className="text-white no-underline hover:text-white hover:no-underline dark:text-white dark:hover:text-white">
+                  className={`text-white transition-all duration-150 hover:-translate-y-0.5 hover:text-purple-300 dark:text-white dark:hover:text-purple-300 ${LINK_RESET}`}>
                   <Icon icon={social.icon} className="h-5 w-5" aria-hidden="true" />
                 </a>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-8">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 lg:col-span-7 lg:pt-2">
             {columns.map((col, idx) => (
               <div key={col.title ?? idx}>
-                <h3 className="mb-4 font-display text-sm font-bold text-white dark:text-white">{col.title}</h3>
-                <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+                <h3 className="mb-4 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-purple-300 dark:text-purple-300">
+                  {col.title}
+                </h3>
+                <ul className="m-0 flex list-none flex-col gap-3 p-0">
                   {col.items.map((item, itemIdx) => (
                     <li key={item.label ?? itemIdx}>
                       <FooterLink item={item} />
@@ -141,62 +147,62 @@ function Footer(): JSX.Element | null {
         </div>
 
         {/* Foundation & Ecosystem Logos */}
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-x-10 gap-y-6 border-t border-white/15 py-7">
+        <div className="mt-10 grid grid-cols-1 gap-6 border-y border-white/15 py-7 sm:mt-12 sm:grid-cols-2 sm:py-8 lg:flex lg:flex-wrap lg:items-center lg:justify-between lg:gap-x-10 lg:gap-y-6">
           <a
             href="https://www.cncf.io/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white no-underline hover:text-white hover:no-underline dark:text-white dark:hover:text-white"
+            className={`inline-flex items-center text-white transition-opacity duration-150 hover:text-white hover:opacity-80 dark:text-white dark:hover:text-white ${LINK_RESET}`}
             title="Cloud Native Computing Foundation">
-            <CncfWordmark className="h-8 w-auto" />
+            <CncfWordmark className="h-9 w-auto max-w-full sm:h-10" />
           </a>
 
           <a
             href="https://lfx.linuxfoundation.org/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white no-underline hover:text-white hover:no-underline dark:text-white dark:hover:text-white"
+            className={`inline-flex items-center text-white transition-opacity duration-150 hover:text-white hover:opacity-80 dark:text-white dark:hover:text-white ${LINK_RESET}`}
             title="LFX - The Linux Foundation">
-            <LfxWordmark className="h-7 w-auto" />
+            <LfxWordmark className="h-6 w-auto max-w-full sm:h-7" />
           </a>
 
           <a
             href="https://opencontainers.org/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white no-underline hover:text-white hover:no-underline dark:text-white dark:hover:text-white"
+            className={`inline-flex items-center text-white transition-opacity duration-150 hover:text-white hover:opacity-80 dark:text-white dark:hover:text-white ${LINK_RESET}`}
             title="Open Container Initiative">
-            <OciWordmark className="h-8 w-auto" />
+            <OciWordmark className="h-9 w-auto max-w-full sm:h-10" />
           </a>
 
           <a
             href="https://podman-desktop.io/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 text-white no-underline hover:text-white hover:no-underline dark:text-white dark:hover:text-white"
+            className={`inline-flex items-center gap-3 text-white transition-opacity duration-150 hover:text-white hover:opacity-80 dark:text-white dark:hover:text-white ${LINK_RESET}`}
             title="Podman Desktop">
             <img
               src={podmanDesktopLogoUrl}
               alt="Podman Desktop"
-              width={32}
-              height={32}
-              className="h-8 w-8 object-contain"
+              width={40}
+              height={40}
+              className="h-9 w-9 object-contain sm:h-10 sm:w-10"
               loading="lazy"
               decoding="async"
             />
-            <span className="font-display text-sm font-bold tracking-wide text-white">Podman Desktop</span>
+            <span className="font-display text-[15px] font-semibold tracking-wide text-white">Podman Desktop</span>
           </a>
         </div>
 
         {/* Copyright & Legal */}
-        <div className="flex flex-col items-center justify-between gap-3 pt-4 text-xs text-white/75 md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-3 pt-6 text-center text-xs text-white/75 md:flex-row md:text-left">
           <p className="m-0 text-center text-xs leading-normal text-white/75 dark:text-white/75 md:text-left">
             Copyright © {CURRENT_YEAR} Podman Container Tools, a Series of LF Projects, LLC.{' '}
             <a
               href="https://lfprojects.org/policies/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-blue-300 no-underline hover:text-blue-300 hover:no-underline dark:text-blue-300 dark:hover:text-blue-300">
+              className={`text-xs text-purple-300 transition-colors duration-150 hover:text-white dark:text-purple-300 dark:hover:text-white ${LINK_RESET}`}>
               LF Projects policies
             </a>
             .
@@ -205,7 +211,7 @@ function Footer(): JSX.Element | null {
             href="https://docusaurus.io/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs text-white/75 no-underline hover:text-white/75 hover:no-underline dark:text-white/75 dark:hover:text-white/75">
+            className={`inline-flex items-center gap-1.5 text-xs text-white/75 transition-colors duration-150 hover:text-purple-300 dark:text-white/75 dark:hover:text-purple-300 ${LINK_RESET}`}>
             <Icon icon="simple-icons:docusaurus" className="h-4 w-4 text-white" aria-hidden="true" />
             <span>Built with Docusaurus</span>
           </a>

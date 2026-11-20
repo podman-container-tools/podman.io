@@ -134,11 +134,6 @@ const config = {
                 label: 'Documentation',
                 to: 'docs/',
               },
-
-              {
-                label: 'Podman CLI Commands',
-                href: 'https://docs.podman.io/en/latest/Commands.html',
-              },
             ],
           },
           {
@@ -159,10 +154,6 @@ const config = {
               {
                 label: 'Mailing List',
                 href: 'https://lists.podman.io',
-              },
-              {
-                label: 'RSS Feed',
-                href: 'https://blog.podman.io/feed/',
               },
             ],
           },

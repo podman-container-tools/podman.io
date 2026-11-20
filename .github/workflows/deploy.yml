@@ -5,9 +5,9 @@ on:
   push:
     branches: [main]
 
-  # Periodically check if upstream containers/podman CLI documentation changed
+  # Check once a day if upstream containers/podman CLI documentation changed
   schedule:
-    - cron: '0 */4 * * *'
+    - cron: '0 0 * * *'
 
   # Allow upstream containers/podman webhook to trigger a documentation rebuild directly
   repository_dispatch:

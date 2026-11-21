@@ -53,7 +53,7 @@ function FooterLink({ item }: { item: FooterLinkItem }): JSX.Element {
 
   return (
     <Link
-      className={`group inline-flex items-center gap-2.5 text-sm text-white/85 transition-all duration-150 hover:translate-x-0.5 hover:text-purple-300 dark:text-white/85 dark:hover:text-purple-300 ${LINK_RESET}`}
+      className={`group inline-flex items-center gap-2.5 text-sm text-white/80 transition-all duration-150 hover:translate-x-0.5 hover:text-white dark:text-white/80 dark:hover:text-white ${LINK_RESET}`}
       {...(href
         ? {
             href: prependBaseUrlToHref ? normalizedHref : href,
@@ -65,7 +65,7 @@ function FooterLink({ item }: { item: FooterLinkItem }): JSX.Element {
       {iconName && (
         <Icon
           icon={iconName}
-          className="h-4 w-4 shrink-0 text-white transition-colors duration-150 group-hover:text-purple-300"
+          className="h-4 w-4 shrink-0 text-white/80 transition-colors duration-150 group-hover:text-white"
           aria-hidden="true"
         />
       )}
@@ -121,7 +121,7 @@ function Footer(): JSX.Element | null {
                   rel="noopener noreferrer"
                   aria-label={social.label}
                   title={social.label}
-                  className={`text-white transition-all duration-150 hover:-translate-y-0.5 hover:text-purple-300 dark:text-white dark:hover:text-purple-300 ${LINK_RESET}`}>
+                  className={`text-white/80 transition-all duration-150 hover:-translate-y-0.5 hover:text-white dark:text-white/80 dark:hover:text-white ${LINK_RESET}`}>
                   <Icon icon={social.icon} className="h-5 w-5" aria-hidden="true" />
                 </a>
               ))}
@@ -147,7 +147,7 @@ function Footer(): JSX.Element | null {
         </div>
 
         {/* Foundation & Ecosystem Logos */}
-        <div className="mt-10 grid grid-cols-1 gap-6 border-y border-white/15 py-7 sm:mt-12 sm:grid-cols-2 sm:py-8 lg:flex lg:flex-wrap lg:items-center lg:justify-between lg:gap-x-10 lg:gap-y-6">
+        <div className="mt-10 grid grid-cols-1 gap-6 border-b border-white/15 py-7 sm:mt-12 sm:grid-cols-2 sm:py-8 lg:flex lg:flex-wrap lg:items-center lg:justify-between lg:gap-x-10 lg:gap-y-6">
           <a
             href="https://www.cncf.io/"
             target="_blank"
@@ -211,7 +211,7 @@ function Footer(): JSX.Element | null {
             href="https://docusaurus.io/"
             target="_blank"
             rel="noopener noreferrer"
-            className={`inline-flex items-center gap-1.5 text-xs text-white/75 transition-colors duration-150 hover:text-purple-300 dark:text-white/75 dark:hover:text-purple-300 ${LINK_RESET}`}>
+            className={`inline-flex items-center gap-1.5 text-xs text-white/75 transition-colors duration-150 hover:text-white dark:text-white/75 dark:hover:text-white ${LINK_RESET}`}>
             <Icon icon="simple-icons:docusaurus" className="h-4 w-4 text-white" aria-hidden="true" />
             <span>Built with Docusaurus</span>
           </a>

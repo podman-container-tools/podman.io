@@ -46,11 +46,12 @@ function TestimonialSection() {
   };
 
   return (
-    <section className="overflow-hidden bg-gradient-to-b from-white via-purple-100 to-white py-16 dark:from-[#1B1B1D] dark:via-purple-900/25 dark:to-[#1B1B1D] xl:py-24">
+    <section className="overflow-hidden bg-gradient-to-b from-white via-blue-100/40 to-white py-16 dark:from-[#1B1B1D] dark:via-purple-900/25 dark:to-[#1B1B1D] xl:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
           <SectionHeader
             title="What people are saying about Podman"
+            description="Hear from developers, sysadmins, and teams running rootless containers with Podman every day."
             textGradient={true}
             textGradientStops="from-blue-700 to-blue-500"
           />
@@ -65,10 +66,10 @@ function TestimonialSection() {
             disabled={!canGoLeft}
             aria-label="Previous testimonials"
             title="Previous"
-            style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-            className={`absolute left-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#892CA0] text-white shadow-md transition-all duration-200 sm:left-1 sm:h-11 sm:w-11 md:left-2 ${
+            style={{ backgroundColor: '#009FFF', color: '#ffffff' }}
+            className={`absolute left-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-blue-700 text-white shadow-md transition-all duration-200 sm:left-1 sm:h-11 sm:w-11 md:left-2 ${
               canGoLeft
-                ? 'cursor-pointer hover:scale-105 hover:bg-[#77218d] active:scale-95'
+                ? 'cursor-pointer hover:scale-105 hover:bg-blue-900 active:scale-95'
                 : 'pointer-events-none opacity-25'
             }`}>
             <Icon icon="material-symbols:arrow-back-rounded" className="text-xl text-white sm:text-2xl" />
@@ -81,10 +82,10 @@ function TestimonialSection() {
             disabled={!canGoRight}
             aria-label="Next testimonials"
             title="Next"
-            style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
-            className={`absolute right-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#892CA0] text-white shadow-md transition-all duration-200 sm:right-1 sm:h-11 sm:w-11 md:right-2 ${
+            style={{ backgroundColor: '#009FFF', color: '#ffffff' }}
+            className={`absolute right-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-blue-700 text-white shadow-md transition-all duration-200 sm:right-1 sm:h-11 sm:w-11 md:right-2 ${
               canGoRight
-                ? 'cursor-pointer hover:scale-105 hover:bg-[#77218d] active:scale-95'
+                ? 'cursor-pointer hover:scale-105 hover:bg-blue-900 active:scale-95'
                 : 'pointer-events-none opacity-25'
             }`}>
             <Icon icon="material-symbols:arrow-forward-rounded" className="text-xl text-white sm:text-2xl" />

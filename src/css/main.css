@@ -29,6 +29,30 @@
   box-decoration-break: clone;
 }
 
+@layer base {
+  body {
+    cursor: default;
+  }
+
+  a,
+  button,
+  [role='button'],
+  select,
+  summary {
+    cursor: pointer;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='button']):not([type='submit']):not([type='reset']),
+  textarea,
+  [contenteditable='true'],
+  pre,
+  pre code,
+  .markdown p,
+  .markdown li {
+    cursor: text;
+  }
+}
+
 .breadcrumbs__link {
   @apply -my-2;
 }

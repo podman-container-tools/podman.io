@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
-import Button from '@site/src/components/utilities/Button';
+import SectionHeader from '@site/src/components/layout/SectionHeader';
 import { literature } from '@site/static/data/literature';
 
 function LiteratureCarousel() {
@@ -10,69 +10,89 @@ function LiteratureCarousel() {
   useEffect(() => {
     setActiveIndex(Math.floor(Math.random() * literature.length));
   }, []);
-  const currentBook = literature[activeIndex];
 
-  const navigateLeft = () => {
-    setActiveIndex(prev => (prev > 0 ? prev - 1 : literature.length - 1));
-  };
-
-  const navigateRight = () => {
-    setActiveIndex(prev => (prev < literature.length - 1 ? prev + 1 : 0));
-  };
+  // Auto-advance every 4.5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIndex(prev => (prev < literature.length - 1 ? prev + 1 : 0));
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <section className="container my-12 xl:my-20">
-      <div className="relative flex items-center justify-center gap-4">
-        {/* Left Arrow */}
-        <button type="button" onClick={navigateLeft} className="absolute left-0 z-10">
-          <Icon
-            icon="fa-solid:arrow-circle-left"
-            className="text-3xl text-purple-700 opacity-50 transition duration-150 ease-linear hover:text-purple-900 hover:opacity-100 dark:text-purple-500 dark:hover:text-purple-300"
-          />
-        </button>
+      <SectionHeader
+        title="Learn Podman with books & guides"
+        description="Explore free e-books, hands-on DevOps guides and resources by Podman maintainers and experts."
+        fontWeight="font-bold"
+        textColor="text-blue-700 dark:text-blue-500"
+      />
 
-        {/* Book Content - Fixed Width Container */}
-        <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-4 lg:justify-start">
-          <div className={`flex flex-1 ${!currentBook.coverImage ? 'justify-center' : ''}`}>
-            {/* Book Cover Image (only if available) */}
-            {currentBook.coverImage && (
-              <div className="order-first mr-12 hidden lg:block">
-                <img src={currentBook.coverImage.src} alt={currentBook.coverImage.alt} className="max-w-xs" />
+      {/* Smooth Horizontal Sliding Track */}
+      <div className="mx-auto mt-10 max-w-6xl overflow-hidden py-6">
+        <div
+          className="flex items-center transition-transform duration-500 ease-out"
+          style={{ transform: `translateX(-${activeIndex * 100}%)` }}>
+          {literature.map(book => (
+            <div key={book.id} className="w-full shrink-0 px-4">
+              <div className="mx-auto flex max-w-5xl flex-col items-center justify-center gap-6 lg:flex-row lg:items-start lg:gap-8">
+                <div
+                  className={`flex min-w-0 max-w-full flex-col items-center justify-center gap-6 lg:flex-row lg:items-start lg:gap-0 ${book.extraImages ? 'flex-1' : ''}`}>
+                  {/* Book Cover Image (visible on mobile, tablet & desktop) */}
+                  {book.coverImage && (
+                    <div className="order-first shrink-0 lg:mr-12 xl:mr-16">
+                      <img
+                        src={book.coverImage.src}
+                        alt={book.coverImage.alt}
+                        className={
+                          book.id === 'container-commandos'
+                            ? 'block max-h-48 w-auto max-w-[170px] origin-bottom-left rotate-[4deg] object-contain sm:max-h-56 sm:max-w-[190px] lg:max-h-64 lg:max-w-[200px]'
+                            : 'block h-56 w-auto origin-bottom-left rotate-[4deg] object-contain sm:h-64 lg:-mt-5 lg:h-[350px]'
+                        }
+                      />
+                    </div>
+                  )}
+
+                  {/* Text Content */}
+                  <div className="mx-2 min-w-0 max-w-lg flex-1 flex-col items-center text-center sm:mx-4 lg:mx-0 lg:items-start lg:text-start">
+                    <h3 className="mb-3 mt-0 p-0 text-xl font-bold tracking-tight text-purple-700 dark:!text-white sm:text-2xl">
+                      {book.title}
+                    </h3>
+                    <p className="mb-5 max-w-prose text-sm leading-relaxed text-gray-700 dark:text-gray-300 sm:text-[15px] lg:mb-7">
+                      {book.description}
+                    </p>
+                    <a
+                      href={book.button.path}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-2 rounded-md bg-purple-700 px-5 py-2.5 text-sm font-semibold !text-white !no-underline shadow-sm transition-colors duration-200 hover:bg-purple-900 hover:!text-white hover:!no-underline dark:bg-purple-700 dark:hover:bg-purple-500">
+                      <span>{book.button.text}</span>
+                      <Icon
+                        icon={
+                          book.button.text.toLowerCase().includes('download')
+                            ? 'material-symbols:download-rounded'
+                            : 'material-symbols:arrow-forward-rounded'
+                        }
+                        className="text-base"
+                      />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Extra Images (like coloring pages collage) */}
+                {book.extraImages && (
+                  <div className="order-first mx-auto hidden lg:order-last lg:block xl:mx-0">
+                    <img src={book.extraImages.src} alt={book.extraImages.alt} className="max-w-[290px]" />
+                  </div>
+                )}
               </div>
-            )}
-
-            {/* Text Content */}
-            <div className="mx-4 max-w-prose flex-col items-center text-center lg:mx-0 lg:items-start lg:text-start">
-              <h2 className="my-4 p-0 font-medium text-blue-900 dark:text-blue-500">{currentBook.title}</h2>
-              <p className="mb-4 max-w-prose lg:mb-10">{currentBook.description}</p>
-              <Button
-                as="link"
-                outline
-                {...currentBook.button}
-                colors="hover:bg-purple-700 dark:hover:bg-purple-900 dark:bg-purple-500 dark:text-purple-700 hover:text-white outline"
-              />
             </div>
-          </div>
-
-          {/* Extra Images (like coloring pages collage) */}
-          {currentBook.extraImages && (
-            <div className="order-first mx-auto hidden lg:order-last lg:block xl:mx-0">
-              <img src={currentBook.extraImages.src} alt={currentBook.extraImages.alt} className="max-w-sm" />
-            </div>
-          )}
+          ))}
         </div>
-
-        {/* Right Arrow */}
-        <button type="button" onClick={navigateRight} className="absolute right-0 z-10">
-          <Icon
-            icon="fa-solid:arrow-circle-right"
-            className="text-3xl text-purple-700 opacity-50 transition duration-150 ease-linear hover:text-purple-900 hover:opacity-100 dark:text-purple-500 dark:hover:text-purple-300"
-          />
-        </button>
       </div>
 
       {/* Carousel Indicators */}
-      <div className="mt-6 flex justify-center gap-2">
+      <div className="mt-2 flex justify-center gap-2">
         {literature.map((_, index) => (
           <button
             type="button"

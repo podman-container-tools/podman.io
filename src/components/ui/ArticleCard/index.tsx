@@ -60,7 +60,7 @@ function ArticleCard(props: ArticleCardProps) {
 
   if (props.altLayout) {
     return (
-      <article className="group flex flex-1 flex-col overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#232326] dark:shadow-none dark:hover:border-white/20">
+      <article className="group flex flex-1 flex-col overflow-hidden rounded-md border border-black/[0.08] bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
         <div className="flex h-full flex-col md:grid md:grid-cols-2 md:items-center">
           <div className="relative flex h-44 w-full items-center justify-center p-5 md:h-full">
             <img
@@ -126,7 +126,7 @@ function ArticleCard(props: ArticleCardProps) {
 
   // Normal Layout
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#232326] dark:shadow-none dark:hover:border-white/20">
+    <article className="group flex h-full flex-col overflow-hidden rounded-md border border-black/[0.08] bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
       {/* Graphic Container */}
       <div className="relative flex h-44 w-full items-center justify-center p-4 sm:h-48">
         <img

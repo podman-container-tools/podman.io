@@ -28,32 +28,32 @@ const header = {
 const featureList = [
   {
     id: 'fast-and-light',
-    title: 'Fast and light.',
-    icon: 'material-symbols:bolt-rounded',
+    title: 'Fast and light',
+    icon: 'lucide:zap',
     description:
       "Daemonless, using the fastest technologies for a snappy experience. Our UI is reactive and light on resource usage and won't drag you down.",
     href: 'https://www.redhat.com/architect/hpc-containers-scale-using-podman',
   },
   {
     id: 'secure',
-    title: 'Secure.',
-    icon: 'material-symbols:shield-lock-rounded',
+    title: 'Secure',
+    icon: 'lucide:shield-check',
     description:
       'Rootless containers allow you to contain privileges without compromising functionality. Trusted by US government agencies for secure HPC at scale [case study](https://www.redhat.com/architect/hpc-containers-scale-using-podman). ',
     href: 'https://www.redhat.com/architect/hpc-containers-scale-using-podman',
   },
   {
     id: 'open',
-    title: 'Open.',
-    icon: 'material-symbols:lock-open-right-rounded',
+    title: 'Open',
+    icon: 'lucide:lock-open',
     description:
       "Podman is open source first and won't lock you in. Podman Desktop can be used as one tool to manage all your containers, regardless of container engine - even if you don't use Podman as your container engine.",
     href: 'https://developers.redhat.com/blog/2020/11/19/transitioning-from-docker-to-podman',
   },
   {
     id: 'compatible',
-    title: 'Compatible.',
-    icon: 'material-symbols:layers-rounded',
+    title: 'Compatible',
+    icon: 'lucide:blocks',
     description:
       'Compatible with other OCI compliant container formats including Docker. Run your legacy Docker containers (including docker-compose files) on Podman. [Learn more](https://developers.redhat.com/blog/2020/11/19/transitioning-from-docker-to-podman)',
     href: 'https://developers.redhat.com/blog/2020/11/19/transitioning-from-docker-to-podman',
@@ -64,10 +64,8 @@ const kubernetesBanner = {
   title: 'Kubernetes Ready',
   description:
     'Create, start, inspect, and manage pods. Play Kubernetes YAML directly with Podman, generate Kubernetes YAML from pods, and deploy to existing Kubernetes environments.',
-  image: {
-    src: 'logos/optimized/kubernetes-logo-147w-143h.webp',
-    alt: 'Kubernetes Logo',
-  },
+  icon: 'devicon:kubernetes',
+  iconSize: 144,
 };
 
 const compatibleTools = {
@@ -76,22 +74,25 @@ const compatibleTools = {
     {
       title: 'VS Code',
       description: 'Visual Studio Code includes Podman support',
-      image: { path: 'logos/optimized/vscode-logo-75w-75h.webp', alt: 'VS Code Logo' },
+      icon: 'logos:visual-studio-code',
+      iconClassName: 'h-20 w-20',
     },
     {
       title: 'Cirrus',
       description: 'Cirrus CLI allows you to reproducibly run containerized tasks with Podman',
-      image: { path: 'logos/optimized/cirrus-logo-75w-75h.webp', alt: 'Cirrus Logo' },
+      icon: 'simple-icons:cirrusci',
+      iconClassName: 'h-20 w-20 text-gray-900 dark:text-white',
     },
     {
       title: 'GitHub Actions',
       description: 'GitHub Actions include support for Podman, as well as friends buildah and skopeo',
-      image: { path: 'logos/optimized/github-logo-115w-115h.webp', alt: 'GitHub Logo' },
+      icon: 'fa6-brands:github',
+      iconClassName: 'h-20 w-20 text-gray-900 dark:text-white',
     },
     {
       title: 'Kind',
       description: "Kind's ability to run local Kubernetes clusters via container nodes includes support for Podman",
-      image: { path: 'logos/optimized/kind-logo-165w-95h.webp', alt: 'Kind Logo' },
+      image: { path: 'logos/raw/kind-logo.png', alt: 'Kind Logo' },
     },
   ],
 };

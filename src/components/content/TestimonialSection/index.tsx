@@ -46,7 +46,7 @@ function TestimonialSection() {
   };
 
   return (
-    <section className="overflow-hidden bg-gradient-to-b from-white via-blue-100/40 to-white py-16 dark:from-[#1B1B1D] dark:via-purple-900/25 dark:to-[#1B1B1D] xl:py-24">
+    <section className="overflow-hidden py-16 xl:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
           <SectionHeader

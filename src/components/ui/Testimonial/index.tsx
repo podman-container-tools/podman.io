@@ -57,7 +57,7 @@ function Testimonial(props: TestimonialProps) {
   const socialIcon = props.social === 'twitter' ? 'fa6-brands:x-twitter' : `logos:${props.social}`;
 
   return (
-    <article className="flex h-[290px] w-full flex-col justify-between whitespace-normal rounded-md border border-black/[0.08] bg-white p-5 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] sm:h-[300px]">
+    <article className="flex h-[290px] w-full flex-col justify-between whitespace-normal rounded-md border border-black/[0.08] bg-white p-5 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:h-[300px]">
       <div>
         {/* Header: Avatar, Name, Handle, Social Icon */}
         <div className="mb-3.5 flex items-start justify-between gap-3">
@@ -73,7 +73,7 @@ function Testimonial(props: TestimonialProps) {
                 href={props.path}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block truncate text-xs font-medium !text-blue-700 transition-colors hover:!text-blue-900 dark:!text-blue-500 dark:hover:!text-blue-300">
+                className="block truncate text-xs font-medium !text-gray-900 transition-colors hover:!text-gray-700 dark:!text-white dark:hover:!text-gray-300">
                 {props.handle}
               </a>
             </div>
@@ -104,7 +104,7 @@ function Testimonial(props: TestimonialProps) {
               target="_blank"
               rel="noopener noreferrer"
               title={props.featuredlink}
-              className="group/link inline-flex max-w-full items-center gap-1.5 !text-xs font-medium !text-blue-700 !no-underline transition-colors hover:!text-blue-900 dark:!text-blue-500 dark:hover:!text-blue-300">
+              className="group/link inline-flex max-w-full items-center gap-1.5 !text-xs font-medium !text-gray-900 !no-underline transition-colors hover:!text-gray-700 dark:!text-white dark:hover:!text-gray-300">
               <Icon icon="material-symbols:link-rounded" className="shrink-0 text-sm" />
               <span className="truncate hover:underline">{props.featuredlink.replace(/^https?:\/\/(www\.)?/, '')}</span>
               <Icon icon="material-symbols:arrow-outward-rounded" className="shrink-0 text-[10px]" />

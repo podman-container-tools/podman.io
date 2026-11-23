@@ -89,9 +89,9 @@ function Instructions({ instructions }: InstructionsProps) {
               target={isExternal ? '_blank' : undefined}
               rel={isExternal ? 'noopener noreferrer' : undefined}
               style={{ textDecoration: 'none' }}
-              className="group flex w-full items-center justify-between gap-3 rounded-xl border border-purple-100/60 bg-white p-3.5 !no-underline shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-[#232326] dark:shadow-none dark:hover:border-white/20 sm:gap-4 sm:p-4">
+              className="group flex w-full items-center justify-between gap-3 rounded-md border border-black/[0.08] bg-white p-3.5 !no-underline shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] sm:gap-4 sm:p-4">
               <div className="flex min-w-0 items-center gap-3 !no-underline sm:gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#892CA0] transition-colors duration-200 group-hover:bg-[#892CA0] group-hover:text-white dark:bg-purple-900/40 dark:text-purple-300 dark:group-hover:bg-[#892CA0] dark:group-hover:text-white sm:h-11 sm:w-11">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-purple-100 text-[#892CA0] transition-colors duration-200 group-hover:bg-[#892CA0] group-hover:text-white dark:bg-purple-900/40 dark:text-purple-300 dark:group-hover:bg-[#892CA0] dark:group-hover:text-white sm:h-11 sm:w-11">
                   <Icon
                     icon={
                       instructions.button.icon === 'fa6-solid:book'

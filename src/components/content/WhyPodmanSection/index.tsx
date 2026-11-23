@@ -43,17 +43,17 @@ function WhyPodmanSection(): JSX.Element {
               aria-hidden="true"
             />
 
-            {/* Two Distinct Side-by-Side Units: Standalone Container + Multi-Container Pod */}
-            <div className="relative z-10 flex w-full max-w-xl flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
+            {/* Two Distinct Side-by-Side Units: Standalone Container + Multi-Container Pod (Clean Horizontal Swap on Hover) */}
+            <div className="relative z-10 flex w-full max-w-xl flex-col items-center justify-center gap-4 sm:flex-row sm:gap-4">
               {/* Unit 1: Standalone Container */}
-              <div className="relative w-48 shrink-0 sm:w-44">
+              <div className="relative z-20 w-48 shrink-0 transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] sm:group-hover:translate-x-[252px]">
                 <div
-                  className="pointer-events-none absolute -bottom-2 -left-2 h-[82%] w-[82%] rounded-md bg-purple-500/80 shadow-md transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-x-3 group-hover:translate-y-2 group-hover:rotate-3 dark:bg-purple-500/70"
+                  className="pointer-events-none absolute -bottom-2 -left-2 h-[82%] w-[82%] rounded-md bg-purple-500/80 shadow-md transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-10 dark:bg-purple-500/70"
                   aria-hidden="true"
                 />
-                <div className="relative z-10 overflow-hidden rounded-md bg-white/65 shadow-[0_14px_34px_rgba(0,0,0,0.09)] backdrop-blur-md transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-x-2 group-hover:-translate-y-2 group-hover:-rotate-2 dark:bg-white/[0.1] dark:shadow-[0_14px_34px_rgba(0,0,0,0.45)]">
+                <div className="relative z-10 overflow-hidden rounded-md bg-white/65 shadow-[0_14px_34px_rgba(0,0,0,0.09)] backdrop-blur-md dark:bg-white/[0.1] dark:shadow-[0_14px_34px_rgba(0,0,0,0.45)]">
                   <div className="p-2.5">
-                    <div className="space-y-2 rounded border border-black/[0.06] bg-white/75 p-2.5 font-mono transition-transform duration-500 ease-out group-hover:scale-[1.03] dark:border-white/10 dark:bg-[#1b1b20]/85">
+                    <div className="space-y-2 rounded border border-black/[0.06] bg-white/75 p-2.5 font-mono dark:border-white/10 dark:bg-[#1b1b20]/85">
                       <div className="flex items-center gap-2 text-xs font-bold text-gray-900 dark:text-white">
                         <Icon icon="lucide:box" className="h-3.5 w-3.5 shrink-0 text-purple-700 dark:text-purple-300" />
                         <span className="truncate">nginx</span>
@@ -79,26 +79,26 @@ function WhyPodmanSection(): JSX.Element {
                 </div>
               </div>
 
-              {/* Separator Badge */}
+              {/* Center Separator Badge */}
               <div
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-black/[0.08] bg-white/85 font-mono text-xs font-bold text-purple-700 shadow-sm backdrop-blur-sm transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90 group-hover:scale-110 group-hover:border-purple-700 group-hover:bg-purple-700 group-hover:text-white dark:border-white/15 dark:bg-[#242328]/90 dark:text-purple-300 dark:group-hover:border-purple-500 dark:group-hover:bg-purple-700 dark:group-hover:text-white"
+                className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-black/[0.08] bg-white/85 font-mono text-xs font-bold text-purple-700 shadow-sm backdrop-blur-sm transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-180 dark:border-white/15 dark:bg-[#242328]/90 dark:text-purple-300"
                 aria-hidden="true">
                 +
               </div>
 
               {/* Unit 2: Multi-Container Pod */}
-              <div className="relative w-48 shrink-0">
+              <div className="relative z-20 w-48 shrink-0 transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] sm:group-hover:-translate-x-[252px]">
                 <div
-                  className="pointer-events-none absolute -bottom-2 -right-2 h-[88%] w-[88%] rounded-md bg-purple-700 shadow-lg transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-3 group-hover:translate-y-2 group-hover:-rotate-3 dark:bg-purple-700"
+                  className="pointer-events-none absolute -bottom-2 -right-2 h-[88%] w-[88%] rounded-md bg-purple-700 shadow-lg transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-x-10 dark:bg-purple-700"
                   aria-hidden="true"
                 />
-                <div className="relative z-10 overflow-hidden rounded-md bg-white/55 shadow-[0_14px_34px_rgba(0,0,0,0.09)] backdrop-blur-md transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-2 group-hover:translate-x-2 group-hover:rotate-2 dark:bg-white/[0.1] dark:shadow-[0_14px_34px_rgba(0,0,0,0.45)]">
+                <div className="relative z-10 overflow-hidden rounded-md bg-white/55 shadow-[0_14px_34px_rgba(0,0,0,0.09)] backdrop-blur-md dark:bg-white/[0.1] dark:shadow-[0_14px_34px_rgba(0,0,0,0.45)]">
                   <div className="p-2.5">
-                    <div className="space-y-1.5 rounded border border-dashed border-purple-700/30 bg-white/30 p-2 transition-colors duration-500 group-hover:border-purple-700/60 dark:border-white/20 dark:bg-white/[0.04] dark:group-hover:border-purple-300/50">
+                    <div className="space-y-1.5 rounded border border-dashed border-purple-700/30 bg-white/30 p-2 dark:border-white/20 dark:bg-white/[0.04]">
                       {POD_CONTAINERS.map(c => (
                         <div
                           key={c.name}
-                          className={`flex items-center gap-2 rounded bg-white/85 px-2.5 py-1 font-mono text-xs font-bold text-gray-900 shadow-sm ring-1 ring-black/[0.05] backdrop-blur-sm transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5 group-hover:translate-x-1.5 dark:bg-[#1b1b20]/85 dark:text-white dark:ring-white/10 ${c.delay}`}>
+                          className="flex items-center gap-2 rounded bg-white/85 px-2.5 py-1 font-mono text-xs font-bold text-gray-900 shadow-sm ring-1 ring-black/[0.05] backdrop-blur-sm dark:bg-[#1b1b20]/85 dark:text-white dark:ring-white/10">
                           <Icon icon={c.icon} className="h-3.5 w-3.5 shrink-0 text-gray-900 dark:text-white" />
                           <span>{c.name}</span>
                         </div>

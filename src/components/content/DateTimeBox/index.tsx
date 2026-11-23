@@ -96,7 +96,7 @@ function TimeZoneBlock({ zone }: { zone: ZoneConfig }): JSX.Element {
     <div className="flex flex-col gap-5 py-2 sm:flex-row sm:items-center sm:justify-between sm:py-4">
       {/* Left: Icon, Region, Hubs & Date */}
       <div className="flex items-center gap-4">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#892CA0] text-white shadow-md dark:shadow-none">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-[#892CA0] text-white shadow-md dark:shadow-none">
           <Icon icon={zone.icon} className="text-3xl text-white" />
         </div>
         <div>
@@ -112,7 +112,7 @@ function TimeZoneBlock({ zone }: { zone: ZoneConfig }): JSX.Element {
           <span className="font-mono text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
             {data.time}
           </span>
-          <span className="shadow-xs rounded-lg bg-purple-100 px-2.5 py-1 font-mono text-xs font-bold text-[#892CA0] dark:bg-white/10 dark:text-purple-300 dark:shadow-none sm:text-sm">
+          <span className="shadow-xs rounded-md bg-purple-100 px-2.5 py-1 font-mono text-xs font-bold text-[#892CA0] dark:bg-white/10 dark:text-purple-300 dark:shadow-none sm:text-sm">
             {data.tzName}
           </span>
         </div>
@@ -124,8 +124,8 @@ function TimeZoneBlock({ zone }: { zone: ZoneConfig }): JSX.Element {
 
 function DateTimeBox(): JSX.Element {
   return (
-    <div className="w-full rounded-3xl bg-white p-8 shadow-xl shadow-purple-900/10 dark:bg-[#1e172a] dark:shadow-none sm:p-12">
-      <BrowserOnly fallback={<div className="h-80 animate-pulse rounded-2xl bg-purple-100/50 dark:bg-white/5" />}>
+    <div className="w-full rounded-md border border-black/[0.08] bg-white p-8 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:p-12">
+      <BrowserOnly fallback={<div className="h-80 animate-pulse rounded-md bg-purple-100/50 dark:bg-white/5" />}>
         {() => (
           <>
             <TimeZoneBlock zone={ZONES[0]} />

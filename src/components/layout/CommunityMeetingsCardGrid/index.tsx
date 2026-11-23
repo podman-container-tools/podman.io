@@ -57,7 +57,7 @@ function MeetingCard({
 
   return (
     <div
-      className={`meeting-card flex w-full flex-1 flex-col rounded-2xl p-6 sm:p-7 ${isSingle ? 'max-w-4xl' : 'max-w-[540px]'}`}>
+      className={`meeting-card flex w-full flex-1 flex-col rounded-md p-6 sm:p-7 ${isSingle ? 'max-w-4xl' : 'max-w-[540px]'}`}>
       {/* Top Row: Badge on left, Time on right top */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2.5">
         <div className="meeting-badge shadow-xs inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold">
@@ -133,7 +133,7 @@ function CommunityMeetingsCardGrid({ cards }: { cards: CommunityMeetingsCardProp
       </div>
 
       {/* Integrated CTA Archive Callout — directs users to full meeting archive */}
-      <div className="mx-auto mb-10 w-full max-w-4xl overflow-hidden rounded-2xl bg-gradient-to-r from-purple-700 to-purple-900 shadow-md">
+      <div className="mx-auto mb-10 w-full max-w-4xl overflow-hidden rounded-md bg-gradient-to-r from-purple-700 to-purple-900 shadow-md">
         <div className="flex flex-col items-start justify-between gap-5 p-6 md:flex-row md:items-center md:px-8">
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-0.5 text-xs font-bold text-white">

@@ -129,7 +129,7 @@ export default function TopDocsSearch({ className, onSelectCommand }: TopDocsSea
               title: item.title,
               category: cat.name,
               description: item.description,
-              url: `/docs/commands?cmd=${encodeURIComponent(item.slug)}`,
+              url: `/docs/commands/${encodeURIComponent(item.slug)}`,
               type: 'command',
             });
             if (matchedCommands.length >= 25) break;

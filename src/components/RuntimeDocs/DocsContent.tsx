@@ -17,7 +17,7 @@ const MarkdownRenderer = lazy(async () => {
 interface DocsContentProps {
   content: DocContent | null;
   loading: boolean;
-  onNavigateInternal: (slug: string) => void;
+  onNavigateInternal: (slug: string, hash?: string) => void;
 }
 
 function CodeBlock({ children }: { children: React.ReactNode; className?: string }) {
@@ -131,7 +131,7 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
   }
 
   const { metadata, markdown } = content;
-  const upstreamUrl = `https://github.com/containers/podman/blob/main/docs/source/markdown/${metadata.filename}`;
+  const upstreamUrl = `https://github.com/podman-container-tools/podman/blob/main/docs/source/markdown/${metadata.filename}`;
 
   const copyPageLink = () => {
     if (typeof window !== 'undefined') {
@@ -159,7 +159,7 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
               type="button"
               onClick={copyPageLink}
               title="Copy link to this page"
-              className="shadow-2xs group inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200/90 bg-slate-50 px-2.5 text-xs font-medium text-slate-600 transition-all hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:border-zinc-700/80 dark:bg-zinc-800/80 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-white sm:h-8 sm:px-3">
+              className="shadow-2xs group inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-lg border border-[#0284c7]/20 bg-[#0284c7]/10 px-2.5 text-xs font-medium text-[#0284c7] transition-all hover:border-[#0284c7]/30 hover:bg-[#0284c7]/[0.16] hover:text-[#0369a1] dark:border-[#1ECCFF]/30 dark:bg-[#1ECCFF]/[0.18] dark:text-[#1ECCFF] dark:hover:border-[#1ECCFF]/45 dark:hover:bg-[#1ECCFF]/[0.26] dark:hover:text-[#1ECCFF] sm:h-8 sm:px-3">
               {copiedLink ? (
                 <>
                   <svg
@@ -177,7 +177,7 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
               ) : (
                 <>
                   <svg
-                    className="h-3.5 w-3.5 text-slate-400 transition-colors group-hover:text-slate-600 dark:text-zinc-400 dark:group-hover:text-zinc-200"
+                    className="h-3.5 w-3.5 text-[#0284c7] transition-colors group-hover:text-[#0369a1] dark:text-[#1ECCFF] dark:group-hover:text-[#1ECCFF]"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -199,10 +199,10 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
               target="_blank"
               rel="noopener noreferrer"
               title="View source markdown on GitHub"
-              className="shadow-2xs group inline-flex h-7 items-center gap-1.5 rounded-lg border border-slate-200/90 bg-slate-50 px-2.5 text-xs font-medium !text-slate-600 !no-underline transition-all hover:border-slate-300 hover:bg-slate-100 hover:!text-slate-900 dark:border-zinc-700/80 dark:bg-zinc-800/80 dark:!text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800 dark:hover:!text-white sm:h-8 sm:px-3">
+              className="shadow-2xs group inline-flex h-7 items-center gap-1.5 rounded-lg border border-[#0284c7]/20 bg-[#0284c7]/10 px-2.5 text-xs font-medium !text-[#0284c7] !no-underline transition-all hover:border-[#0284c7]/30 hover:bg-[#0284c7]/[0.16] hover:!text-[#0369a1] dark:border-[#1ECCFF]/30 dark:bg-[#1ECCFF]/[0.18] dark:!text-[#1ECCFF] dark:hover:border-[#1ECCFF]/45 dark:hover:bg-[#1ECCFF]/[0.26] dark:hover:!text-[#1ECCFF] sm:h-8 sm:px-3">
               {/* GitHub Mark */}
               <svg
-                className="h-3.5 w-3.5 text-slate-400 transition-colors group-hover:text-slate-600 dark:text-zinc-400 dark:group-hover:text-zinc-200"
+                className="h-3.5 w-3.5 text-[#0284c7] transition-colors group-hover:text-[#0369a1] dark:text-[#1ECCFF] dark:group-hover:text-[#1ECCFF]"
                 viewBox="0 0 24 24"
                 fill="currentColor">
                 <path
@@ -214,7 +214,7 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
               <span>View Source</span>
               {/* External Arrow */}
               <svg
-                className="h-3 w-3 text-slate-400 transition-colors group-hover:text-slate-600 dark:text-zinc-500 dark:group-hover:text-zinc-300"
+                className="h-3 w-3 text-[#0284c7] transition-colors group-hover:text-[#0369a1] dark:text-[#1ECCFF] dark:group-hover:text-[#1ECCFF]"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -334,17 +334,23 @@ export default function DocsContent({ content, loading, onNavigateInternal }: Do
                     return <CodeBlock className={className}>{children}</CodeBlock>;
                   },
                   a({ href, children }) {
-                    if (href && (href.startsWith('/commands?cmd=') || href.startsWith('/docs/commands?cmd='))) {
-                      const targetCmd = href
-                        .replace(/^.*[?&]cmd=/, '')
-                        .split('&')[0]
-                        .split('#')[0];
+                    const commandPathMatch = href?.match(/^\/docs\/commands\/([^/?#]+)(?:[?][^#]*)?(#.*)?$/);
+                    const legacyCmdMatch =
+                      href?.startsWith('/commands?cmd=') || href?.startsWith('/docs/commands?cmd=')
+                        ? href
+                            .replace(/^.*[?&]cmd=/, '')
+                            .split('&')[0]
+                            .split('#')[0]
+                        : '';
+                    const targetCmd = commandPathMatch ? decodeURIComponent(commandPathMatch[1]) : legacyCmdMatch;
+                    const targetHash = commandPathMatch?.[2] || (href?.includes('#') ? `#${href.split('#')[1]}` : '');
+                    if (href && targetCmd) {
                       return (
                         <a
                           href={href}
                           onClick={e => {
                             e.preventDefault();
-                            onNavigateInternal(targetCmd);
+                            onNavigateInternal(targetCmd, targetHash);
                           }}
                           className="dark:hover:text-blue-200 cursor-pointer font-medium text-sky-600 hover:text-sky-700 hover:underline dark:text-blue-300">
                           {children}

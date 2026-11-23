@@ -39,7 +39,7 @@ man podman
 man podman-<subcommand>
 ```
 
-Please also reference the [Podman Troubleshooting Guide](https://github.com/containers/podman/blob/main/troubleshooting.md)
+Please also reference the [Podman Troubleshooting Guide](https://github.com/podman-container-tools/podman/blob/main/troubleshooting.md)
 to find known issues and tips on how to solve common configuration mistakes.
 
 ### Searching, pulling & listing images
@@ -191,7 +191,7 @@ You can verify the deletion of the container by running `podman ps -a`.
 ## Network
 
 For a more detailed guide about Networking and DNS in containers, please see the
-[network guide](https://github.com/containers/podman/blob/main/docs/tutorials/basic_networking.md).
+[network guide](https://github.com/podman-container-tools/podman/blob/main/docs/tutorials/basic_networking.md).
 
 ## Checkpoint, Migration and Restoring containers
 
@@ -205,7 +205,7 @@ checkpoint. For more details, see the
 
 For more information on how to setup and run the integration tests in your
 environment, checkout the Integration Tests
-[README.md](https://github.com/containers/podman/blob/main/test/README.md).
+[README.md](https://github.com/podman-container-tools/podman/blob/main/test/README.md).
 
 ## Podman Python Documentation
 
@@ -215,5 +215,5 @@ The documentation for the Podman Python SDK is located
 ## More information
 
 For more information on Podman and its subcommands, checkout the asciiart demos
-on the [README.md](https://github.com/containers/podman/blob/main/commands-demo.md)
+on the [README.md](https://github.com/podman-container-tools/podman/blob/main/commands-demo.md)
 page.

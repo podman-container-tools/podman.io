@@ -6,7 +6,7 @@ on:
   workflow_call:
     inputs:
       podman_docs_ref:
-        description: 'Optional upstream containers/podman commit SHA or ref for CLI docs'
+        description: 'Optional upstream podman-container-tools/podman commit SHA or ref for CLI docs'
         required: false
         type: string
 

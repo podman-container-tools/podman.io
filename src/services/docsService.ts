@@ -1,13 +1,12 @@
 import { PodmanMarkdownPreprocessor } from './podmanMarkdownPreprocessor';
+import { CATEGORY_ORDER } from './commandCategorizer';
 import type { DocManifest, DocContent, DocCategory, DocMetadata } from './docsTypes';
 
-const REPO_OWNER = 'containers';
+const REPO_OWNER = 'podman-container-tools';
 const REPO_NAME = 'podman';
 const BRANCH = 'main';
 const BASE_MARKDOWN_PATH = 'docs/source/markdown';
 const STATIC_DOCS_BASE = '/data/cli-docs';
-
-const GITHUB_COMMITS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=${BASE_MARKDOWN_PATH}&sha=${BRANCH}&per_page=1`;
 
 // Bounded Cache TTL: 5 minutes. After 5 minutes, SWR triggers background revalidation.
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -167,7 +166,6 @@ export class DocsService {
   private preprocessor: PodmanMarkdownPreprocessor;
   private memoryDocCache: Map<string, CacheEntry<DocContent>> = new Map();
   private manifestCache: CacheEntry<DocManifest> | null = null;
-  private optionsCache: Map<string, string> = new Map();
 
   // In-flight request deduplication so simultaneous mounts share a single fetch
   private manifestPromise: Promise<DocManifest> | null = null;
@@ -179,18 +177,8 @@ export class DocsService {
   private commitCheckPromise: Promise<boolean> | null = null;
 
   constructor() {
-    this.preprocessor = new PodmanMarkdownPreprocessor(this.optionsCache);
+    this.preprocessor = new PodmanMarkdownPreprocessor();
     this.cleanLegacyCaches();
-  }
-
-  private getRawBaseUrl(): string {
-    const ref = (this.latestCommitSha || BRANCH).split(':')[0];
-    return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${ref}/${BASE_MARKDOWN_PATH}`;
-  }
-
-  private getManifestApiUrl(): string {
-    const ref = (this.latestCommitSha || BRANCH).split(':')[0];
-    return `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${BASE_MARKDOWN_PATH}?ref=${ref}`;
   }
 
   private isEntryFresh<T>(entry: CacheEntry<T>, now: number): boolean {
@@ -256,49 +244,15 @@ export class DocsService {
       this.lastCommitCheckTime = Date.now();
       let detectedSha: string | null = null;
       try {
-        // 1. Check static site manifest first (fast, zero GitHub API calls)
+        // Check static site manifest.json (fast, zero external API calls)
         if (typeof window !== 'undefined' && window.location.protocol.startsWith('http')) {
-          try {
-            const staticRes = await fetch(`${STATIC_DOCS_BASE}/manifest.json`, { cache: 'no-cache' });
-            if (staticRes.ok) {
-              const staticManifest: DocManifest = await staticRes.json();
-              if (staticManifest && staticManifest.revision) {
-                detectedSha = staticManifest.generatorVersion
-                  ? `${staticManifest.revision}:${staticManifest.generatorVersion}`
-                  : staticManifest.revision;
-              }
-            }
-          } catch {
-            // Static manifest unavailable, fall back to GitHub commit check
-          }
-        }
-
-        // 2. Fallback: GitHub commit check with conditional ETag (304 costs 0 rate limit)
-        if (!detectedSha) {
-          const headers: Record<string, string> = {
-            Accept: 'application/vnd.github.v3+json',
-          };
-          const storage = this.getStorage();
-          const storedEtag = storage ? storage.getItem('podman_v7_commit_etag') : null;
-          if (storedEtag) {
-            headers['If-None-Match'] = storedEtag;
-          }
-
-          const res = await fetch(GITHUB_COMMITS_URL, { headers });
-          if (res.status === 304) {
-            detectedSha = this.latestCommitSha;
-          } else if (res.ok) {
-            const etag = res.headers.get('ETag');
-            if (etag && storage) {
-              try {
-                storage.setItem('podman_v7_commit_etag', etag);
-              } catch {
-                // Ignore
-              }
-            }
-            const commits = await res.json();
-            if (Array.isArray(commits) && commits.length > 0 && commits[0].sha) {
-              detectedSha = commits[0].sha;
+          const staticRes = await fetch(`${STATIC_DOCS_BASE}/manifest.json`, { cache: 'no-cache' });
+          if (staticRes.ok) {
+            const staticManifest: DocManifest = await staticRes.json();
+            if (staticManifest && staticManifest.revision) {
+              detectedSha = staticManifest.generatorVersion
+                ? `${staticManifest.revision}:${staticManifest.generatorVersion}`
+                : staticManifest.revision;
             }
           }
         }
@@ -334,7 +288,6 @@ export class DocsService {
   public invalidateAllCaches(newSha?: string): void {
     this.manifestCache = null;
     this.memoryDocCache.clear();
-    this.optionsCache.clear();
     if (newSha) this.latestCommitSha = newSha;
 
     if (typeof window !== 'undefined') {
@@ -423,7 +376,7 @@ export class DocsService {
   }
 
   private async fetchFreshManifest(): Promise<DocManifest> {
-    // Strategy A: Load static build-time generated manifest (zero GitHub API dependency)
+    // Load static build-time generated manifest.json
     if (typeof window !== 'undefined' && window.location.protocol.startsWith('http')) {
       try {
         const staticRes = await fetch(`${STATIC_DOCS_BASE}/manifest.json`, { cache: 'no-cache' });
@@ -446,90 +399,27 @@ export class DocsService {
           }
         }
       } catch {
-        // Static manifest unavailable, proceed to GitHub fallback
+        // Static manifest unavailable, proceed to local fallback
       }
     }
 
-    if (typeof window !== 'undefined' && !this.latestCommitSha) {
-      this.checkUpstreamChanges().catch(() => undefined);
+    if (this.manifestCache) {
+      return this.manifestCache.data;
     }
 
-    // Strategy B: Direct GitHub API fallback with conditional ETag support
-    try {
-      const storage = this.getStorage();
-      const headers: Record<string, string> = {
-        Accept: 'application/vnd.github.v3+json',
-      };
-      const storedManifestEtag = storage ? storage.getItem('podman_v7_manifest_etag') : null;
-      if (storedManifestEtag && this.manifestCache) {
-        headers['If-None-Match'] = storedManifestEtag;
-      }
+    const fallbackList: DocMetadata[] = CORE_COMMANDS_FALLBACK.map(item => ({
+      slug: item.slug,
+      title: item.title,
+      section: item.section,
+      description: item.desc,
+      filename: item.filename,
+      category: this.preprocessor.categorizeCommand(item.slug, item.section),
+      isTemplate: item.filename.endsWith('.md.in'),
+    }));
 
-      const response = await fetch(this.getManifestApiUrl(), { headers });
-
-      if (response.status === 304 && this.manifestCache) {
-        this.manifestCache.cachedAt = Date.now();
-        return this.manifestCache.data;
-      }
-
-      if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.status}`);
-      }
-
-      const etag = response.headers.get('ETag');
-      if (etag && storage) {
-        try {
-          storage.setItem('podman_v7_manifest_etag', etag);
-        } catch {
-          // Ignore
-        }
-      }
-
-      const items: Array<{ name: string; type: string }> = await response.json();
-      const files = items.filter(i => i.type === 'file' && (i.name.endsWith('.md') || i.name.endsWith('.md.in')));
-
-      const metadataList: DocMetadata[] = [];
-      for (const file of files) {
-        if (file.name === 'README.md' || file.name === '.gitignore') continue;
-
-        const isTemplate = file.name.endsWith('.md.in');
-        const cleanName = file.name.replace(/\.(1|5|7)(\.md|\.md\.in)?$/, '');
-        let section = '1';
-        const secMatch = file.name.match(/\.(1|5|7)(?:\.md|\.md\.in)?$/);
-        if (secMatch) section = secMatch[1];
-
-        metadataList.push({
-          slug: cleanName,
-          title: cleanName,
-          section,
-          description: `Podman CLI reference documentation for ${cleanName}`,
-          filename: file.name,
-          category: this.preprocessor.categorizeCommand(cleanName, section),
-          isTemplate,
-        });
-      }
-
-      const manifest = this.buildManifestStructure(metadataList, {});
-      this.saveManifestCache(manifest);
-      return manifest;
-    } catch {
-      if (this.manifestCache) {
-        return this.manifestCache.data;
-      }
-      const fallbackList: DocMetadata[] = CORE_COMMANDS_FALLBACK.map(item => ({
-        slug: item.slug,
-        title: item.title,
-        section: item.section,
-        description: item.desc,
-        filename: item.filename,
-        category: this.preprocessor.categorizeCommand(item.slug, item.section),
-        isTemplate: item.filename.endsWith('.md.in'),
-      }));
-
-      const manifest = this.buildManifestStructure(fallbackList, {});
-      this.saveManifestCache(manifest);
-      return manifest;
-    }
+    const manifest = this.buildManifestStructure(fallbackList, {});
+    this.saveManifestCache(manifest);
+    return manifest;
   }
 
   private saveManifestCache(manifest: DocManifest): void {
@@ -551,16 +441,7 @@ export class DocsService {
   }
 
   private buildManifestStructure(items: DocMetadata[], aliases: Record<string, string>): DocManifest {
-    const categoryOrder = [
-      'Core CLI (Man Pages)',
-      'Containers',
-      'Pods & Kubernetes',
-      'Images',
-      'Networks & Volumes',
-      'System & Machine',
-      'Quadlet & Systemd',
-      'Other Commands',
-    ];
+    const categoryOrder = CATEGORY_ORDER;
 
     const categoryMap = new Map<string, DocMetadata[]>();
     for (const cat of categoryOrder) {
@@ -668,7 +549,7 @@ export class DocsService {
   private async fetchFreshDocument(slug: string): Promise<DocContent> {
     const cacheKey = slug.toLowerCase();
 
-    // Strategy A: Load static build-time preprocessed JSON (zero GitHub API dependency)
+    // Load static build-time preprocessed JSON (zero external API dependency)
     if (typeof window !== 'undefined' && window.location.protocol.startsWith('http')) {
       try {
         const staticRes = await fetch(`${STATIC_DOCS_BASE}/commands/${encodeURIComponent(cacheKey)}.json`, {
@@ -682,11 +563,10 @@ export class DocsService {
           }
         }
       } catch {
-        // Static command JSON unavailable, proceed to GitHub raw fallback
+        // Static command JSON unavailable, proceed to local fallback
       }
     }
 
-    // Strategy B: Direct GitHub Raw Fetch with Preprocessing fallback
     const manifest = await this.getManifest();
     let targetMeta: DocMetadata | undefined;
 
@@ -698,58 +578,8 @@ export class DocsService {
       }
     }
 
-    const filename = targetMeta?.filename || `${slug}.1.md`;
-    let rawMarkdown = '';
-    let usedFilename = filename;
-    const rawBaseUrl = this.getRawBaseUrl();
-
-    try {
-      const rawRes = await fetch(`${rawBaseUrl}/${filename}`);
-      if (!rawRes.ok && filename.endsWith('.md')) {
-        const inRes = await fetch(`${rawBaseUrl}/${filename}.in`);
-        if (inRes.ok) {
-          rawMarkdown = await inRes.text();
-          usedFilename = `${filename}.in`;
-        } else {
-          throw new Error(`Document ${slug} not found`);
-        }
-      } else if (!rawRes.ok && filename.endsWith('.md.in')) {
-        const mdRes = await fetch(`${rawBaseUrl}/${filename.replace(/\.in$/, '')}`);
-        if (mdRes.ok) {
-          rawMarkdown = await mdRes.text();
-          usedFilename = filename.replace(/\.in$/, '');
-        } else {
-          throw new Error(`Document ${slug} not found`);
-        }
-      } else {
-        rawMarkdown = await rawRes.text();
-      }
-    } catch {
-      rawMarkdown = `# ${slug}\n\nUnable to fetch latest documentation for \`${slug}\` from GitHub. Please check your network connection or view the source on GitHub.\n\n[View ${slug} on GitHub](https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${BRANCH}/${BASE_MARKDOWN_PATH})`;
-    }
-
-    const optionMatches = rawMarkdown.match(/^@@option\s+([^\s\n]+)/gm);
-    if (optionMatches && optionMatches.length > 0) {
-      const optionNames = Array.from(new Set(optionMatches.map(m => m.replace(/^@@option\s+/, '').trim())));
-
-      await Promise.all(
-        optionNames.map(async optName => {
-          const optKey = optName.endsWith('.md') ? optName : `${optName}.md`;
-          if (!this.optionsCache.has(optKey)) {
-            try {
-              const res = await fetch(`${rawBaseUrl}/options/${optKey}`);
-              if (res.ok) {
-                const text = await res.text();
-                this.optionsCache.set(optKey, text);
-                this.preprocessor.setOptionSnippet(optKey, text);
-              }
-            } catch {
-              // Ignore option fetch error
-            }
-          }
-        }),
-      );
-    }
+    const usedFilename = targetMeta?.filename || `${slug}.1.md`;
+    const rawMarkdown = `# ${slug}\n\nStatic documentation for \`${slug}\` is currently unavailable. Please run \`yarn fetch-docs\` locally or view the source on GitHub.\n\n[View ${slug} on GitHub](https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${BRANCH}/${BASE_MARKDOWN_PATH})`;
 
     const processed = this.preprocessor.process(usedFilename, rawMarkdown, manifest.revision);
     this.saveDocCache(cacheKey, processed);

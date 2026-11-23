@@ -1375,11 +1375,11 @@ aside[class*='docSidebarContainer'] a * {
 }
 
 /* -------------------------------------------------------- */
-/* Dark Mode Nav Items: All Cyan Blue #1ECCFF               */
+/* Dark Mode Nav Items: Normally White, Active Cyan #1ECCFF */
 /* -------------------------------------------------------- */
 [data-theme='dark'] .doc-nav-item,
 [data-theme='dark'] .doc-nav-item:visited {
-  color: #1eccff !important;
+  color: #ffffff !important;
   background-color: transparent !important;
 }
 
@@ -1387,25 +1387,25 @@ aside[class*='docSidebarContainer'] a * {
 [data-theme='dark'] .doc-nav-item span,
 [data-theme='dark'] .doc-nav-item:visited .doc-nav-title,
 [data-theme='dark'] .doc-nav-item:visited span {
-  color: #1eccff !important;
+  color: #ffffff !important;
 }
 
 [data-theme='dark'] .doc-nav-item svg,
 [data-theme='dark'] .doc-nav-item:visited svg {
-  color: #1eccff !important;
+  color: #ffffff !important;
   stroke: currentColor !important;
 }
 
 [data-theme='dark'] .doc-nav-item .doc-nav-count {
-  color: #1eccff !important;
+  color: #ffffff !important;
   opacity: 0.7 !important;
 }
 
 /* Dark mode hover */
 [data-theme='dark'] .doc-nav-item:hover,
 [data-theme='dark'] .doc-nav-item:visited:hover {
-  background-color: rgba(30, 204, 255, 0.12) !important;
-  color: #83f1ff !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
   text-decoration: none !important;
 }
 
@@ -1415,12 +1415,14 @@ aside[class*='docSidebarContainer'] a * {
 [data-theme='dark'] .doc-nav-item:visited:hover .doc-nav-title,
 [data-theme='dark'] .doc-nav-item:visited:hover span,
 [data-theme='dark'] .doc-nav-item:visited:hover svg {
-  color: #83f1ff !important;
+  color: #ffffff !important;
 }
 
 /* Dark mode active item: Cyan pill, bold cyan */
 [data-theme='dark'] .doc-nav-item-active,
-[data-theme='dark'] .doc-nav-item-active:visited {
+[data-theme='dark'] .doc-nav-item-active:visited,
+[data-theme='dark'] .doc-nav-item-active:hover,
+[data-theme='dark'] .doc-nav-item-active:visited:hover {
   background-color: rgba(30, 204, 255, 0.2) !important;
   color: #1eccff !important;
   font-weight: 600 !important;
@@ -1433,7 +1435,13 @@ aside[class*='docSidebarContainer'] a * {
 [data-theme='dark'] .doc-nav-item-active svg,
 [data-theme='dark'] .doc-nav-item-active:visited .doc-nav-title,
 [data-theme='dark'] .doc-nav-item-active:visited span,
-[data-theme='dark'] .doc-nav-item-active:visited svg {
+[data-theme='dark'] .doc-nav-item-active:visited svg,
+[data-theme='dark'] .doc-nav-item-active:hover .doc-nav-title,
+[data-theme='dark'] .doc-nav-item-active:hover span,
+[data-theme='dark'] .doc-nav-item-active:hover svg,
+[data-theme='dark'] .doc-nav-item-active:visited:hover .doc-nav-title,
+[data-theme='dark'] .doc-nav-item-active:visited:hover span,
+[data-theme='dark'] .doc-nav-item-active:visited:hover svg {
   color: #1eccff !important;
   font-weight: 600 !important;
 }
@@ -1474,7 +1482,7 @@ aside[class*='docSidebarContainer'] a * {
 }
 
 [data-theme='dark'] .doc-submenu-tree {
-  border-left: 1.5px solid rgba(30, 204, 255, 0.25) !important;
+  border-left: 1.5px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 /* Light mode submenu link: Charcoal, never purple on visited */
@@ -1506,26 +1514,26 @@ aside[class*='docSidebarContainer'] a * {
   background-color: transparent !important;
 }
 
-/* Dark mode submenu link: Cyan blue, never dull gray */
+/* Dark mode submenu link: Normally White, Active Cyan Blue #1eccff */
 [data-theme='dark'] .doc-submenu-link,
 [data-theme='dark'] .doc-submenu-link:visited {
-  color: #1eccff !important;
+  color: #ffffff !important;
   background-color: transparent !important;
-  opacity: 0.9 !important;
+  opacity: 0.85 !important;
 }
 
 [data-theme='dark'] .doc-submenu-link:hover,
 [data-theme='dark'] .doc-submenu-link:visited:hover {
-  color: #83f1ff !important;
+  color: #1eccff !important;
   background-color: transparent !important;
   opacity: 1 !important;
 }
 
-/* Dark mode active submenu link: Crisp White #ffffff */
+/* Dark mode active submenu link: Cyan Blue #1eccff */
 [data-theme='dark'] .doc-submenu-link-active,
 [data-theme='dark'] .doc-submenu-link-active:visited,
 [data-theme='dark'] .doc-submenu-link-active:hover {
-  color: #ffffff !important;
+  color: #1eccff !important;
   font-weight: 600 !important;
   text-decoration: none !important;
   background-color: transparent !important;

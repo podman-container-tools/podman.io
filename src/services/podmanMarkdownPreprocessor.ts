@@ -1,58 +1,5 @@
 import type { DocMetadata, DocContent, TOCHeading } from './docsTypes';
-
-// Keep in sync with scripts/fetch-podman-docs.js (build-time categorizer)
-const CORE_COMMANDS = ['podman', 'podman-remote', 'podman-help', 'podman-version', 'podmansh'];
-const QUADLET_COMMANDS = ['podman-generate-systemd', 'podman-auto-update'];
-const SYSTEM_COMMANDS = ['podman-info', 'podman-events', 'podman-completion', 'podman-unshare'];
-const IMAGE_COMMANDS = [
-  'podman-build',
-  'podman-pull',
-  'podman-push',
-  'podman-images',
-  'podman-rmi',
-  'podman-tag',
-  'podman-untag',
-  'podman-save',
-  'podman-load',
-  'podman-import',
-  'podman-history',
-  'podman-search',
-  'podman-login',
-  'podman-logout',
-];
-const CONTAINER_COMMANDS = [
-  'podman-run',
-  'podman-exec',
-  'podman-ps',
-  'podman-start',
-  'podman-stop',
-  'podman-restart',
-  'podman-rm',
-  'podman-kill',
-  'podman-logs',
-  'podman-inspect',
-  'podman-top',
-  'podman-stats',
-  'podman-cp',
-  'podman-attach',
-  'podman-commit',
-  'podman-create',
-  'podman-diff',
-  'podman-export',
-  'podman-init',
-  'podman-mount',
-  'podman-unmount',
-  'podman-pause',
-  'podman-unpause',
-  'podman-port',
-  'podman-rename',
-  'podman-update',
-  'podman-wait',
-  'podman-checkpoint',
-  'podman-restore',
-  'podman-generate',
-  'podman-generate-spec',
-];
+import { categorizeCommand } from './commandCategorizer';
 
 export class PodmanMarkdownPreprocessor {
   private optionsCache: Map<string, string>;
@@ -116,10 +63,7 @@ export class PodmanMarkdownPreprocessor {
     content = content.replace(/(^[^|\r\n][^\r\n]*)\r?\n(\|[^\r\n]+\|)/gm, '$1\n\n$2');
     content = content.replace(/(\|[^\r\n]+\|)\r?\n([^|\r\n])/gm, '$1\n\n$2');
 
-    // 3. Resolve conditional blocks << if variable >> ... << endif >>
-    content = this.renderConditionals(content, { is_quadlet: isQuadlet });
-
-    // 4. Expand @@option <name> includes from options/
+    // 3. Expand @@option <name> includes from options/
     content = content.replace(/^@@option\s+([^\s\n]+)/gm, (_, optName) => {
       const optKey = optName.endsWith('.md') ? optName : `${optName}.md`;
       const optSnippet = this.optionsCache.get(optKey) || '';
@@ -130,6 +74,9 @@ export class PodmanMarkdownPreprocessor {
       const cleaned = optSnippet.replace(/^####>[^\n]*\n?/gm, '').trim();
       return cleaned;
     });
+
+    // 4. Resolve conditional blocks << if variable >> ... << endif >> (including inside expanded options)
+    content = this.renderConditionals(content, { is_quadlet: isQuadlet });
 
     // 5. Resolve <<pod|container>> alternates
     content = content.replace(/<<([^|>]*)\|([^|>]*)>>/g, (_, podPart, containerPart) => {
@@ -143,12 +90,12 @@ export class PodmanMarkdownPreprocessor {
     content = content.replace(/<<fullsubcommand>>/g, fullSubcommand);
 
     // 7. Rewrite cross-reference links
-    // e.g. [podman-build(1)](podman-build.1.md) -> [podman-build(1)](/docs/commands?cmd=podman-build)
+    // e.g. [podman-build(1)](podman-build.1.md) -> [podman-build(1)](/docs/commands/podman-build)
     content = content.replace(
       /\[([^\]]+)\]\(([^)]*?)(podman-[a-zA-Z0-9_.-]+)\.(1|5|7)(?:\.md|\.md\.in)?(?:#([a-zA-Z0-9_-]+))?\)/g,
       (_, linkText, _path, targetCmd, _sec, anchor) => {
         const anchorPart = anchor ? `#${anchor}` : '';
-        return `[${linkText}](/docs/commands?cmd=${targetCmd}${anchorPart})`;
+        return `[${linkText}](/docs/commands/${targetCmd}${anchorPart})`;
       },
     );
 
@@ -157,7 +104,7 @@ export class PodmanMarkdownPreprocessor {
       /\[([^\]]+)\]\(([^)]*?)podman\.(1|5|7)(?:\.md|\.md\.in)?(?:#([a-zA-Z0-9_-]+))?\)/g,
       (_, linkText, _path, _sec, anchor) => {
         const anchorPart = anchor ? `#${anchor}` : '';
-        return `[${linkText}](/docs/commands?cmd=podman${anchorPart})`;
+        return `[${linkText}](/docs/commands/podman${anchorPart})`;
       },
     );
 
@@ -195,18 +142,19 @@ export class PodmanMarkdownPreprocessor {
 
   private renderConditionals(text: string, context: Record<string, boolean>): string {
     const ifRegex = /<<\s*if\s+(not\s+)?([a-zA-Z0-9_]+)\s*>>([\s\S]*?)<<\s*endif\s*>>/g;
-    return text.replace(ifRegex, (_, notToken, varName, body) => {
+    const blockResolved = text.replace(ifRegex, (_, notToken, varName, body) => {
       const isNot = Boolean(notToken);
       const val = Boolean(context[varName]);
       const condition = isNot ? !val : val;
-      if (condition) {
-        // If there's an << else >> block
-        const elseParts = body.split(/<<\s*else\s*>>/);
-        return elseParts[0] || '';
-      } else {
-        const elseParts = body.split(/<<\s*else\s*>>/);
-        return elseParts[1] || '';
-      }
+      const elseParts = body.split(/<<\s*else\s*>>/);
+      return condition ? elseParts[0] || '' : elseParts[1] || '';
+    });
+    const inlineTernaryRegex = /<<\s*'([^']*)'\s+if\s+(not\s+)?([a-zA-Z0-9_]+)\s+else\s+'([^']*)'\s*>>/g;
+    return blockResolved.replace(inlineTernaryRegex, (_, trueVal, notToken, varName, falseVal) => {
+      const isNot = Boolean(notToken);
+      const val = Boolean(context[varName]);
+      const condition = isNot ? !val : val;
+      return condition ? trueVal : falseVal;
     });
   }
 
@@ -252,35 +200,6 @@ export class PodmanMarkdownPreprocessor {
   }
 
   public categorizeCommand(slug: string, section: string): string {
-    const name = slug.toLowerCase();
-    const startsWithAny = (prefixes: string[]) =>
-      prefixes.some(prefix => name === prefix || name.startsWith(`${prefix}-`));
-
-    // Quadlet / systemd integration (all section 5 unit files, quadlet guides & commands)
-    if (section === '5' || name.endsWith('.unit') || name.includes('quadlet') || QUADLET_COMMANDS.includes(name)) {
-      return 'Quadlet & Systemd';
-    }
-    if (CORE_COMMANDS.includes(name)) {
-      return 'Core CLI (Man Pages)';
-    }
-    if (startsWithAny(['podman-pod', 'podman-kube', 'podman-compose']) || name === 'podman-play-kube') {
-      return 'Pods & Kubernetes';
-    }
-    if (
-      startsWithAny(['podman-image', 'podman-manifest', 'podman-artifact', 'podman-farm']) ||
-      IMAGE_COMMANDS.includes(name)
-    ) {
-      return 'Images';
-    }
-    if (startsWithAny(['podman-network', 'podman-volume'])) {
-      return 'Networks & Volumes';
-    }
-    if (startsWithAny(['podman-container', 'podman-healthcheck']) || CONTAINER_COMMANDS.includes(name)) {
-      return 'Containers';
-    }
-    if (startsWithAny(['podman-system', 'podman-machine', 'podman-secret']) || SYSTEM_COMMANDS.includes(name)) {
-      return 'System & Machine';
-    }
-    return 'Other Commands';
+    return categorizeCommand(slug, section);
   }
 }

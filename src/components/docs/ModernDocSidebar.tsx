@@ -112,7 +112,7 @@ const RESOURCE_ITEMS: NavLinkItem[] = [
   {
     id: 'network',
     label: 'Basic Networking',
-    href: 'https://github.com/containers/podman/blob/main/docs/tutorials/basic_networking.md',
+    href: 'https://github.com/podman-container-tools/podman/blob/main/docs/tutorials/basic_networking.md',
     isExternal: true,
     icon: () => (
       <svg
@@ -151,7 +151,7 @@ const RESOURCE_ITEMS: NavLinkItem[] = [
   {
     id: 'troubleshooting',
     label: 'Troubleshooting Guide',
-    href: 'https://github.com/containers/podman/blob/main/troubleshooting.md',
+    href: 'https://github.com/podman-container-tools/podman/blob/main/troubleshooting.md',
     isExternal: true,
     icon: () => (
       <svg
@@ -171,7 +171,7 @@ const RESOURCE_ITEMS: NavLinkItem[] = [
   {
     id: 'github-repo',
     label: 'GitHub Source & Issues',
-    href: 'https://github.com/containers/podman',
+    href: 'https://github.com/podman-container-tools/podman',
     isExternal: true,
     icon: () => (
       <svg
@@ -336,10 +336,15 @@ export default function ModernDocSidebar({
   // Active command resolution
   const activeCmdParam = useMemo(() => {
     if (currentCommandSlug) return currentCommandSlug.toLowerCase();
+    const pathMatch = location.pathname.match(/^\/docs\/commands\/([^/]+)\/?$/);
+    if (pathMatch) {
+      return decodeURIComponent(pathMatch[1]).toLowerCase();
+    }
+    // Legacy ?cmd= support while bookmarks redirect
     if (typeof window === 'undefined') return '';
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     return (params.get('cmd') || '').toLowerCase();
-  }, [currentCommandSlug, location.search]);
+  }, [currentCommandSlug, location.pathname, location.search]);
 
   // Load manifest and listen for live updates
   useEffect(() => {
@@ -404,7 +409,7 @@ export default function ModernDocSidebar({
       if (slug === 'overview' || !slug) {
         history.push('/docs/commands');
       } else {
-        history.push(`/docs/commands?cmd=${encodeURIComponent(slug)}`);
+        history.push(`/docs/commands/${encodeURIComponent(slug)}`);
       }
     }
     if (onItemClick) onItemClick();
@@ -601,7 +606,7 @@ export default function ModernDocSidebar({
             return (
               <li key={cat.id} className="relative">
                 <Link
-                  to={`/docs/commands?category=${encodeURIComponent(cat.id)}`}
+                  to="/docs/commands"
                   onClick={e => {
                     e.preventDefault();
                     toggleCategory(cat.id);
@@ -645,7 +650,7 @@ export default function ModernDocSidebar({
                         return (
                           <li key={cmd.slug}>
                             <Link
-                              to={`/docs/commands?cmd=${encodeURIComponent(cmd.slug)}`}
+                              to={`/docs/commands/${encodeURIComponent(cmd.slug)}`}
                               onClick={() => handleCommandClick(cmd.slug)}
                               className={clsx(
                                 'doc-submenu-link block w-full truncate rounded-md px-2 py-1 font-mono text-[12.5px] no-underline transition-colors duration-150',

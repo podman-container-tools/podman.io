@@ -1,7 +1,7 @@
 /**
  * Build-time Podman CLI Documentation Fetcher & Preprocessor
  *
- * Fetches canonical Markdown from `containers/podman` (`docs/source/markdown`)
+ * Fetches canonical Markdown from `podman-container-tools/podman` (`docs/source/markdown`)
  * at a pinned commit SHA (`.podman-docs-revision` or `PODMAN_DOCS_REF`),
  * preprocesses all `.md` and `.md.in` man-page templates and `options/*.md`
  * snippets, and outputs static JSON assets into `static/data/cli-docs/`
@@ -13,12 +13,18 @@ const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
 const { execFileSync } = require('child_process');
+const { CATEGORY_ORDER, categorizeCommand } = require('../src/services/commandCategorizer');
 
-// Fingerprint of this script: any change to the fetch/categorize logic forces a regeneration,
-// even when the upstream revision is unchanged.
-const GENERATOR_VERSION = crypto.createHash('sha256').update(fs.readFileSync(__filename)).digest('hex').slice(0, 12);
+// Fingerprint of this script and shared categorizer: any change to the fetch/categorize logic
+// forces a regeneration, even when the upstream revision is unchanged.
+const GENERATOR_VERSION = crypto
+  .createHash('sha256')
+  .update(fs.readFileSync(__filename))
+  .update(fs.readFileSync(require.resolve('../src/services/commandCategorizer')))
+  .digest('hex')
+  .slice(0, 12);
 
-const REPO_URL = 'https://github.com/containers/podman.git';
+const REPO_URL = 'https://github.com/podman-container-tools/podman.git';
 const MARKDOWN_SUBPATH = 'docs/source/markdown';
 const ROOT_DIR = path.resolve(__dirname, '..');
 const REVISION_FILE = path.join(ROOT_DIR, '.podman-docs-revision');
@@ -52,107 +58,6 @@ function resolveTargetRevision() {
     // Fallback to branch name
   }
   return 'main';
-}
-
-const CATEGORY_ORDER = [
-  'Core CLI (Man Pages)',
-  'Containers',
-  'Pods & Kubernetes',
-  'Images',
-  'Networks & Volumes',
-  'System & Machine',
-  'Quadlet & Systemd',
-  'Other Commands',
-];
-
-const CORE_COMMANDS = ['podman', 'podman-remote', 'podman-help', 'podman-version', 'podmansh'];
-
-const CONTAINER_COMMANDS = [
-  'podman-run',
-  'podman-exec',
-  'podman-ps',
-  'podman-start',
-  'podman-stop',
-  'podman-restart',
-  'podman-rm',
-  'podman-kill',
-  'podman-logs',
-  'podman-inspect',
-  'podman-top',
-  'podman-stats',
-  'podman-cp',
-  'podman-attach',
-  'podman-commit',
-  'podman-create',
-  'podman-diff',
-  'podman-export',
-  'podman-init',
-  'podman-mount',
-  'podman-unmount',
-  'podman-pause',
-  'podman-unpause',
-  'podman-port',
-  'podman-rename',
-  'podman-update',
-  'podman-wait',
-  'podman-checkpoint',
-  'podman-restore',
-  'podman-generate',
-  'podman-generate-spec',
-];
-
-const IMAGE_COMMANDS = [
-  'podman-build',
-  'podman-pull',
-  'podman-push',
-  'podman-images',
-  'podman-rmi',
-  'podman-tag',
-  'podman-untag',
-  'podman-save',
-  'podman-load',
-  'podman-import',
-  'podman-history',
-  'podman-search',
-  'podman-login',
-  'podman-logout',
-];
-
-const SYSTEM_COMMANDS = ['podman-info', 'podman-events', 'podman-completion', 'podman-unshare'];
-
-const QUADLET_COMMANDS = ['podman-generate-systemd', 'podman-auto-update'];
-
-const startsWithAny = (name, prefixes) => prefixes.some(prefix => name === prefix || name.startsWith(`${prefix}-`));
-
-/**
- * Places each command in the group it is related to, based on what it manages.
- * Unknown future commands fall back to "Other Commands" so nothing is ever dropped.
- */
-function categorizeCommand(title, section) {
-  const name = title.toLowerCase();
-
-  // Quadlet / systemd integration (all section 5 unit files, quadlet guides & commands)
-  if (section === '5' || name.endsWith('.unit') || name.includes('quadlet') || QUADLET_COMMANDS.includes(name)) {
-    return 'Quadlet & Systemd';
-  }
-  if (CORE_COMMANDS.includes(name)) return 'Core CLI (Man Pages)';
-  if (startsWithAny(name, ['podman-pod', 'podman-kube', 'podman-compose']) || name === 'podman-play-kube') {
-    return 'Pods & Kubernetes';
-  }
-  if (
-    startsWithAny(name, ['podman-image', 'podman-manifest', 'podman-artifact', 'podman-farm']) ||
-    IMAGE_COMMANDS.includes(name)
-  ) {
-    return 'Images';
-  }
-  if (startsWithAny(name, ['podman-network', 'podman-volume'])) return 'Networks & Volumes';
-  if (startsWithAny(name, ['podman-container', 'podman-healthcheck']) || CONTAINER_COMMANDS.includes(name)) {
-    return 'Containers';
-  }
-  if (startsWithAny(name, ['podman-system', 'podman-machine', 'podman-secret']) || SYSTEM_COMMANDS.includes(name)) {
-    return 'System & Machine';
-  }
-  return 'Other Commands';
 }
 
 function deriveSubcommand(filename, full = false) {
@@ -278,14 +183,14 @@ function preprocessMarkdown(filename, rawContent, optionsMap, revision) {
     /\[([^\]]+)\]\(([^)]*?)(podman-[a-zA-Z0-9_.-]+)\.(1|5|7)(?:\.md|\.md\.in)?(?:#([a-zA-Z0-9_-]+))?\)/g,
     (_, linkText, _path, targetCmd, _sec, anchor) => {
       const anchorPart = anchor ? `#${anchor}` : '';
-      return `[${linkText}](/docs/commands?cmd=${targetCmd}${anchorPart})`;
+      return `[${linkText}](/docs/commands/${targetCmd}${anchorPart})`;
     },
   );
   content = content.replace(
     /\[([^\]]+)\]\(([^)]*?)podman\.(1|5|7)(?:\.md|\.md\.in)?(?:#([a-zA-Z0-9_-]+))?\)/g,
     (_, linkText, _path, _sec, anchor) => {
       const anchorPart = anchor ? `#${anchor}` : '';
-      return `[${linkText}](/docs/commands?cmd=podman${anchorPart})`;
+      return `[${linkText}](/docs/commands/podman${anchorPart})`;
     },
   );
 

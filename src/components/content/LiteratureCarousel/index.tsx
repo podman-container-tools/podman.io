@@ -44,6 +44,8 @@ function LiteratureCarousel() {
                       <img
                         src={book.coverImage.src}
                         alt={book.coverImage.alt}
+                        loading="lazy"
+                        decoding="async"
                         className={
                           book.id === 'container-commandos'
                             ? 'block max-h-48 w-auto max-w-[170px] origin-bottom-left rotate-[4deg] object-contain sm:max-h-56 sm:max-w-[190px] lg:max-h-64 lg:max-w-[200px]'
@@ -82,7 +84,13 @@ function LiteratureCarousel() {
                 {/* Extra Images (like coloring pages collage) */}
                 {book.extraImages && (
                   <div className="order-first mx-auto hidden lg:order-last lg:block xl:mx-0">
-                    <img src={book.extraImages.src} alt={book.extraImages.alt} className="max-w-[290px]" />
+                    <img
+                      src={book.extraImages.src}
+                      alt={book.extraImages.alt}
+                      loading="lazy"
+                      decoding="async"
+                      className="max-w-[290px]"
+                    />
                   </div>
                 )}
               </div>
@@ -101,7 +109,7 @@ function LiteratureCarousel() {
             className={`h-2 w-2 rounded-full transition-all duration-300 ${
               index === activeIndex
                 ? 'w-8 bg-purple-700 dark:bg-purple-500'
-                : 'hover:bg-gray-400 dark:bg-gray-600 bg-gray-300 dark:hover:bg-gray-500'
+                : 'bg-gray-300 hover:bg-gray-500 dark:bg-gray-700 dark:hover:bg-gray-500'
             }`}
             aria-label={`Go to book ${index + 1}`}
           />

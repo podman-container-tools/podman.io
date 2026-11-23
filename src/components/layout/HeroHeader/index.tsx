@@ -117,22 +117,22 @@ const InstallOption = (props): JSX.Element => {
   );
 };
 
-function HeroHeader({ title, subtitle, podmanrelease, desktoprelease, image, platforms }) {
-  const releaseLinkProps = {
-    fontSize: 'text-xs sm:text-sm 2xl:text-base font-normal',
-    textColor: 'text-white dark:text-gray-100',
-    hoverColor: 'hover:text-purple-300 dark:hover:text-purple-300',
-    underline: 'underline underline-offset-4 decoration-white/70 hover:decoration-purple-300',
-  };
+const RELEASE_LINK_PROPS = {
+  fontSize: 'text-xs sm:text-sm 2xl:text-base font-normal',
+  textColor: 'text-white dark:text-gray-100',
+  hoverColor: 'hover:text-purple-300 dark:hover:text-purple-300',
+  underline: 'underline underline-offset-4 decoration-white/70 hover:decoration-purple-300',
+};
 
+function HeroHeader({ title, subtitle, podmanrelease, desktoprelease, image, platforms }) {
   return (
     <header className="relative z-30 bg-gradient-to-r from-blue-500 to-purple-700 dark:from-blue-700 dark:to-purple-900">
       <div className="mx-auto grid px-6 sm:px-8 md:grid-cols-5 md:items-end md:gap-8 lg:gap-12 lg:px-16 xl:px-28 2xl:px-52">
         <div className="relative z-20 min-w-0 pb-20 pt-8 md:col-span-3 md:pb-28 md:pt-12 lg:pb-32 2xl:pb-36">
-          <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-white dark:text-gray-50 sm:text-4xl lg:mb-6 lg:text-5xl 2xl:text-6xl">
+          <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-white dark:!text-white sm:text-4xl lg:mb-6 lg:text-5xl 2xl:text-6xl">
             {title}
           </h1>
-          <p className="max-w-sm text-base leading-relaxed text-white/95 dark:text-gray-100 sm:max-w-md sm:text-lg lg:max-w-xl 2xl:max-w-2xl 2xl:text-xl">
+          <p className="max-w-sm text-base leading-relaxed text-white dark:!text-white sm:max-w-md sm:text-lg lg:max-w-xl 2xl:max-w-2xl 2xl:text-xl">
             {subtitle}
           </p>
           <div className="relative z-40 my-4 flex max-w-sm gap-6 text-base sm:gap-8 sm:text-lg 2xl:text-xl">
@@ -149,13 +149,13 @@ function HeroHeader({ title, subtitle, podmanrelease, desktoprelease, image, pla
           </div>
           <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 pt-2 text-xs font-normal text-white dark:text-gray-100 sm:flex-nowrap sm:gap-x-3 sm:text-sm 2xl:gap-x-4 2xl:text-base">
             <span className="max-w-full break-words sm:whitespace-nowrap">
-              Latest stable Podman <Link {...podmanrelease} {...releaseLinkProps} />
+              Latest stable Podman <Link {...podmanrelease} {...RELEASE_LINK_PROPS} />
             </span>
             <span className="hidden opacity-60 sm:inline" aria-hidden="true">
               -
             </span>
             <span className="max-w-full break-words sm:whitespace-nowrap">
-              Latest stable Podman Desktop <Link {...desktoprelease} {...releaseLinkProps} />
+              Latest stable Podman Desktop <Link {...desktoprelease} {...RELEASE_LINK_PROPS} />
             </span>
             <span className="hidden opacity-60 sm:inline" aria-hidden="true">
               -
@@ -164,7 +164,7 @@ function HeroHeader({ title, subtitle, podmanrelease, desktoprelease, image, pla
               <Link
                 text="Apache License 2.0"
                 path="https://www.apache.org/licenses/LICENSE-2.0"
-                {...releaseLinkProps}
+                {...RELEASE_LINK_PROPS}
               />
             </span>
           </p>
@@ -187,6 +187,7 @@ function HeroHeader({ title, subtitle, podmanrelease, desktoprelease, image, pla
             <img
               src={image.path}
               alt={image.alt}
+              decoding="async"
               className="w-full max-w-none object-cover md:w-[108%] lg:w-[112%] 2xl:w-[115%]"
             />
           </div>

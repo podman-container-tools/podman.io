@@ -37,6 +37,8 @@ function Avatar({ src, name }: { src: string; name: string }) {
     <img
       src={src}
       alt={`${name} avatar`}
+      loading="lazy"
+      decoding="async"
       onError={() => setBroken(true)}
       ref={img => {
         if (img && img.complete && img.naturalWidth === 0) setBroken(true);
@@ -55,7 +57,7 @@ function Testimonial(props: TestimonialProps) {
   const socialIcon = props.social === 'twitter' ? 'fa6-brands:x-twitter' : `logos:${props.social}`;
 
   return (
-    <article className="group flex h-[290px] w-full flex-col justify-between whitespace-normal rounded-md border border-black/[0.08] bg-white p-5 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] sm:h-[300px]">
+    <article className="flex h-[290px] w-full flex-col justify-between whitespace-normal rounded-md border border-black/[0.08] bg-white p-5 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] sm:h-[300px]">
       <div>
         {/* Header: Avatar, Name, Handle, Social Icon */}
         <div className="mb-3.5 flex items-start justify-between gap-3">
@@ -113,7 +115,7 @@ function Testimonial(props: TestimonialProps) {
 
       {/* Footer: Date and Source Link */}
       <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 text-xs dark:border-white/5">
-        <time className="text-gray-400 !text-xs font-normal dark:text-gray-500">{props.date}</time>
+        <time className="!text-xs font-normal text-gray-500 dark:text-gray-300">{props.date}</time>
         <a
           href={props.path}
           target="_blank"

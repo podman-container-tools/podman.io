@@ -66,10 +66,10 @@ function TestimonialSection() {
             disabled={!canGoLeft}
             aria-label="Previous testimonials"
             title="Previous"
-            style={{ backgroundColor: '#009FFF', color: '#ffffff' }}
-            className={`absolute left-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-blue-700 text-white shadow-md transition-all duration-200 sm:left-1 sm:h-11 sm:w-11 md:left-2 ${
+            style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
+            className={`absolute left-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-purple-700 text-white shadow-md transition-all duration-200 sm:left-1 sm:h-11 sm:w-11 md:left-2 ${
               canGoLeft
-                ? 'cursor-pointer hover:scale-105 hover:bg-blue-900 active:scale-95'
+                ? 'cursor-pointer hover:scale-105 hover:bg-purple-900 active:scale-95'
                 : 'pointer-events-none opacity-25'
             }`}>
             <Icon icon="material-symbols:arrow-back-rounded" className="text-xl text-white sm:text-2xl" />
@@ -82,10 +82,10 @@ function TestimonialSection() {
             disabled={!canGoRight}
             aria-label="Next testimonials"
             title="Next"
-            style={{ backgroundColor: '#009FFF', color: '#ffffff' }}
-            className={`absolute right-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-blue-700 text-white shadow-md transition-all duration-200 sm:right-1 sm:h-11 sm:w-11 md:right-2 ${
+            style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
+            className={`absolute right-0 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-purple-700 text-white shadow-md transition-all duration-200 sm:right-1 sm:h-11 sm:w-11 md:right-2 ${
               canGoRight
-                ? 'cursor-pointer hover:scale-105 hover:bg-blue-900 active:scale-95'
+                ? 'cursor-pointer hover:scale-105 hover:bg-purple-900 active:scale-95'
                 : 'pointer-events-none opacity-25'
             }`}>
             <Icon icon="material-symbols:arrow-forward-rounded" className="text-xl text-white sm:text-2xl" />

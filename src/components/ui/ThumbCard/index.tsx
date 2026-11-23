@@ -25,6 +25,8 @@ function ThumbCard({ title, subtitle, image, icon, iconClassName = 'h-20 w-20' }
           <img
             src={image.path}
             alt={image.alt}
+            loading="lazy"
+            decoding="async"
             className="h-20 w-auto max-w-full object-contain transition-transform duration-200"
           />
         ) : null}

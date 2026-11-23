@@ -6,6 +6,21 @@ const dotGridStyle: React.CSSProperties = {
   backgroundSize: '16px 16px',
 };
 
+const CARD_BASE_CLASS =
+  'group flex flex-col justify-between overflow-hidden rounded-md border border-black/[0.08] bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]';
+
+const OS_PILLS = [
+  { name: 'Linux', icon: 'fa6-brands:linux', delay: 'delay-0' },
+  { name: 'macOS', icon: 'fa6-brands:apple', delay: 'delay-75' },
+  { name: 'Windows', icon: 'fa6-brands:microsoft', delay: 'delay-150' },
+] as const;
+
+const POD_CONTAINERS = [
+  { name: 'app', icon: 'lucide:box', delay: 'delay-0' },
+  { name: 'worker', icon: 'lucide:cpu', delay: 'delay-75' },
+  { name: 'db', icon: 'lucide:database', delay: 'delay-150' },
+] as const;
+
 function WhyPodmanSection(): JSX.Element {
   return (
     <section className="mx-auto my-14 max-w-6xl px-4 lg:my-20">
@@ -17,10 +32,10 @@ function WhyPodmanSection(): JSX.Element {
         </p>
       </header>
 
-      {/* 4-Card Asymmetric Bento Grid (Row 1: 7+5, Row 2: 5+7) */}
+      {/* 5-Card Asymmetric Bento Grid (Row 1: 7+5, Row 2: 5+7, Row 3: 12) */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
         {/* CARD 1 (7 cols): Systemd Quadlets & Pods (Layered Frosted Glass over White Gradient) */}
-        <article className="group flex flex-col justify-between overflow-hidden rounded-md border border-black/[0.08] bg-white p-5 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] sm:p-6 lg:col-span-7">
+        <article className={`${CARD_BASE_CLASS} p-5 sm:p-6 lg:col-span-7`}>
           <div className="relative mb-6 flex h-56 items-center justify-center overflow-hidden rounded-md bg-gradient-to-br from-white via-[#f2f3f5] to-white px-3 dark:from-[#1f1f23] dark:via-[#151518] dark:to-[#1f1f23] sm:px-6">
             {/* Subtle White Radial Vignette + Monochrome Architectural Grid */}
             <div style={dotGridStyle} className="pointer-events-none absolute inset-0 opacity-70" aria-hidden="true" />
@@ -80,7 +95,7 @@ function WhyPodmanSection(): JSX.Element {
         </article>
 
         {/* CARD 2 (5 cols): Runs Everywhere (Frosted Glass OS Pills + 3D Spherical Wireframe Globe) */}
-        <article className="group flex flex-col justify-between overflow-hidden rounded-md border border-black/[0.08] bg-white p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] lg:col-span-5">
+        <article className={`${CARD_BASE_CLASS} p-6 lg:col-span-5`}>
           <div className="relative mb-6 flex h-56 items-center justify-start overflow-hidden rounded-md bg-gradient-to-br from-white via-[#f2f3f5] to-white px-5 dark:from-[#1f1f23] dark:via-[#151518] dark:to-[#1f1f23]">
             {/* Subtle White Radial Highlight + Dot Grid */}
             <div style={dotGridStyle} className="pointer-events-none absolute inset-0 opacity-70" aria-hidden="true" />
@@ -143,16 +158,12 @@ function WhyPodmanSection(): JSX.Element {
             <div className="relative z-10 flex items-center pl-4">
               {/* Brand Purple Backing Plate Behind the Frosted Glass Pills */}
               <div
-                className="pointer-events-none absolute -left-0 top-1/2 h-36 w-16 -translate-y-1/2 rounded-md bg-purple-700 shadow-lg transition-transform duration-500 ease-out group-hover:-translate-x-1 dark:bg-purple-700"
+                className="pointer-events-none absolute left-0 top-1/2 h-36 w-16 -translate-y-1/2 rounded-md bg-purple-700 shadow-lg transition-transform duration-500 ease-out group-hover:-translate-x-1 dark:bg-purple-700"
                 aria-hidden="true"
               />
 
               <div className="relative z-10 flex flex-col gap-2.5">
-                {[
-                  { name: 'Linux', icon: 'fa6-brands:linux', delay: 'delay-0' },
-                  { name: 'macOS', icon: 'fa6-brands:apple', delay: 'delay-75' },
-                  { name: 'Windows', icon: 'fa6-brands:microsoft', delay: 'delay-150' },
-                ].map(os => (
+                {OS_PILLS.map(os => (
                   <div
                     key={os.name}
                     className={`flex w-28 items-center gap-2 rounded-full bg-white/55 px-3.5 py-2 shadow-[0_8px_24px_rgba(0,0,0,0.08)] backdrop-blur-md transition-transform duration-300 ease-out group-hover:translate-x-2 dark:bg-white/[0.1] dark:shadow-[0_8px_24px_rgba(0,0,0,0.35)] ${os.delay}`}>
@@ -176,7 +187,7 @@ function WhyPodmanSection(): JSX.Element {
         </article>
 
         {/* CARD 3 (5 cols): Rootless User Namespaces (Frosted Glass Isolation Shield over White Gradient) */}
-        <article className="group flex flex-col justify-between overflow-hidden rounded-md border border-black/[0.08] bg-white p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] lg:col-span-5">
+        <article className={`${CARD_BASE_CLASS} p-6 lg:col-span-5`}>
           <div className="relative mb-6 flex h-56 items-center justify-center overflow-hidden rounded-md bg-gradient-to-b from-white via-[#f2f3f5] to-white px-5 dark:from-[#1f1f23] dark:via-[#151518] dark:to-[#1f1f23]">
             {/* Subtle White Radial Highlight + Dot Grid */}
             <div style={dotGridStyle} className="pointer-events-none absolute inset-0 opacity-70" aria-hidden="true" />
@@ -226,7 +237,7 @@ function WhyPodmanSection(): JSX.Element {
         </article>
 
         {/* CARD 4 (7 cols): Daemonless Fork / Exec (Depth-Stacked Container Processes) */}
-        <article className="group flex flex-col justify-between overflow-hidden rounded-md border border-black/[0.08] bg-white p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] lg:col-span-7">
+        <article className={`${CARD_BASE_CLASS} p-6 lg:col-span-7`}>
           <div className="relative mb-6 flex h-56 flex-col items-center justify-end overflow-hidden rounded-md bg-gradient-to-br from-white via-[#f2f3f5] to-white px-5 pt-6 dark:from-[#1f1f23] dark:via-[#151518] dark:to-[#1f1f23]">
             <div style={dotGridStyle} className="pointer-events-none absolute inset-0 opacity-70" aria-hidden="true" />
 
@@ -326,11 +337,7 @@ function WhyPodmanSection(): JSX.Element {
                   {/* Inner Dashed Namespace Tray with 3 Stacked Containers */}
                   <div className="p-2.5">
                     <div className="space-y-1.5 rounded border border-dashed border-purple-700/30 bg-white/30 p-2 dark:border-white/20 dark:bg-white/[0.04]">
-                      {[
-                        { name: 'app', icon: 'lucide:box', delay: 'delay-0' },
-                        { name: 'worker', icon: 'lucide:cpu', delay: 'delay-75' },
-                        { name: 'db', icon: 'lucide:database', delay: 'delay-150' },
-                      ].map(c => (
+                      {POD_CONTAINERS.map(c => (
                         <div
                           key={c.name}
                           className={`flex items-center gap-2 rounded bg-white/85 px-2.5 py-1.5 font-mono text-xs font-bold text-gray-900 shadow-sm ring-1 ring-black/[0.05] backdrop-blur-sm transition-transform duration-300 ease-out group-hover:-translate-y-0.5 dark:bg-[#1b1b20]/85 dark:text-white dark:ring-white/10 ${c.delay}`}>
@@ -444,4 +451,4 @@ function WhyPodmanSection(): JSX.Element {
   );
 }
 
-export default WhyPodmanSection;
+export default React.memo(WhyPodmanSection);

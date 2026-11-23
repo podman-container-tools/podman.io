@@ -29,7 +29,7 @@ function GetToKnowPodmanSection() {
             return (
               <article
                 key={index}
-                className="group flex h-full flex-col overflow-hidden rounded-md border border-black/[0.08] bg-white p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] sm:p-7">
+                className="group flex h-full flex-col overflow-hidden rounded-md border border-black/[0.08] bg-white p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:p-7">
                 {/* Graphic Container */}
                 <div className="relative mb-4 flex h-44 w-full items-center justify-center sm:h-48">
                   <img
@@ -68,7 +68,7 @@ const PodmanDesktopSection = () => {
         layout="mb-4 sm:mb-6 lg:mb-8"
       />
       <div className="mx-auto mt-6 max-w-6xl px-4 sm:mt-8 sm:px-6 lg:mt-10 lg:px-8">
-        <div className="flex flex-col justify-between gap-6 rounded-md border border-black/[0.08] bg-purple-100 p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#1e172a] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] sm:flex-row sm:items-center sm:p-8">
+        <div className="flex flex-col justify-between gap-6 rounded-md border border-black/[0.08] bg-purple-100 p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#1e172a] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:flex-row sm:items-center sm:p-8">
           <div className="flex items-start gap-4 sm:items-center">
             <img
               src="logos/optimized/podman-desktop-logo-200w-198h.webp"

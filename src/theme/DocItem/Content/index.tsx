@@ -5,7 +5,7 @@ import { useDoc } from '@docusaurus/theme-common/internal';
 import Heading from '@theme/Heading';
 import MDXContent from '@theme/MDXContent';
 import type { Props } from '@theme/DocItem/Content';
-import { useDocSubmenu } from '@site/src/context/DocSubmenuContext';
+import { useDocSubmenu, type TOCHeading } from '@site/src/context/DocSubmenuContext';
 
 function useSyntheticTitle() {
   const { metadata, frontMatter, contentTitle } = useDoc();
@@ -23,7 +23,7 @@ export default function DocItemContent({ children }: Props): JSX.Element {
 
   useEffect(() => {
     if (toc) {
-      setDocTOC(toc as any);
+      setDocTOC(toc as unknown as TOCHeading[]);
     }
   }, [toc, setDocTOC]);
 

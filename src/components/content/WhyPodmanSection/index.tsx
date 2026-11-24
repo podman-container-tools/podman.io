@@ -7,7 +7,7 @@ const dotGridStyle: React.CSSProperties = {
 };
 
 const CARD_BASE_CLASS =
-  'group flex flex-col justify-between overflow-hidden rounded-md border border-black/[0.08] bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]';
+  'group flex flex-col justify-between overflow-hidden rounded-md border border-black/[0.08] bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)]';
 
 const OS_PILLS = [
   { name: 'Linux', icon: 'fa6-brands:linux', delay: 'delay-0' },
@@ -43,15 +43,15 @@ function WhyPodmanSection(): JSX.Element {
               aria-hidden="true"
             />
 
-            {/* Two Distinct Side-by-Side Units: Standalone Container + Multi-Container Pod (Clean Horizontal Swap on Hover) */}
-            <div className="relative z-10 flex w-full max-w-xl flex-col items-center justify-center gap-4 sm:flex-row sm:gap-4">
-              {/* Unit 1: Standalone Container */}
-              <div className="relative z-20 w-48 shrink-0 transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] sm:group-hover:translate-x-[252px]">
+            {/* Combined Frosted-Glass Visual: Standalone Container + 3 Animated Curved S-Branches + Multi-Container Pod */}
+            <div className="relative z-10 flex w-full max-w-xl flex-col items-center justify-center gap-5 sm:flex-row sm:gap-0">
+              {/* Left: Frosted-Glass Standalone Container Card */}
+              <div className="relative w-48 shrink-0 sm:w-44">
                 <div
-                  className="pointer-events-none absolute -bottom-2 -left-2 h-[82%] w-[82%] rounded-md bg-purple-500/80 shadow-md transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-10 dark:bg-purple-500/70"
+                  className="pointer-events-none absolute -bottom-2 -left-2 h-[82%] w-[82%] rounded-md bg-purple-700 shadow-lg transition-transform duration-500 ease-out group-hover:-translate-x-1 group-hover:translate-y-0.5 dark:bg-purple-700"
                   aria-hidden="true"
                 />
-                <div className="relative z-10 overflow-hidden rounded-md bg-white/65 shadow-[0_14px_34px_rgba(0,0,0,0.09)] backdrop-blur-md dark:bg-white/[0.1] dark:shadow-[0_14px_34px_rgba(0,0,0,0.45)]">
+                <div className="relative z-10 overflow-hidden rounded-md bg-white/65 shadow-[0_14px_34px_rgba(0,0,0,0.09)] backdrop-blur-md transition-transform duration-500 ease-out group-hover:-translate-y-1 dark:bg-white/[0.1] dark:shadow-[0_14px_34px_rgba(0,0,0,0.45)]">
                   <div className="p-2.5">
                     <div className="space-y-2 rounded border border-black/[0.06] bg-white/75 p-2.5 font-mono dark:border-white/10 dark:bg-[#1b1b20]/85">
                       <div className="flex items-center gap-2 text-xs font-bold text-gray-900 dark:text-white">
@@ -79,26 +79,74 @@ function WhyPodmanSection(): JSX.Element {
                 </div>
               </div>
 
-              {/* Center Separator Badge */}
-              <div
-                className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-black/[0.08] bg-white/85 font-mono text-xs font-bold text-purple-700 shadow-sm backdrop-blur-sm transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-180 dark:border-white/15 dark:bg-[#242328]/90 dark:text-purple-300"
+              {/* Middle: 3 Individual Curved S-Branching Connectors Animated on Hover */}
+              <svg
+                viewBox="0 0 60 120"
+                className="relative z-0 -mx-1 hidden h-[120px] w-16 shrink-0 overflow-visible sm:block"
                 aria-hidden="true">
-                +
-              </div>
+                {/* Resting subtle tracks */}
+                <path
+                  d="M 0 60 C 28 60, 26 22, 60 22"
+                  fill="none"
+                  strokeWidth="1.8"
+                  className="stroke-purple-700/25 dark:stroke-purple-300/25"
+                />
+                <path
+                  d="M 0 60 L 60 60"
+                  fill="none"
+                  strokeWidth="1.8"
+                  className="stroke-purple-700/25 dark:stroke-purple-300/25"
+                />
+                <path
+                  d="M 0 60 C 28 60, 26 98, 60 98"
+                  fill="none"
+                  strokeWidth="1.8"
+                  className="stroke-purple-700/25 dark:stroke-purple-300/25"
+                />
+                {/* Hover-drawn Brand Purple animated flow lines */}
+                <path
+                  d="M 0 60 C 28 60, 26 22, 60 22"
+                  fill="none"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  pathLength={100}
+                  strokeDasharray="100"
+                  className="stroke-purple-700 transition-[stroke-dashoffset] duration-700 ease-out [stroke-dashoffset:100] group-hover:[stroke-dashoffset:0] dark:stroke-purple-300"
+                />
+                <path
+                  d="M 0 60 L 60 60"
+                  fill="none"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  pathLength={100}
+                  strokeDasharray="100"
+                  className="stroke-purple-700 transition-[stroke-dashoffset] delay-75 duration-700 ease-out [stroke-dashoffset:100] group-hover:[stroke-dashoffset:0] dark:stroke-purple-300"
+                />
+                <path
+                  d="M 0 60 C 28 60, 26 98, 60 98"
+                  fill="none"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  pathLength={100}
+                  strokeDasharray="100"
+                  className="stroke-purple-700 transition-[stroke-dashoffset] delay-150 duration-700 ease-out [stroke-dashoffset:100] group-hover:[stroke-dashoffset:0] dark:stroke-purple-300"
+                />
+                <circle cx="2" cy="60" r="3" className="fill-purple-700 dark:fill-purple-300" />
+              </svg>
 
-              {/* Unit 2: Multi-Container Pod */}
-              <div className="relative z-20 w-48 shrink-0 transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] sm:group-hover:-translate-x-[252px]">
+              {/* Right: Frosted-Glass Multi-Container Pod Shell */}
+              <div className="relative w-48 shrink-0">
                 <div
-                  className="pointer-events-none absolute -bottom-2 -right-2 h-[88%] w-[88%] rounded-md bg-purple-700 shadow-lg transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-x-10 dark:bg-purple-700"
+                  className="pointer-events-none absolute -bottom-2 -right-2 h-[88%] w-[88%] rounded-md bg-purple-700 shadow-lg transition-transform duration-500 ease-out group-hover:translate-x-1 group-hover:translate-y-0.5 dark:bg-purple-700"
                   aria-hidden="true"
                 />
-                <div className="relative z-10 overflow-hidden rounded-md bg-white/55 shadow-[0_14px_34px_rgba(0,0,0,0.09)] backdrop-blur-md dark:bg-white/[0.1] dark:shadow-[0_14px_34px_rgba(0,0,0,0.45)]">
+                <div className="relative z-10 overflow-hidden rounded-md bg-white/55 shadow-[0_14px_34px_rgba(0,0,0,0.09)] backdrop-blur-md transition-transform duration-500 ease-out group-hover:-translate-y-1 dark:bg-white/[0.1] dark:shadow-[0_14px_34px_rgba(0,0,0,0.45)]">
                   <div className="p-2.5">
-                    <div className="space-y-1.5 rounded border border-dashed border-purple-700/30 bg-white/30 p-2 dark:border-white/20 dark:bg-white/[0.04]">
+                    <div className="space-y-1.5 rounded border border-dashed border-purple-700/30 bg-white/30 p-2 transition-colors duration-500 group-hover:border-purple-700/60 dark:border-white/20 dark:bg-white/[0.04] dark:group-hover:border-purple-300/60">
                       {POD_CONTAINERS.map(c => (
                         <div
                           key={c.name}
-                          className="flex items-center gap-2 rounded bg-white/85 px-2.5 py-1 font-mono text-xs font-bold text-gray-900 shadow-sm ring-1 ring-black/[0.05] backdrop-blur-sm dark:bg-[#1b1b20]/85 dark:text-white dark:ring-white/10">
+                          className={`flex items-center gap-2 rounded bg-white/85 px-2.5 py-1 font-mono text-xs font-bold text-gray-900 shadow-sm ring-1 ring-black/[0.05] backdrop-blur-sm transition-transform duration-300 ease-out group-hover:-translate-y-0.5 dark:bg-[#1b1b20]/85 dark:text-white dark:ring-white/10 ${c.delay}`}>
                           <Icon icon={c.icon} className="h-3.5 w-3.5 shrink-0 text-gray-900 dark:text-white" />
                           <span>{c.name}</span>
                         </div>

@@ -120,10 +120,14 @@ function Testimonial(props: TestimonialProps) {
           href={props.path}
           target="_blank"
           rel="noopener noreferrer"
-          className="group/post inline-flex items-center gap-1 !text-xs font-bold !text-blue-700 !no-underline transition-colors hover:!text-blue-900 dark:!text-blue-500 dark:hover:!text-blue-300">
-          <span className="!text-xs">View post</span>
+          style={{ color: '#892CA0' }}
+          className="group/post inline-flex items-center gap-1 !text-xs font-bold !text-[#892CA0] !no-underline transition-opacity hover:opacity-80 dark:!text-[#892CA0]">
+          <span className="!text-xs" style={{ color: '#892CA0' }}>
+            View post
+          </span>
           <Icon
             icon="material-symbols:arrow-outward-rounded"
+            style={{ color: '#892CA0' }}
             className="text-[11px] transition-transform duration-200 group-hover/post:-translate-y-0.5 group-hover/post:translate-x-0.5"
           />
         </a>

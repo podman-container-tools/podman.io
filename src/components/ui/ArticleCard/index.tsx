@@ -39,33 +39,34 @@ const getInitials = (name?: string) => {
   return name.slice(0, 2).toUpperCase();
 };
 
+// Sanitizes HTML and converts it to plain text (SSR-safe)
+const sanitizeHtml = (html: string) => {
+  if (!html) return html;
+  if (typeof document === 'undefined') {
+    return html.replace(/<[^>]*>/g, '');
+  }
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  return div.textContent || div.innerText || '';
+};
+
 function ArticleCard(props: ArticleCardProps) {
   // Select fallback image based on index, cycling through available images
   const fallbackImage = FALLBACK_IMAGES[(props.index || 0) % FALLBACK_IMAGES.length];
-
-  // Sanitizes HTML and converts it to plain text
-  const sanitizeHtml = (html: string) => {
-    if (!html) return html;
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    return div.textContent || div.innerText || '';
-  };
-
-  const formatTitle = (rawTitle: string) => {
-    return sanitizeHtml(rawTitle);
-  };
-
+  const cleanTitle = sanitizeHtml(props.title);
   const cleanSubtitle = sanitizeHtml(props.subtitle).trim();
   const formattedDate = formatDate(props.date);
 
   if (props.altLayout) {
     return (
-      <article className="group flex flex-1 flex-col overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#232326] dark:shadow-none dark:hover:border-white/20">
+      <article className="group flex flex-1 flex-col overflow-hidden rounded-md border border-black/[0.08] bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)]">
         <div className="flex h-full flex-col md:grid md:grid-cols-2 md:items-center">
           <div className="relative flex h-44 w-full items-center justify-center p-5 md:h-full">
             <img
               src={props.imgSrc || fallbackImage}
-              alt={props.title || 'Article cover image'}
+              alt={cleanTitle || 'Article cover image'}
+              loading="lazy"
+              decoding="async"
               className="max-h-36 w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105 md:max-h-40"
             />
           </div>
@@ -77,9 +78,9 @@ function ArticleCard(props: ArticleCardProps) {
                     href={props.path}
                     target="_blank"
                     rel="noopener noreferrer"
-                    title={formatTitle(props.title)}
+                    title={cleanTitle}
                     className="!text-gray-900 !no-underline transition-colors hover:!text-purple-700 dark:!text-white dark:hover:!text-purple-300">
-                    {formatTitle(props.title)}
+                    {cleanTitle}
                   </a>
                 </h3>
               </div>
@@ -126,12 +127,14 @@ function ArticleCard(props: ArticleCardProps) {
 
   // Normal Layout
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#232326] dark:shadow-none dark:hover:border-white/20">
+    <article className="group flex h-full flex-col overflow-hidden rounded-md border border-black/[0.08] bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)]">
       {/* Graphic Container */}
       <div className="relative flex h-44 w-full items-center justify-center p-4 sm:h-48">
         <img
           src={props.imgSrc || fallbackImage}
-          alt={props.title || 'Article cover image'}
+          alt={cleanTitle || 'Article cover image'}
+          loading="lazy"
+          decoding="async"
           className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
         />
       </div>
@@ -146,9 +149,9 @@ function ArticleCard(props: ArticleCardProps) {
                 href={props.path}
                 target="_blank"
                 rel="noopener noreferrer"
-                title={formatTitle(props.title)}
+                title={cleanTitle}
                 className="!text-gray-900 !no-underline transition-colors hover:!text-purple-700 dark:!text-white dark:hover:!text-purple-300">
-                {formatTitle(props.title)}
+                {cleanTitle}
               </a>
             </h3>
           </div>

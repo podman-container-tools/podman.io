@@ -1,15 +1,36 @@
 import React from 'react';
+import { Icon } from '@iconify/react';
 
 type ThumbCardProps = Card & {
-  image: Image;
+  image?: Image;
+  icon?: string;
+  iconClassName?: string;
 };
 
-function ThumbCard({ title, subtitle, image }: ThumbCardProps): JSX.Element {
+function ThumbCard({ title, subtitle, image, icon, iconClassName = 'h-20 w-20' }: ThumbCardProps): JSX.Element {
   return (
-    <article className="flex max-w-xs flex-col items-center justify-center rounded-md p-6 shadow-md lg:m-4">
+    <article className="group flex flex-col items-center justify-start p-8 text-center transition-colors duration-200 hover:bg-purple-700 dark:hover:bg-purple-700">
       <h3 className="hidden">{title}</h3>
-      <p className="w-48 text-center">{subtitle}</p>
-      <img src={image.path} alt={image.alt} className="order-first my-8 h-20" />
+      <p className="max-w-[14rem] text-center text-gray-700 transition-colors duration-200 group-hover:text-white dark:text-gray-100">
+        {subtitle}
+      </p>
+      <div className="order-first mb-6 flex h-24 w-full items-center justify-center">
+        {icon ? (
+          <Icon
+            icon={icon}
+            className={`${iconClassName} transition-all duration-200 group-hover:brightness-0 group-hover:invert`}
+            aria-label={title ? `${title} Logo` : undefined}
+          />
+        ) : image ? (
+          <img
+            src={image.path}
+            alt={image.alt}
+            loading="lazy"
+            decoding="async"
+            className="h-20 w-auto max-w-full object-contain transition-transform duration-200"
+          />
+        ) : null}
+      </div>
     </article>
   );
 }

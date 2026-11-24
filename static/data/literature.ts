@@ -39,7 +39,7 @@ export const literature = [
       path: 'https://www.packtpub.com/en-us/product/podman-for-devops-9781835886632',
     },
     coverImage: {
-      src: 'images/raw/podman-for-devops-cover.jpg',
+      src: 'images/raw/podman-for-devops-cover.png',
       alt: 'Podman for DevOps book cover',
     },
     extraImages: null,

@@ -27,7 +27,7 @@ function Avatar({ src, name }: { src: string; name: string }) {
       <div
         aria-label={`${name} avatar`}
         role="img"
-        className="to-purple-600 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#892CA0] text-sm font-bold text-white shadow-sm ring-2 ring-purple-100 dark:ring-purple-900/40">
+        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-700 text-sm font-bold text-white shadow-sm">
         {initials || name[0]}
       </div>
     );
@@ -37,11 +37,13 @@ function Avatar({ src, name }: { src: string; name: string }) {
     <img
       src={src}
       alt={`${name} avatar`}
+      loading="lazy"
+      decoding="async"
       onError={() => setBroken(true)}
       ref={img => {
         if (img && img.complete && img.naturalWidth === 0) setBroken(true);
       }}
-      className="h-12 w-12 shrink-0 rounded-full object-cover shadow-sm ring-2 ring-purple-100 dark:ring-purple-900/40"
+      className="h-12 w-12 shrink-0 rounded-full object-cover shadow-sm"
     />
   );
 }
@@ -55,7 +57,7 @@ function Testimonial(props: TestimonialProps) {
   const socialIcon = props.social === 'twitter' ? 'fa6-brands:x-twitter' : `logos:${props.social}`;
 
   return (
-    <article className="group flex h-[290px] w-full flex-col justify-between whitespace-normal rounded-xl border border-purple-100/60 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-[#232326] dark:shadow-none dark:hover:border-white/20 sm:h-[300px]">
+    <article className="flex h-[290px] w-full flex-col justify-between whitespace-normal rounded-md border border-black/[0.08] bg-white p-5 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:h-[300px]">
       <div>
         {/* Header: Avatar, Name, Handle, Social Icon */}
         <div className="mb-3.5 flex items-start justify-between gap-3">
@@ -71,7 +73,7 @@ function Testimonial(props: TestimonialProps) {
                 href={props.path}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="dark:text-gray-400 block truncate text-xs font-medium text-gray-500 transition-colors hover:text-[#892CA0] dark:hover:text-purple-300">
+                className="block truncate text-xs font-medium !text-gray-900 transition-colors hover:!text-gray-700 dark:!text-white dark:hover:!text-gray-300">
                 {props.handle}
               </a>
             </div>
@@ -82,7 +84,7 @@ function Testimonial(props: TestimonialProps) {
             target="_blank"
             rel="noopener noreferrer"
             title="View original post"
-            className="text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 flex shrink-0 items-center justify-center transition-colors dark:text-gray-500">
+            className="flex shrink-0 items-center justify-center !text-blue-700 transition-colors hover:!text-blue-900 dark:!text-blue-500 dark:hover:!text-blue-300">
             <Icon icon={socialIcon} className="text-base" />
           </a>
         </div>
@@ -102,16 +104,10 @@ function Testimonial(props: TestimonialProps) {
               target="_blank"
               rel="noopener noreferrer"
               title={props.featuredlink}
-              className="group/link dark:text-gray-400 inline-flex max-w-full items-center gap-1.5 !text-xs text-gray-500 !no-underline transition-colors hover:text-[#892CA0] dark:hover:text-purple-300">
-              <Icon
-                icon="material-symbols:link-rounded"
-                className="text-gray-400 shrink-0 text-sm transition-colors group-hover/link:text-[#892CA0] dark:text-gray-500 dark:group-hover/link:text-purple-300"
-              />
+              className="group/link inline-flex max-w-full items-center gap-1.5 !text-xs font-medium !text-gray-900 !no-underline transition-colors hover:!text-gray-700 dark:!text-white dark:hover:!text-gray-300">
+              <Icon icon="material-symbols:link-rounded" className="shrink-0 text-sm" />
               <span className="truncate hover:underline">{props.featuredlink.replace(/^https?:\/\/(www\.)?/, '')}</span>
-              <Icon
-                icon="material-symbols:arrow-outward-rounded"
-                className="text-gray-400 shrink-0 text-[10px] transition-colors group-hover/link:text-[#892CA0] dark:text-gray-500 dark:group-hover/link:text-purple-300"
-              />
+              <Icon icon="material-symbols:arrow-outward-rounded" className="shrink-0 text-[10px]" />
             </a>
           )}
         </div>
@@ -119,15 +115,19 @@ function Testimonial(props: TestimonialProps) {
 
       {/* Footer: Date and Source Link */}
       <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 text-xs dark:border-white/5">
-        <time className="text-gray-400 !text-xs font-normal dark:text-gray-500">{props.date}</time>
+        <time className="!text-xs font-normal text-gray-500 dark:text-gray-300">{props.date}</time>
         <a
           href={props.path}
           target="_blank"
           rel="noopener noreferrer"
-          className="group/post text-gray-400 inline-flex items-center gap-1 !text-xs font-normal !no-underline transition-colors hover:text-[#892CA0] dark:text-gray-500 dark:hover:text-purple-300">
-          <span className="!text-xs">View post</span>
+          style={{ color: '#892CA0' }}
+          className="group/post inline-flex items-center gap-1 !text-xs font-bold !text-[#892CA0] !no-underline transition-opacity hover:opacity-80 dark:!text-[#892CA0]">
+          <span className="!text-xs" style={{ color: '#892CA0' }}>
+            View post
+          </span>
           <Icon
             icon="material-symbols:arrow-outward-rounded"
+            style={{ color: '#892CA0' }}
             className="text-[11px] transition-transform duration-200 group-hover/post:-translate-y-0.5 group-hover/post:translate-x-0.5"
           />
         </a>

@@ -33,6 +33,9 @@ export default function DocsCommandsPage(): JSX.Element {
   const [currentSlug, setCurrentSlug] = useState<string>(() => getSlugFromLocation());
   const [manifest, setManifest] = useState<DocManifest | null>(null);
 
+  // Mobile drawer state
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState<boolean>(false);
+
   // Dynamic navbar visibility for responsive sidebar top & height on scroll
   const [navbarVisible, setNavbarVisible] = useState<boolean>(true);
 
@@ -150,6 +153,45 @@ export default function DocsCommandsPage(): JSX.Element {
           </aside>
         </div>
 
+        {/* Mobile Header / Drawer Toggle */}
+        <div className="fixed bottom-5 right-5 z-40 lg:hidden">
+          <button
+            type="button"
+            onClick={() => setMobileDrawerOpen(true)}
+            className="flex cursor-pointer items-center gap-2 rounded-full border-0 bg-sky-600 px-4 py-2.5 text-xs font-semibold text-white shadow-lg dark:bg-[#1ECCFF] dark:text-gray-900">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+            <span>Documentation Menu</span>
+          </button>
+        </div>
+
+        {/* Mobile Drawer Backdrop and Panel */}
+        {mobileDrawerOpen && (
+          <div className="fixed inset-0 z-50 flex lg:hidden">
+            <div className="backdrop-blur-xs fixed inset-0 bg-black/40" onClick={() => setMobileDrawerOpen(false)} />
+            <div className="relative flex h-full w-80 max-w-[85vw] flex-col overflow-hidden bg-white p-4 shadow-2xl dark:bg-[#18181b]">
+              <div className="mb-3 flex items-center justify-between px-2">
+                <span className="text-sm font-bold text-gray-900 dark:text-white">Documentation</span>
+                <button
+                  type="button"
+                  onClick={() => setMobileDrawerOpen(false)}
+                  className="cursor-pointer border-0 bg-transparent p-1 text-lg text-gray-500">
+                  ✕
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-hidden">
+                <ModernDocSidebar
+                  currentPath={location.pathname}
+                  currentCommandSlug={currentSlug}
+                  onItemClick={() => setMobileDrawerOpen(false)}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ========================================================= */}
         {/* MAIN CONTENT AREA: What is Podman OR Selected Command     */}
         {/* ========================================================= */}
@@ -188,9 +230,9 @@ export default function DocsCommandsPage(): JSX.Element {
                 </>
               ) : (
                 <>
-                  <span className="text-slate-500 dark:text-zinc-400">CLI Commands</span>
-                  <span className="text-slate-400 dark:text-zinc-500">›</span>
-                  <span className="break-words font-mono font-semibold text-slate-900 dark:text-zinc-100">
+                  <span className="text-gray-500 dark:text-[#1ECCFF]">CLI Commands</span>
+                  <span className="text-gray-400 dark:text-[#1ECCFF]/60">›</span>
+                  <span className="rounded-full bg-[#0284c7]/10 px-2.5 py-0.5 font-mono font-medium text-[#0284c7] dark:bg-[#1ECCFF]/[0.18] dark:text-[#1ECCFF]">
                     {currentSlug}
                   </span>
                 </>

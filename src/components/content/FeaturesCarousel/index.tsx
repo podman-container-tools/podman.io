@@ -75,10 +75,10 @@ function FeaturesCarousel(): JSX.Element {
                   onClick={() => setActiveTabIndex(index)}
                   onKeyDown={e => handleKeyDown(e, index)}
                   style={{ WebkitTapHighlightColor: 'transparent' }}
-                  className={`group relative flex h-full select-none flex-col items-center justify-center rounded-xl px-2.5 py-4 text-center transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[#009FFF] focus-visible:ring-offset-2 dark:focus-visible:ring-white dark:focus-visible:ring-offset-black sm:rounded-2xl sm:px-3 sm:py-6 md:px-4 md:py-7 ${
+                  className={`group relative flex h-full select-none flex-col items-center justify-center rounded-md px-2.5 py-4 text-center transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[#009FFF] focus-visible:ring-offset-2 dark:focus-visible:ring-white dark:focus-visible:ring-offset-black sm:px-3 sm:py-6 md:px-4 md:py-7 ${
                     isActive
-                      ? 'z-10 border-none bg-[#009FFF] text-white shadow-lg shadow-black/20 hover:bg-[#008fe6] dark:bg-[#009FFF] dark:shadow-md dark:shadow-black/30 dark:hover:bg-[#008fe6]'
-                      : 'border-none bg-[#dcf0fe] text-[#009FFF] shadow hover:bg-[#cde7fc] hover:shadow-md dark:bg-[#18181c] dark:text-white dark:shadow-sm dark:shadow-black/20 dark:hover:bg-[#222228]'
+                      ? 'z-10 border-none bg-[#009FFF] text-white shadow-none hover:bg-[#008fe6] dark:bg-[#009FFF] dark:shadow-none dark:hover:bg-[#008fe6]'
+                      : 'border-none bg-[#dcf0fe] text-[#009FFF] shadow-none hover:bg-[#cde7fc] dark:bg-[#18181c] dark:text-white dark:shadow-none dark:hover:bg-[#222228]'
                   }`}>
                   <div className="flex w-full items-center justify-center gap-1.5 text-center sm:gap-2">
                     <Icon
@@ -140,7 +140,7 @@ function FeaturesCarousel(): JSX.Element {
               </div>
 
               {/* Terminal Command Box */}
-              <div className="overflow-hidden rounded-xl border border-white/15 bg-black/40 p-4 text-left font-mono text-xs shadow-inner backdrop-blur-sm sm:text-sm">
+              <div className="overflow-hidden rounded-md border border-white/15 bg-black/40 p-4 text-left font-mono text-xs shadow-inner backdrop-blur-sm sm:text-sm">
                 <div className="mb-2 flex items-center justify-between border-b border-white/10 pb-2 text-[11px] text-purple-100">
                   <span className="flex items-center gap-1.5">
                     <span className="bg-emerald-400 h-2 w-2 rounded-full" aria-hidden="true"></span>
@@ -178,7 +178,7 @@ function FeaturesCarousel(): JSX.Element {
                     type="button"
                     onClick={() => setActiveTabIndex(activeTabIndex > 0 ? activeTabIndex - 1 : tabData.length - 1)}
                     aria-label="Previous command workflow"
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-white/15 text-white transition-colors hover:bg-white/25 active:scale-95">
+                    className="flex h-9 w-9 items-center justify-center rounded-md border border-white/20 bg-white/15 text-white transition-colors hover:bg-white/25 active:scale-95">
                     <Icon icon="material-symbols:arrow-back-rounded" className="text-lg" aria-hidden="true" />
                   </button>
 
@@ -186,7 +186,7 @@ function FeaturesCarousel(): JSX.Element {
                     type="button"
                     onClick={() => setActiveTabIndex(activeTabIndex < tabData.length - 1 ? activeTabIndex + 1 : 0)}
                     aria-label="Next command workflow"
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-white/15 text-white transition-colors hover:bg-white/25 active:scale-95">
+                    className="flex h-9 w-9 items-center justify-center rounded-md border border-white/20 bg-white/15 text-white transition-colors hover:bg-white/25 active:scale-95">
                     <Icon icon="material-symbols:arrow-forward-rounded" className="text-lg" aria-hidden="true" />
                   </button>
                 </div>
@@ -195,7 +195,7 @@ function FeaturesCarousel(): JSX.Element {
 
             {/* Right Column: Terminal Window Mockup */}
             <div className="flex justify-center lg:col-span-6">
-              <div className="w-full max-w-lg overflow-hidden rounded-xl border border-white/20 bg-[#18181b] shadow-2xl ring-1 ring-black/30 xl:max-w-[520px]">
+              <div className="w-full max-w-lg overflow-hidden rounded-md border border-white/20 bg-[#18181b] shadow-2xl ring-1 ring-black/30 xl:max-w-[520px]">
                 {/* macOS/Linux Terminal Titlebar */}
                 <div className="border-gray-800 flex items-center justify-between border-b bg-[#1e1e24] px-4 py-2.5">
                   <div className="flex items-center gap-1.5" aria-hidden="true">
@@ -214,7 +214,7 @@ function FeaturesCarousel(): JSX.Element {
                   <img
                     src={currentTab.image?.src || 'images/optimized/cli-screens/cli-find-image.webp'}
                     alt={currentTab.image?.alt || 'Podman CLI command screen'}
-                    className="max-h-[380px] w-full rounded-lg object-contain shadow-sm"
+                    className="max-h-[380px] w-full rounded-md object-contain shadow-sm"
                     loading="eager"
                   />
                 </div>

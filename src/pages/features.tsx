@@ -1,5 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
+import { Icon } from '@iconify/react';
 /* COMPONENTS */
 import Markdown from '@site/src/components/utilities/Markdown';
 import PageHeader from '@site/src/components/layout/PageHeader';
@@ -28,7 +29,7 @@ function GetToKnowPodmanSection() {
             return (
               <article
                 key={index}
-                className="group flex h-full flex-col overflow-hidden rounded-xl border border-black/[0.03] bg-white p-6 transition-all duration-300 hover:-translate-y-1 dark:border-white/10 dark:bg-[#232326] sm:p-7">
+                className="group flex h-full flex-col overflow-hidden rounded-md border border-black/[0.08] bg-white p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:p-7">
                 {/* Graphic Container */}
                 <div className="relative mb-4 flex h-44 w-full items-center justify-center sm:h-48">
                   <img
@@ -66,31 +67,52 @@ const PodmanDesktopSection = () => {
         fontWeight="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight"
         layout="mb-4 sm:mb-6 lg:mb-8"
       />
-      <div className="mx-auto mt-6 max-w-5xl px-4 sm:mt-8 sm:px-6 lg:mt-12 lg:px-8">
-        <div className="rounded-2xl border border-purple-100/80 bg-purple-100/40 p-6 shadow-sm transition-all duration-300 dark:border-white/10 dark:bg-[#232326] sm:p-8 md:p-10">
-          <div className="flex flex-col items-center justify-center gap-6 md:flex-row md:gap-10">
+      <div className="mx-auto mt-6 max-w-6xl px-4 sm:mt-8 sm:px-6 lg:mt-10 lg:px-8">
+        <div className="flex flex-col justify-between gap-6 rounded-md border border-black/[0.08] bg-purple-100 p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#1e172a] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:flex-row sm:items-center sm:p-8">
+          <div className="flex items-start gap-4 sm:items-center">
+            <img
+              src="logos/optimized/podman-desktop-logo-200w-198h.webp"
+              alt="Podman Desktop Logo"
+              loading="lazy"
+              decoding="async"
+              className="h-14 w-14 shrink-0 object-contain sm:h-16 sm:w-16"
+            />
+            <div className="space-y-1">
+              <div
+                style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
+                className="shadow-xs inline-flex items-center gap-1.5 rounded-md bg-[#892CA0] px-2.5 py-0.5 text-xs font-bold text-white">
+                <Icon icon="material-symbols:desktop-windows-rounded" className="text-sm text-white" />
+                <span className="text-white">Podman Desktop GUI</span>
+              </div>
+              <h3 className="m-0 text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+                Prefer a Graphical Desktop Interface?
+              </h3>
+              <p className="m-0 max-w-xl text-justify !text-sm font-medium leading-relaxed text-gray-700 dark:text-gray-300">
+                Podman Desktop is Podman&rsquo;s graphical application that makes it easy to install and work with
+                Podman (and other container engines) on Windows, macOS, and Linux.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex shrink-0 flex-wrap items-center gap-3">
+            <a
+              href="https://podman-desktop.io/downloads"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none', backgroundColor: '#892CA0', color: '#ffffff' }}
+              className="shadow-xs inline-flex items-center gap-2 rounded-md bg-[#892CA0] px-4 py-2.5 !text-sm font-bold text-white !no-underline transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#77218d] hover:!text-white hover:shadow-md">
+              <span className="text-white">Download</span>
+              <Icon icon="material-symbols:arrow-outward-rounded" className="text-base text-white" />
+            </a>
             <a
               href="https://podman-desktop.io"
               target="_blank"
               rel="noopener noreferrer"
-              className="shrink-0 transition-transform duration-200 hover:scale-105">
-              <img
-                src="logos/optimized/podman-desktop-logo-200w-198h.webp"
-                alt="Podman Desktop Logo"
-                className="h-28 w-28 object-contain sm:h-36 sm:w-36"
-              />
+              style={{ textDecoration: 'none' }}
+              className="shadow-xs inline-flex items-center gap-1.5 rounded-md bg-white px-4 py-2.5 !text-sm font-bold text-[#892CA0] !no-underline transition-all duration-150 hover:bg-purple-50 hover:text-[#77218d] dark:bg-white/10 dark:text-purple-300 dark:hover:bg-white/15">
+              <span>Official Website</span>
+              <Icon icon="material-symbols:arrow-outward-rounded" className="text-base" />
             </a>
-            <p className="text-gray-800 text-center text-lg leading-relaxed dark:text-gray-100 sm:text-xl md:text-left">
-              <a
-                href="https://podman-desktop.io"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-bold text-[#892CA0] underline underline-offset-4 transition-colors hover:text-[#77218d] dark:text-purple-300 dark:hover:text-purple-100">
-                Podman Desktop
-              </a>{' '}
-              is Podman's graphical application that makes it easy to install and work with Podman (and other container
-              engines) on Windows, macOS, and Linux.
-            </p>
           </div>
         </div>
       </div>

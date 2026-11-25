@@ -22,7 +22,7 @@ const GetHelpSection = () => {
 
         <div className="space-y-6">
           {/* Manpages */}
-          <div className="grid grid-cols-1 items-center gap-4 rounded-2xl border border-white/20 bg-white/10 p-5 shadow-lg backdrop-blur-md sm:p-6 lg:grid-cols-12 lg:gap-6">
+          <div className="grid grid-cols-1 items-center gap-4 rounded-md border border-white/20 bg-white/10 p-5 shadow-lg backdrop-blur-md sm:p-6 lg:grid-cols-12 lg:gap-6">
             <div className="text-left lg:col-span-5">
               <h4 className="mb-1 text-lg font-bold text-white">Manpages</h4>
               <p className="text-sm leading-relaxed text-white/90 sm:text-base">
@@ -39,7 +39,7 @@ const GetHelpSection = () => {
             </div>
             <div className="lg:col-span-7">
               {/* prettier-ignore */}
-              <CodeBlock language="bash" showLineNumbers className="w-full text-left rounded-xl shadow-md no-scrollbar">
+              <CodeBlock language="bash" showLineNumbers className="w-full text-left rounded-md shadow-md no-scrollbar">
                 $ man podman {'\n'} 
                 $ man podman subcommand
               </CodeBlock>
@@ -47,7 +47,7 @@ const GetHelpSection = () => {
           </div>
 
           {/* Built-in Help */}
-          <div className="grid grid-cols-1 items-center gap-4 rounded-2xl border border-white/20 bg-white/10 p-5 shadow-lg backdrop-blur-md sm:p-6 lg:grid-cols-12 lg:gap-6">
+          <div className="grid grid-cols-1 items-center gap-4 rounded-md border border-white/20 bg-white/10 p-5 shadow-lg backdrop-blur-md sm:p-6 lg:grid-cols-12 lg:gap-6">
             <div className="text-left lg:col-span-5">
               <h4 className="mb-1 text-lg font-bold text-white">Built-in Help</h4>
               <p className="text-sm leading-relaxed text-white/90 sm:text-base">
@@ -56,7 +56,7 @@ const GetHelpSection = () => {
             </div>
             <div className="lg:col-span-7">
               {/* prettier-ignore */}
-              <CodeBlock language="bash" showLineNumbers className="w-full text-left rounded-xl shadow-md no-scrollbar">
+              <CodeBlock language="bash" showLineNumbers className="w-full text-left rounded-md shadow-md no-scrollbar">
                 $ podman --help # list all commands {'\n'}
                 $ podman subcommand --help # get info on a command
               </CodeBlock>
@@ -97,7 +97,7 @@ const SearchPullListSection = () => {
 
 const StickyNote = ({ children, title = 'Note' }: { children: React.ReactNode; title?: string }) => {
   return (
-    <div className="sticky-note shadow-xs relative mt-5 rounded-xl border border-white/25 bg-white/25 p-5 backdrop-blur-md transition-all sm:p-6">
+    <div className="sticky-note shadow-xs relative mt-5 rounded-md border border-white/25 bg-white/25 p-5 backdrop-blur-md transition-all sm:p-6">
       <div className="sticky-note-header mb-2.5 flex items-center gap-2 font-bold">
         <Icon icon="material-symbols:sticky-note-2-rounded" className="shrink-0 text-xl" />
         <span className="text-xs font-extrabold uppercase tracking-wider">{title}:</span>
@@ -121,9 +121,9 @@ const RunListContainersSection = () => {
 
         <div className="space-y-8">
           {/* Step 1: Running a container */}
-          <div className="step-card rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
+          <div className="step-card rounded-md border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
             <div className="mb-4 flex items-center gap-3">
-              <span className="step-badge shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold">
+              <span className="step-badge shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white/25 text-sm font-bold">
                 1
               </span>
               <h3 className="text-xl font-bold sm:text-2xl">Running a container</h3>
@@ -135,7 +135,7 @@ const RunListContainersSection = () => {
               </code>
               :
             </p>
-            <CodeBlock language="bash" showLineNumbers className="no-scrollbar w-full rounded-xl text-left shadow-md">
+            <CodeBlock language="bash" showLineNumbers className="no-scrollbar w-full rounded-md text-left shadow-md">
               $ podman run -dt -p 8080:80/tcp docker.io/library/httpd {'\n'}
             </CodeBlock>
             <StickyNote title="Note">
@@ -163,9 +163,9 @@ const RunListContainersSection = () => {
           </div>
 
           {/* Step 2: Listing running containers */}
-          <div className="step-card rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
+          <div className="step-card rounded-md border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
             <div className="mb-4 flex items-center gap-3">
-              <span className="step-badge shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold">
+              <span className="step-badge shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white/25 text-sm font-bold">
                 2
               </span>
               <h3 className="text-xl font-bold sm:text-2xl">Listing running containers</h3>
@@ -177,7 +177,7 @@ const RunListContainersSection = () => {
               </code>{' '}
               command is used to list created and running containers:
             </p>
-            <CodeBlock language="bash" showLineNumbers className="no-scrollbar w-full rounded-xl text-left shadow-md">
+            <CodeBlock language="bash" showLineNumbers className="no-scrollbar w-full rounded-md text-left shadow-md">
               $ podman ps{'\n'}
               CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES{'\n'}
               01c44968199f docker.io/library/httpd:latest httpd-foreground 1 minute ago Up 1 minute 0.0.0.0:8080-{'>'}
@@ -199,9 +199,9 @@ const RunListContainersSection = () => {
           </div>
 
           {/* Step 3: Testing the container */}
-          <div className="step-card rounded-2xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
+          <div className="step-card rounded-md border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur-md sm:p-8">
             <div className="mb-4 flex items-center gap-3">
-              <span className="step-badge shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/25 text-sm font-bold">
+              <span className="step-badge shadow-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white/25 text-sm font-bold">
                 3
               </span>
               <h3 className="text-xl font-bold sm:text-2xl">
@@ -215,14 +215,14 @@ const RunListContainersSection = () => {
             <p className="mb-3 text-left text-base leading-relaxed">
               The container is reachable via its mapped port on your local machine:
             </p>
-            <CodeBlock language="bash" showLineNumbers className="no-scrollbar w-full rounded-xl text-left shadow-md">
+            <CodeBlock language="bash" showLineNumbers className="no-scrollbar w-full rounded-md text-left shadow-md">
               $ curl http://localhost:8080{'\n'}
             </CodeBlock>
 
             <p className="mb-3 mt-6 text-left text-base leading-relaxed">
               From another machine, reach it using the host's IP address:
             </p>
-            <CodeBlock language="bash" showLineNumbers className="no-scrollbar w-full rounded-xl text-left shadow-md">
+            <CodeBlock language="bash" showLineNumbers className="no-scrollbar w-full rounded-md text-left shadow-md">
               $ curl http://{'<IP_Address>'}:8080{'\n'}
             </CodeBlock>
 

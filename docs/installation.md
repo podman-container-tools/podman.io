@@ -369,7 +369,6 @@ sudo dnf -y builddep rpm/podman.spec --enablerepo=crb
 # RHEL 9+
 sudo dnf -y builddep rpm/podman.spec --enablerepo=codeready-builder-for-rhel-$(rpm --eval %{?rhel})-$(uname -m)-rpms
 ```
-
 Install runtime dependencies:
 
 ```bash
@@ -381,6 +380,12 @@ sudo dnf -y install \
   netavark \
   nftables \
   slirp4netns
+```
+
+On EL9 derivatives (such as CentOS Stream 9), install `catatonit` from the CRB repository:
+
+```bash
+sudo dnf -y install catatonit --enablerepo=crb
 ```
 
 Debian, Ubuntu, and related distributions:

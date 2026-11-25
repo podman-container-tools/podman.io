@@ -12,6 +12,27 @@ const GUIDE_NAMES: Record<string, string> = {
   '/docs/checkpoint': 'Checkpoint & Restore',
 };
 
+const VALID_PARENT_COMMANDS = new Set([
+  'podman-artifact',
+  'podman-container',
+  'podman-farm',
+  'podman-generate',
+  'podman-healthcheck',
+  'podman-image',
+  'podman-kube',
+  'podman-machine',
+  'podman-machine-os',
+  'podman-manifest',
+  'podman-network',
+  'podman-play',
+  'podman-pod',
+  'podman-quadlet',
+  'podman-secret',
+  'podman-system',
+  'podman-systemd.unit',
+  'podman-volume',
+]);
+
 function resolveParentCommand(slug: string): string | null {
   const lower = slug.toLowerCase();
   if ((lower.endsWith('.unit') && lower !== 'podman-systemd.unit') || lower === 'podman-quadlet-basic-usage') {
@@ -26,7 +47,8 @@ function resolveParentCommand(slug: string): string | null {
   if (lower.startsWith('podman-')) {
     const parts = lower.split('-');
     if (parts.length >= 3) {
-      return `${parts[0]}-${parts[1]}`;
+      const candidate = `${parts[0]}-${parts[1]}`;
+      return VALID_PARENT_COMMANDS.has(candidate) ? candidate : null;
     }
   }
   return null;

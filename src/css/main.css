@@ -515,20 +515,26 @@ div[class*='codeBlockContainer'] button[class*='copyButton']:hover {
   display: inline-flex !important;
   align-items: center !important;
   padding: 0.5rem 0.65rem !important;
-  color: #ffffff !important;
   text-decoration: none !important;
 }
 
 .dropdown > .navbar__link:hover,
 .dropdown--hoverable:hover > .navbar__link,
-.dropdown--show > .navbar__link,
-.dropdown > .navbar__link.navbar__link--active {
-  color: #ffffff !important;
+.dropdown--show > .navbar__link {
+  color: #d8b4fe !important;
   text-decoration: none !important;
 }
 
+.dropdown > .navbar__link.navbar__link--active,
+.dropdown > .navbar__link.navbar__link--active:hover,
+.dropdown--hoverable:hover > .navbar__link.navbar__link--active,
+.dropdown--show > .navbar__link.navbar__link--active {
+  color: #d8b4fe !important;
+  text-decoration: underline !important;
+  text-underline-offset: 4px;
+}
+
 .dropdown > .navbar__link::after {
-  border-top-color: #ffffff !important;
   opacity: 0.9;
   margin-left: 6px;
   margin-top: 1px;
@@ -605,16 +611,6 @@ div[class*='codeBlockContainer'] button[class*='copyButton']:hover {
   font-weight: 700 !important; /* font-bold */
   box-shadow: none !important;
   text-decoration: none !important;
-}
-
-/* When it's only one item in the dropdown (e.g. Community), the whole menu container turns purple when active */
-.dropdown__menu:has(> li:only-child .dropdown__link--active),
-.dropdown__menu:has(> li:only-child [aria-current='page']),
-[data-theme='dark'] .dropdown__menu:has(> li:only-child .dropdown__link--active),
-[data-theme='dark'] .dropdown__menu:has(> li:only-child [aria-current='page']) {
-  background-color: #892ca0 !important;
-  border-color: #77218d !important;
-  box-shadow: none !important;
 }
 
 /* Dark mode normal state */

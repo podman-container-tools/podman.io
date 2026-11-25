@@ -88,7 +88,7 @@ function Terminal({ command, label }: { command: string; label?: string }) {
   const parts = command.split(' ');
 
   return (
-    <div className="overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-sm dark:border dark:border-white/10 dark:bg-[#120c22] dark:shadow-none">
+    <div className="download-container overflow-hidden rounded-xl dark:border dark:border-white/10 dark:bg-[#120c22] dark:shadow-none">
       <div className="dark:bg-purple-950/60 flex items-center justify-between bg-[#892CA0] px-4 py-2 text-white dark:border-b dark:border-white/10">
         <div className="flex items-center gap-2">
           <Icon icon="material-symbols:terminal-rounded" className="text-base text-white dark:text-purple-300" />
@@ -141,9 +141,9 @@ function LinuxDistroWorkspace({
   const current = distros.find(d => d.id === selectedId) || distros[0];
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-6 shadow-md backdrop-blur-md transition-all duration-200 dark:border-white/10 dark:bg-[#232326] dark:shadow-none md:p-8">
+    <div className="download-container overflow-hidden rounded-2xl p-6 transition-all duration-200 dark:border dark:border-white/10 dark:bg-[#232326] dark:shadow-none md:p-8">
       {/* 1. Header with Badge, Title & All Distros Link */}
-      <div className="flex flex-col justify-between gap-4 border-b border-purple-100/60 pb-6 dark:border-white/10 sm:flex-row sm:items-center">
+      <div className="flex flex-col justify-between gap-4 border-b border-black/[0.08] pb-6 dark:border-white/10 sm:flex-row sm:items-center">
         <div>
           <div
             style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
@@ -187,7 +187,7 @@ function LinuxDistroWorkspace({
                 className={`group flex cursor-pointer select-none flex-col justify-between rounded-xl p-4 text-left outline-none transition-all duration-150 ${
                   isSelected
                     ? 'border border-[#892CA0] bg-[#892CA0] text-white shadow-sm'
-                    : 'text-purple-950 border border-purple-100/60 bg-white shadow-sm hover:border-purple-300 hover:bg-purple-50/40 hover:shadow-md dark:border-white/10 dark:bg-[#25242b] dark:text-white dark:hover:border-white/20'
+                    : 'download-container text-purple-950 hover:bg-purple-50/40 dark:border dark:border-white/10 dark:bg-[#25242b] dark:text-white dark:shadow-none dark:hover:border-white/20'
                 }`}>
                 <div className="flex items-center justify-between gap-2">
                   <div
@@ -216,7 +216,7 @@ function LinuxDistroWorkspace({
 
       {/* 3. Selected Distro Command Box — Inspo from Meeting Containers */}
       <div className="mt-6 space-y-4">
-        <div className="overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-sm dark:border dark:border-white/10 dark:bg-[#120c22] dark:shadow-none">
+        <div className="download-container overflow-hidden rounded-xl dark:border dark:border-white/10 dark:bg-[#120c22] dark:shadow-none">
           <div className="dark:bg-purple-950/60 flex items-center justify-between bg-[#892CA0] px-4 py-2.5 text-white dark:border-b dark:border-white/10">
             <div className="flex items-center gap-2 text-xs font-bold text-white">
               <Icon icon="material-symbols:terminal-rounded" className="text-base text-white dark:text-purple-300" />
@@ -229,10 +229,10 @@ function LinuxDistroWorkspace({
 
           <div className="flex items-center gap-3 overflow-x-auto p-5 font-mono text-sm leading-relaxed text-gray-900 dark:bg-[#120c22] dark:text-white">
             <span className="select-none font-bold text-[#892CA0] dark:text-purple-300">$</span>
-            <span className="font-bold text-emerald-600 dark:text-emerald-300">{current.command}</span>
+            <span className="text-emerald-600 dark:text-emerald-300 font-bold">{current.command}</span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-purple-100/60 bg-white px-5 py-3 text-xs text-gray-700 dark:border-t dark:border-white/10 dark:bg-[#1d142d] dark:text-gray-300">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-black/[0.08] bg-white px-5 py-3 text-xs text-gray-700 dark:border-t dark:border-white/10 dark:bg-[#1d142d] dark:text-gray-300">
             <div className="flex items-center gap-2">
               <Icon
                 icon="material-symbols:info-outline-rounded"
@@ -240,7 +240,7 @@ function LinuxDistroWorkspace({
               />
               <span className="font-semibold text-gray-700 dark:text-gray-300">{current.note}</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-300">
+            <div className="text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5 text-[11px] font-bold">
               <Icon icon="material-symbols:verified-rounded" className="text-sm" />
               <span>Official Repository</span>
             </div>
@@ -248,8 +248,8 @@ function LinuxDistroWorkspace({
         </div>
 
         {/* Verification and Next Step — Full Container */}
-        <div className="border-t border-purple-100 pt-6 dark:border-white/10">
-          <div className="overflow-hidden rounded-xl border border-purple-100/60 bg-white shadow-sm dark:border dark:border-white/10 dark:bg-[#120c22] dark:shadow-none">
+        <div className="border-t border-black/[0.08] pt-6 dark:border-white/10">
+          <div className="download-container overflow-hidden rounded-xl dark:border dark:border-white/10 dark:bg-[#120c22] dark:shadow-none">
             <div className="dark:bg-purple-950/60 flex items-center justify-between bg-[#892CA0] px-4 py-2.5 text-white dark:border-b dark:border-white/10">
               <div className="flex items-center gap-2 text-xs font-bold text-white">
                 <Icon icon="material-symbols:terminal-rounded" className="text-base text-white dark:text-purple-300" />
@@ -260,16 +260,16 @@ function LinuxDistroWorkspace({
 
             <div className="flex items-center gap-3 overflow-x-auto p-5 font-mono text-sm leading-relaxed text-gray-900 dark:bg-[#120c22] dark:text-white">
               <span className="select-none font-bold text-[#892CA0] dark:text-purple-300">$</span>
-              <span className="font-bold text-emerald-600 dark:text-emerald-300">
+              <span className="text-emerald-600 dark:text-emerald-300 font-bold">
                 podman --version &amp;&amp; podman run --rm hello-world
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-purple-100/60 bg-white px-5 py-3 text-xs text-gray-700 dark:border-t dark:border-white/10 dark:bg-[#1d142d] dark:text-gray-300">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-black/[0.08] bg-white px-5 py-3 text-xs text-gray-700 dark:border-t dark:border-white/10 dark:bg-[#1d142d] dark:text-gray-300">
               <div className="flex items-center gap-2">
                 <Icon
                   icon="material-symbols:check-circle-rounded"
-                  className="shrink-0 text-base text-emerald-700 dark:text-emerald-400"
+                  className="text-emerald-700 dark:text-emerald-400 shrink-0 text-base"
                 />
                 <span className="font-semibold text-gray-700 dark:text-gray-300">
                   Confirms daemonless engine &amp; rootless runtime
@@ -343,7 +343,7 @@ function ResourceCard({ badge, icon, title, desc, href, cta }: ResourceCardProps
       onKeyDown={e => {
         if (e.key === 'Enter') window.open(href, '_blank', 'noopener,noreferrer');
       }}
-      className="group flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 text-left shadow-md backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-[#232326] dark:shadow-none">
+      className="download-container group flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl p-7 text-left transition-all duration-200 dark:border dark:border-white/10 dark:bg-[#232326] dark:shadow-none">
       <div>
         {/* Top Header: Icon + Badge */}
         {/* Top Header: Icon + Badge */}
@@ -370,7 +370,7 @@ function ResourceCard({ badge, icon, title, desc, href, cta }: ResourceCardProps
       </div>
 
       {/* Footer Action Link */}
-      <div className="mt-8 flex items-center justify-between border-t border-purple-100/60 pt-4 dark:border-white/10">
+      <div className="mt-8 flex items-center justify-between border-t border-black/[0.08] pt-4 dark:border-white/10">
         <span className="text-sm font-bold text-[#892CA0] transition-colors group-hover:text-[#77218d] dark:text-purple-300 dark:group-hover:text-white">
           {cta}
         </span>
@@ -530,7 +530,7 @@ export default function DownloadsPage(): JSX.Element {
           {os === 'windows' && (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-stretch">
               {/* Card 1: Standalone MSI Installers */}
-              <div className="flex flex-col overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 shadow-md backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-[#232326] dark:shadow-none">
+              <div className="download-container flex flex-col overflow-hidden rounded-2xl p-7 transition-all duration-200 dark:border dark:border-white/10 dark:bg-[#232326] dark:shadow-none">
                 <div>
                   <div className="flex items-center justify-between gap-3">
                     <div
@@ -553,7 +553,7 @@ export default function DownloadsPage(): JSX.Element {
                   </p>
                 </div>
 
-                <div className="mt-6 space-y-6 border-t border-purple-100/60 pt-6 dark:border-white/10">
+                <div className="mt-6 space-y-6 border-t border-black/[0.08] pt-6 dark:border-white/10">
                   <DownloadBtn
                     href={`https://github.com/podman-container-tools/podman/releases/download/v${LATEST_VERSION}/podman-installer-windows-amd64.msi`}
                     primary
@@ -569,7 +569,7 @@ export default function DownloadsPage(): JSX.Element {
               </div>
 
               {/* Card 2: Package Managers (WinGet & Chocolatey) */}
-              <div className="flex flex-col justify-between overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-7 shadow-md backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-[#232326] dark:shadow-none">
+              <div className="download-container flex flex-col justify-between overflow-hidden rounded-2xl p-7 transition-all duration-200 dark:border dark:border-white/10 dark:bg-[#232326] dark:shadow-none">
                 <div>
                   <div className="flex items-center justify-between gap-3">
                     <div
@@ -595,7 +595,7 @@ export default function DownloadsPage(): JSX.Element {
                   </div>
                 </div>
 
-                <div className="mt-8 border-t border-purple-100 pt-6 dark:border-white/10">
+                <div className="mt-8 border-t border-black/[0.08] pt-6 dark:border-white/10">
                   <Terminal
                     command="podman machine init && podman machine start"
                     label="Next step after installation"
@@ -610,9 +610,9 @@ export default function DownloadsPage(): JSX.Element {
           ========================================================== */}
           {os === 'mac' && (
             <div className="mx-auto max-w-3xl">
-              <div className="overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-6 shadow-md backdrop-blur-md transition-all duration-200 dark:border-white/10 dark:bg-[#232326] dark:shadow-none md:p-8">
+              <div className="download-container overflow-hidden rounded-2xl p-6 transition-all duration-200 dark:border dark:border-white/10 dark:bg-[#232326] dark:shadow-none md:p-8">
                 {/* Top Header Card */}
-                <div className="flex flex-col justify-between gap-4 border-b border-purple-100/60 pb-6 dark:border-white/10 sm:flex-row sm:items-center">
+                <div className="flex flex-col justify-between gap-4 border-b border-black/[0.08] pb-6 dark:border-white/10 sm:flex-row sm:items-center">
                   <div>
                     <div
                       style={{ backgroundColor: '#892CA0', color: '#ffffff' }}
@@ -654,7 +654,7 @@ export default function DownloadsPage(): JSX.Element {
                 </div>
 
                 {/* High-Contrast Low-Attention Homebrew Note */}
-                <div className="mt-6 border-t border-purple-100/60 pt-4 dark:border-white/10">
+                <div className="mt-6 border-t border-black/[0.08] pt-4 dark:border-white/10">
                   <div className="flex flex-col items-start justify-between gap-2 text-xs font-medium sm:flex-row sm:items-center">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <Icon
@@ -666,7 +666,7 @@ export default function DownloadsPage(): JSX.Element {
                           Alternative option (Not recommended):
                         </strong>{' '}
                         <span className="text-gray-700 dark:text-gray-300">Homebrew formula</span>{' '}
-                        <span className="shadow-xs inline-flex items-center rounded-md border-0 bg-white px-2.5 py-1 font-mono text-[12px] font-bold text-emerald-600 dark:bg-[#120c22] dark:text-emerald-400">
+                        <span className="download-container text-emerald-600 dark:text-emerald-400 inline-flex items-center rounded-md px-2.5 py-1 font-mono text-[12px] font-bold dark:border dark:border-white/10 dark:bg-[#120c22] dark:shadow-none">
                           brew install podman
                         </span>
                       </span>
@@ -692,7 +692,7 @@ export default function DownloadsPage(): JSX.Element {
       ============================================================ */}
       <section className="bg-white pb-12 pt-2 dark:bg-gray-900 sm:pb-16 sm:pt-4">
         <div className="container mx-auto max-w-5xl px-4 sm:px-6">
-          <div className="flex flex-col items-start justify-between gap-6 overflow-hidden rounded-2xl border border-purple-100/60 bg-white/80 p-6 shadow-md backdrop-blur-md transition-all duration-200 hover:shadow-lg dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none sm:flex-row sm:items-center sm:p-7">
+          <div className="download-container flex flex-col items-start justify-between gap-6 overflow-hidden rounded-2xl p-6 transition-all duration-200 dark:border dark:border-white/10 dark:bg-[#1e1b29] dark:bg-gradient-to-br dark:from-[#2a173d] dark:via-[#1e1b29] dark:to-[#161420] dark:shadow-none sm:flex-row sm:items-center sm:p-7">
             <div className="max-w-xl space-y-1.5">
               <div
                 style={{ backgroundColor: '#892CA0', color: '#ffffff' }}

@@ -34,7 +34,7 @@ const tabData = [
   },
   {
     label: 'Share',
-    title: 'Share the containers you\u2019ve built.',
+    title: "Share the containers you've built.",
     commands: ['podman push'],
     description:
       'Podman lets you push your newly-built containers anywhere you want with a single podman push command.',

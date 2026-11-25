@@ -23,7 +23,6 @@ const config = {
   },
   plugins: [
     '@docusaurus/theme-live-codeblock',
-    require.resolve('./plugins/cli-docs-routes.js'),
     async function tailwindPlugin() {
       return {
         name: 'docusaurus-tailwindcss',

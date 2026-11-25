@@ -16,3 +16,4 @@ yarn-error.log
 build/
 types
 static/data/cli-docs/
+docs/commands/

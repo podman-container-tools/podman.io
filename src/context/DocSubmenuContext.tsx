@@ -9,20 +9,30 @@ export interface TOCHeading {
 interface DocSubmenuContextType {
   toc: TOCHeading[];
   activeHeadingId: string;
+  openCategoryId: string | null;
+  openGuideId: string | null;
   setDocTOC: (toc: TOCHeading[]) => void;
   setActiveHeadingId: (id: string) => void;
+  setOpenCategoryId: React.Dispatch<React.SetStateAction<string | null>>;
+  setOpenGuideId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const DocSubmenuContext = createContext<DocSubmenuContextType>({
   toc: [],
   activeHeadingId: '',
+  openCategoryId: null,
+  openGuideId: 'getting-started',
   setDocTOC: () => undefined,
   setActiveHeadingId: () => undefined,
+  setOpenCategoryId: () => undefined,
+  setOpenGuideId: () => undefined,
 });
 
 export const DocSubmenuProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [toc, setDocTOC] = useState<TOCHeading[]>([]);
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
+  const [openCategoryId, setOpenCategoryId] = useState<string | null>(null);
+  const [openGuideId, setOpenGuideId] = useState<string | null>('getting-started');
 
   useEffect(() => {
     if (typeof window === 'undefined' || !toc || toc.length === 0) return;
@@ -55,7 +65,17 @@ export const DocSubmenuProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   }, [toc]);
 
   return (
-    <DocSubmenuContext.Provider value={{ toc, activeHeadingId, setDocTOC, setActiveHeadingId }}>
+    <DocSubmenuContext.Provider
+      value={{
+        toc,
+        activeHeadingId,
+        openCategoryId,
+        openGuideId,
+        setDocTOC,
+        setActiveHeadingId,
+        setOpenCategoryId,
+        setOpenGuideId,
+      }}>
       {children}
     </DocSubmenuContext.Provider>
   );

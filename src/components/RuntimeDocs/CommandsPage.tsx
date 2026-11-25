@@ -1,14 +1,13 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import clsx from 'clsx';
 import { useLocation, useHistory, matchPath } from '@docusaurus/router';
 import ModernDocSidebar from '@site/src/components/docs/ModernDocSidebar';
-import DocsContent from '@site/src/components/RuntimeDocs/DocsContent';
 import OverviewContent from '@site/src/components/RuntimeDocs/OverviewContent';
 import TopDocsSearch from '@site/src/components/RuntimeDocs/TopDocsSearch';
 import { docsService } from '@site/src/services/docsService';
-import type { DocManifest, DocContent as DocContentType } from '@site/src/services/docsTypes';
+import type { DocManifest } from '@site/src/services/docsTypes';
 
 export default function DocsCommandsPage(): JSX.Element {
   const location = useLocation();
@@ -32,8 +31,6 @@ export default function DocsCommandsPage(): JSX.Element {
 
   const [currentSlug, setCurrentSlug] = useState<string>(() => getSlugFromLocation());
   const [manifest, setManifest] = useState<DocManifest | null>(null);
-  const [docContent, setDocContent] = useState<DocContentType | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
 
   // Mobile drawer state
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState<boolean>(false);
@@ -121,64 +118,6 @@ export default function DocsCommandsPage(): JSX.Element {
     };
   }, []);
 
-  // Fetch document whenever currentSlug changes, with live update listener
-  useEffect(() => {
-    if (!currentSlug || currentSlug === 'overview') {
-      setDocContent(null);
-      setLoading(false);
-      return;
-    }
-
-    let mounted = true;
-    setLoading(true);
-
-    docsService
-      .getDocument(currentSlug)
-      .then(doc => {
-        if (mounted) {
-          setDocContent(doc);
-          setLoading(false);
-          if (typeof window !== 'undefined') {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        }
-      })
-      .catch(() => {
-        if (mounted) setLoading(false);
-      });
-
-    // Listen for live background SWR document updates
-    const handleDocUpdate = (e: CustomEvent<{ slug: string; content: DocContentType }>) => {
-      if (mounted && e.detail && e.detail.slug.toLowerCase() === currentSlug.toLowerCase()) {
-        setDocContent(e.detail.content);
-        setLoading(false);
-      }
-    };
-
-    const handleDocInvalidation = () => {
-      if (mounted) {
-        docsService
-          .getDocument(currentSlug, true)
-          .then(doc => {
-            if (mounted) {
-              setDocContent(doc);
-              setLoading(false);
-            }
-          })
-          .catch(() => undefined);
-      }
-    };
-
-    window.addEventListener('podman-doc-updated', handleDocUpdate as EventListener);
-    window.addEventListener('podman-docs-invalidated', handleDocInvalidation as EventListener);
-
-    return () => {
-      mounted = false;
-      window.removeEventListener('podman-doc-updated', handleDocUpdate as EventListener);
-      window.removeEventListener('podman-docs-invalidated', handleDocInvalidation as EventListener);
-    };
-  }, [currentSlug]);
-
   const handleSelectCommand = (slug: string, hash?: string) => {
     const cleanHash = hash ? (hash.startsWith('#') ? hash : `#${hash}`) : '';
     if (!slug || slug === 'overview') {
@@ -191,23 +130,10 @@ export default function DocsCommandsPage(): JSX.Element {
     setMobileDrawerOpen(false);
   };
 
-  // Find active category for breadcrumb
-  const activeCategory = useMemo(() => {
-    if (!manifest || !currentSlug || currentSlug === 'overview') return null;
-    return manifest.categories.find(c => c.items.some(i => i.slug.toLowerCase() === currentSlug.toLowerCase()));
-  }, [manifest, currentSlug]);
-
   const isOverview = !currentSlug || currentSlug === 'overview';
 
-  const pageTitle = isOverview
-    ? 'CLI Commands | Podman Documentation'
-    : docContent?.metadata.title
-      ? `${docContent.metadata.title} | Podman Documentation`
-      : `${currentSlug} | Podman Documentation`;
-
-  const pageDescription = isOverview
-    ? 'Podman daemonless container engine and CLI reference documentation'
-    : docContent?.metadata.description || 'Podman CLI reference documentation';
+  const pageTitle = 'CLI Commands | Podman Documentation';
+  const pageDescription = 'Podman daemonless container engine and CLI reference documentation';
 
   return (
     <Layout title={pageTitle} description={pageDescription}>
@@ -223,11 +149,7 @@ export default function DocsCommandsPage(): JSX.Element {
                 ? 'top-[var(--ifm-navbar-height,3.75rem)] h-[calc(100vh-var(--ifm-navbar-height,3.75rem))]'
                 : 'top-0 h-screen',
             )}>
-            <ModernDocSidebar
-              currentPath={location.pathname}
-              currentCommandSlug={currentSlug}
-              onSelectCommand={handleSelectCommand}
-            />
+            <ModernDocSidebar currentPath={location.pathname} currentCommandSlug={currentSlug} />
           </aside>
         </div>
 
@@ -263,7 +185,6 @@ export default function DocsCommandsPage(): JSX.Element {
                 <ModernDocSidebar
                   currentPath={location.pathname}
                   currentCommandSlug={currentSlug}
-                  onSelectCommand={handleSelectCommand}
                   onItemClick={() => setMobileDrawerOpen(false)}
                 />
               </div>
@@ -306,12 +227,6 @@ export default function DocsCommandsPage(): JSX.Element {
               ) : (
                 <>
                   <span className="text-gray-500 dark:text-[#1ECCFF]">CLI Commands</span>
-                  {activeCategory && (
-                    <>
-                      <span className="text-gray-400 dark:text-[#1ECCFF]/60">›</span>
-                      <span className="text-gray-500 dark:text-[#1ECCFF]">{activeCategory.name}</span>
-                    </>
-                  )}
                   <span className="text-gray-400 dark:text-[#1ECCFF]/60">›</span>
                   <span className="rounded-full bg-[#0284c7]/10 px-2.5 py-0.5 font-mono font-medium text-[#0284c7] dark:bg-[#1ECCFF]/[0.18] dark:text-[#1ECCFF]">
                     {currentSlug}
@@ -324,23 +239,7 @@ export default function DocsCommandsPage(): JSX.Element {
             <TopDocsSearch onSelectCommand={handleSelectCommand} />
           </div>
 
-          {/* Render Overview OR Specific Command */}
-          {isOverview ? (
-            <OverviewContent manifest={manifest} onSelectCommand={handleSelectCommand} />
-          ) : (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => handleSelectCommand('overview')}
-                  className="inline-flex cursor-pointer items-center gap-1.5 border-0 bg-transparent p-0 text-xs font-medium text-gray-500 transition-colors hover:text-sky-600 dark:text-blue-500 dark:hover:text-blue-300">
-                  <span>← Back to Overview</span>
-                </button>
-              </div>
-
-              <DocsContent content={docContent} loading={loading} onNavigateInternal={handleSelectCommand} />
-            </div>
-          )}
+          <OverviewContent manifest={manifest} onSelectCommand={handleSelectCommand} />
         </main>
       </div>
     </Layout>

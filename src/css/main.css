@@ -124,15 +124,21 @@ article div.group.relative.border:hover,
   border-color: #3f3f46 !important;
 }
 
-div[class*='codeBlockContainer'] pre {
+div[class*='codeBlockContainer'] pre,
+.theme-code-block pre {
   background-color: transparent !important;
   border: none !important;
   padding: 1rem 3.5rem 1rem 1.15rem !important;
   margin: 0 !important;
   font-size: 0.875rem !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  overflow-x: hidden !important;
 }
 
-div[class*='codeBlockContainer'] pre code {
+div[class*='codeBlockContainer'] pre code,
+.theme-code-block pre code {
   font-family: var(--ifm-font-family-monospace, Menlo, Monaco, Consolas, 'Liberation Mono', monospace) !important;
   font-size: 0.875rem !important;
   color: #0f172a !important;
@@ -140,29 +146,49 @@ div[class*='codeBlockContainer'] pre code {
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  float: none !important;
+  display: block !important;
 }
 
-[data-theme='dark'] div[class*='codeBlockContainer'] pre code {
+[data-theme='dark'] div[class*='codeBlockContainer'] pre code,
+[data-theme='dark'] .theme-code-block pre code {
   color: #f1f5f9 !important;
 }
 
-/* Copy button inside Docusaurus classic theme code blocks */
+/* Hide word-wrap toggle button since all code blocks wrap by default */
+.theme-code-block div[class*='buttonGroup'] button[title='Toggle word wrap'],
+.theme-code-block div[class*='buttonGroup'] button[aria-label='Toggle word wrap'],
+div[class*='codeBlockContainer'] div[class*='buttonGroup'] button[title='Toggle word wrap'],
+div[class*='codeBlockContainer'] div[class*='buttonGroup'] button[aria-label='Toggle word wrap'] {
+  display: none !important;
+}
+
+/* Copy button inside Docusaurus classic theme code blocks - always visible */
 .theme-code-block div[class*='buttonGroup'],
 div[class*='codeBlockContainer'] div[class*='buttonGroup'] {
   top: 0.65rem !important;
   right: 0.65rem !important;
   z-index: 10 !important;
+  display: flex !important;
+  opacity: 1 !important;
 }
 
 .theme-code-block div[class*='buttonGroup'] button,
 div[class*='codeBlockContainer'] button[class*='copyButton'],
 div[class*='codeBlockContainer'] div[class*='buttonGroup'] button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   background: transparent !important;
   border: none !important;
   color: #64748b !important;
   padding: 0.35rem 0.5rem !important;
   border-radius: 0.5rem !important;
   opacity: 1 !important;
+  visibility: visible !important;
   line-height: 1 !important;
   transition:
     opacity 0.15s ease,
@@ -1280,11 +1306,11 @@ aside[class*='docSidebarContainer'] a * {
 /* Doc Sidebar Section Titles                               */
 /* ======================================================== */
 .doc-section-title {
-  color: #6b7280 !important;
+  color: #64748b !important;
   font-weight: 700 !important;
-  font-size: 0.6875rem !important; /* 11px */
+  font-size: 0.65rem !important; /* 10.4px */
   text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
+  letter-spacing: 0.08em !important;
 }
 
 [data-theme='dark'] .doc-section-title {
@@ -1299,11 +1325,11 @@ aside[class*='docSidebarContainer'] a * {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  padding: 0.45rem 0.75rem !important;
+  padding: 0.42rem 0.75rem !important;
   border-radius: 0.5rem !important;
   text-decoration: none !important;
   background-color: transparent !important;
-  color: #111827 !important; /* Light mode: crisp black/charcoal */
+  color: #334155 !important; /* Clean modern slate in light mode */
   transition:
     background-color 0.15s ease-in-out,
     color 0.15s ease-in-out !important;
@@ -1315,24 +1341,29 @@ aside[class*='docSidebarContainer'] a * {
 .doc-nav-item span,
 .doc-nav-item:visited .doc-nav-title,
 .doc-nav-item:visited span {
-  color: #111827 !important;
+  color: #334155 !important;
 }
 
 .doc-nav-item svg,
 .doc-nav-item:visited svg {
-  color: #4b5563 !important;
+  color: #64748b !important;
   stroke: currentColor !important;
   transition: color 0.15s ease-in-out !important;
 }
 
 .doc-nav-item .doc-nav-count {
-  color: #6b7280 !important;
-  opacity: 0.75 !important;
+  color: #64748b !important;
+  background-color: #f1f5f9 !important;
+  padding: 0.1rem 0.42rem !important;
+  border-radius: 9999px !important;
+  font-size: 0.675rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
 }
 
-.doc-nav-item *,
-.doc-nav-item:hover *,
-.doc-nav-item-active * {
+.doc-nav-item *:not(.doc-nav-count),
+.doc-nav-item:hover *:not(.doc-nav-count),
+.doc-nav-item-active *:not(.doc-nav-count) {
   background-color: transparent !important;
   text-decoration: none !important;
 }
@@ -1354,6 +1385,11 @@ aside[class*='docSidebarContainer'] a * {
   color: #0f172a !important;
 }
 
+.doc-nav-item:hover .doc-nav-count {
+  background-color: #e2e8f0 !important;
+  color: #334155 !important;
+}
+
 /* Light mode active folder/item: clean sky blue accent */
 .doc-nav-item-active,
 .doc-nav-item-active:visited {
@@ -1372,6 +1408,11 @@ aside[class*='docSidebarContainer'] a * {
 .doc-nav-item-active:visited svg {
   color: #0284c7 !important;
   font-weight: 600 !important;
+}
+
+.doc-nav-item-active .doc-nav-count {
+  background-color: rgba(2, 132, 199, 0.15) !important;
+  color: #0284c7 !important;
 }
 
 /* -------------------------------------------------------- */
@@ -1398,7 +1439,8 @@ aside[class*='docSidebarContainer'] a * {
 
 [data-theme='dark'] .doc-nav-item .doc-nav-count {
   color: #ffffff !important;
-  opacity: 0.7 !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  opacity: 0.85 !important;
 }
 
 /* Dark mode hover */
@@ -1446,10 +1488,17 @@ aside[class*='docSidebarContainer'] a * {
   font-weight: 600 !important;
 }
 
+[data-theme='dark'] .doc-nav-item-active .doc-nav-count {
+  background-color: rgba(30, 204, 255, 0.22) !important;
+  color: #1eccff !important;
+  opacity: 1 !important;
+}
+
 .doc-nav-title {
-  font-size: 0.835rem !important; /* ~13.5px */
-  line-height: 1.25 !important;
+  font-size: 0.8125rem !important; /* 13px */
+  line-height: 1.35 !important;
   font-weight: 500 !important;
+  letter-spacing: -0.005em !important;
 }
 
 /* ======================================================== */
@@ -1478,21 +1527,23 @@ aside[class*='docSidebarContainer'] a * {
 }
 
 .doc-submenu-tree {
-  border-left: 1.5px solid #e5e7eb !important; /* soft lightish gray in light mode */
+  border-left: 1.5px solid #e2e8f0 !important;
 }
 
 [data-theme='dark'] .doc-submenu-tree {
-  border-left: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  border-left: 1.5px solid rgba(255, 255, 255, 0.16) !important;
 }
 
-/* Light mode submenu link: Charcoal, never purple on visited */
+/* Light mode submenu link */
 .doc-submenu-link,
 .doc-submenu-link:visited {
   text-decoration: none !important;
   border: none !important;
   outline: none !important;
   background-color: transparent !important;
-  color: #374151 !important;
+  color: #475569 !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.005em !important;
   transition:
     color 0.15s ease-in-out,
     background-color 0.15s ease-in-out !important;
@@ -1501,8 +1552,8 @@ aside[class*='docSidebarContainer'] a * {
 .doc-submenu-link:hover,
 .doc-submenu-link:visited:hover {
   text-decoration: none !important;
-  color: #0284c7 !important;
-  background-color: transparent !important;
+  color: #0f172a !important;
+  background-color: #f1f5f9 !important;
 }
 
 .doc-submenu-link-active,
@@ -1511,7 +1562,7 @@ aside[class*='docSidebarContainer'] a * {
   color: #0284c7 !important;
   font-weight: 600 !important;
   text-decoration: none !important;
-  background-color: transparent !important;
+  background-color: rgba(2, 132, 199, 0.1) !important;
 }
 
 /* Dark mode submenu link: Normally White, Active Cyan Blue #1eccff */
@@ -1524,19 +1575,19 @@ aside[class*='docSidebarContainer'] a * {
 
 [data-theme='dark'] .doc-submenu-link:hover,
 [data-theme='dark'] .doc-submenu-link:visited:hover {
-  color: #1eccff !important;
-  background-color: transparent !important;
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
   opacity: 1 !important;
 }
 
-/* Dark mode active submenu link: Cyan Blue #1eccff */
+/* Dark mode active submenu link: Cyan Blue #1eccff with pill background */
 [data-theme='dark'] .doc-submenu-link-active,
 [data-theme='dark'] .doc-submenu-link-active:visited,
 [data-theme='dark'] .doc-submenu-link-active:hover {
   color: #1eccff !important;
   font-weight: 600 !important;
   text-decoration: none !important;
-  background-color: transparent !important;
+  background-color: rgba(30, 204, 255, 0.2) !important;
   opacity: 1 !important;
 }
 
@@ -1606,12 +1657,177 @@ article h4[id] {
   font-weight: 600 !important;
 }
 
+/* Override Infima's default `table { display: block }` so tables size cleanly to their content */
+table {
+  display: table !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
+
+/* ======================================================== */
+/* SYNOPSIS 2-Column Summary Table (Description / Usage)    */
+/* ======================================================== */
+.theme-doc-markdown.markdown table.doc-synopsis-table {
+  display: table !important;
+  width: auto !important;
+  max-width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+  margin: 0.5rem 0 2rem !important;
+  font-size: 0.875rem !important;
+}
+
+.theme-doc-markdown.markdown table.doc-synopsis-table tr,
+.theme-doc-markdown.markdown table.doc-synopsis-table tr:nth-child(2n) {
+  background: transparent !important;
+  border: none !important;
+}
+
+.theme-doc-markdown.markdown table.doc-synopsis-table th.doc-synopsis-label {
+  width: 9rem !important;
+  white-space: nowrap !important;
+  padding: 0.95rem 1.25rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  border: none !important;
+  border-right: 1px solid #e2e8f0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.theme-doc-markdown.markdown table.doc-synopsis-table td.doc-synopsis-value {
+  padding: 0.95rem 1.35rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  vertical-align: middle !important;
+  color: #1e293b !important;
+  background-color: #f8fafc !important;
+  border: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.theme-doc-markdown.markdown table.doc-synopsis-table tr:last-child th.doc-synopsis-label,
+.theme-doc-markdown.markdown table.doc-synopsis-table tr:last-child td.doc-synopsis-value {
+  border-bottom: none !important;
+}
+
+.doc-synopsis-pill {
+  display: inline-block !important;
+  padding: 0.25rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  font-family: var(--ifm-font-family-monospace) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  border: none !important;
+  line-height: 1.45 !important;
+}
+
+.doc-synopsis-aliases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+[data-theme='dark'] .theme-doc-markdown.markdown table.doc-synopsis-table {
+  border-color: #27272a !important;
+}
+
+[data-theme='dark'] .theme-doc-markdown.markdown table.doc-synopsis-table th.doc-synopsis-label {
+  background-color: #18181b !important;
+  color: #ffffff !important;
+  border-right-color: #27272a !important;
+  border-bottom-color: #27272a !important;
+}
+
+[data-theme='dark'] .theme-doc-markdown.markdown table.doc-synopsis-table td.doc-synopsis-value {
+  background-color: #1f1f23 !important;
+  color: #e4e4e7 !important;
+  border-bottom-color: #27272a !important;
+}
+
+[data-theme='dark'] .doc-synopsis-pill {
+  background-color: #27272a !important;
+  color: #e4e4e7 !important;
+}
+
 .theme-doc-markdown.markdown table {
-  font-size: 0.75rem !important;
+  display: table !important;
+  width: auto !important;
+  max-width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+  margin: 1.5rem 0 !important;
+  font-size: 0.8125rem !important;
+  background-color: #ffffff !important;
+}
+
+.theme-doc-markdown.markdown thead,
+.theme-doc-markdown.markdown thead tr {
+  background-color: #ffffff !important;
+  border: none !important;
 }
 
 .theme-doc-markdown.markdown th {
-  font-size: 0.75rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 700 !important;
+  text-align: left !important;
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  padding: 0.9rem 1.25rem !important;
+  border: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.theme-doc-markdown.markdown tbody tr,
+.theme-doc-markdown.markdown tbody tr:nth-child(2n) {
+  background-color: #f8fafc !important;
+  border: none !important;
+}
+
+.theme-doc-markdown.markdown td {
+  padding: 0.9rem 1.25rem !important;
+  vertical-align: top !important;
+  line-height: 1.6 !important;
+  color: #1e293b !important;
+  background-color: #f8fafc !important;
+  border: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.theme-doc-markdown.markdown tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+[data-theme='dark'] .theme-doc-markdown.markdown table {
+  border-color: #27272a !important;
+  background-color: #18181b !important;
+}
+
+[data-theme='dark'] .theme-doc-markdown.markdown thead,
+[data-theme='dark'] .theme-doc-markdown.markdown thead tr,
+[data-theme='dark'] .theme-doc-markdown.markdown th {
+  background-color: #18181b !important;
+  color: #ffffff !important;
+  border-bottom-color: #27272a !important;
+}
+
+[data-theme='dark'] .theme-doc-markdown.markdown tbody tr,
+[data-theme='dark'] .theme-doc-markdown.markdown tbody tr:nth-child(2n),
+[data-theme='dark'] .theme-doc-markdown.markdown td {
+  background-color: #1f1f23 !important;
+  color: #e4e4e7 !important;
+  border-bottom-color: #27272a !important;
 }
 
 .theme-doc-markdown.markdown pre,

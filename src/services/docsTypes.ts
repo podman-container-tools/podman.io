@@ -4,8 +4,6 @@ export interface DocMetadata {
   section: string;
   description: string;
   filename: string;
-  category: string;
-  isTemplate?: boolean;
 }
 
 export interface TOCHeading {
@@ -14,25 +12,20 @@ export interface TOCHeading {
   level: number;
 }
 
-export interface DocContent {
-  metadata: DocMetadata;
-  markdown: string;
-  toc: TOCHeading[];
-  revision: string;
-  fetchedAt: string;
-}
-
-export interface DocCategory {
-  id: string;
-  name: string;
-  items: DocMetadata[];
+export interface DocCommandNode {
+  slug: string;
+  title: string;
+  label: string;
+  section: string;
+  description: string;
+  filename: string;
+  subcommands: DocCommandNode[];
 }
 
 export interface DocManifest {
   revision: string;
   generatorVersion?: string;
   generatedAt: string;
-  categories: DocCategory[];
-  aliases: Record<string, string>;
+  commands: DocCommandNode[];
   totalCount: number;
 }

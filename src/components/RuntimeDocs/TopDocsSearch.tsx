@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import clsx from 'clsx';
 import { useHistory } from '@docusaurus/router';
 import { docsService } from '@site/src/services/docsService';
-import type { DocManifest } from '@site/src/services/docsTypes';
+import { flattenCommandTree } from '@site/src/services/commandTree';
+import type { DocCommandNode, DocManifest } from '@site/src/services/docsTypes';
 
 interface SearchItem {
   id: string;
@@ -48,6 +49,120 @@ const STATIC_GUIDES: SearchItem[] = [
   },
 ];
 
+function scoreSearchItem(item: SearchItem, rawQuery: string): number {
+  const rawQ = rawQuery.trim().toLowerCase();
+  if (!rawQ) return 0;
+
+  const normQ = rawQ
+    .replace(/[-_/]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const hyphenQ = normQ.replace(/\s+/g, '-');
+  const compactQ = rawQ.replace(/[-_\s/]+/g, '');
+  const tokens = normQ ? normQ.split(' ').filter(Boolean) : [];
+
+  const slug = item.id.toLowerCase();
+  const shortName = slug.replace(/^podman-/i, '');
+  const spaceSlug = slug.replace(/[-_/]+/g, ' ');
+  const spaceShort = shortName.replace(/[-_/]+/g, ' ');
+  const compactSlug = slug.replace(/[-_\s/]+/g, '');
+  const compactShort = shortName.replace(/[-_\s/]+/g, '');
+  const titleLower = item.title.toLowerCase();
+  const spaceTitle = titleLower.replace(/[-_/]+/g, ' ');
+  const descLower = (item.description || '').toLowerCase();
+  const spaceDesc = descLower.replace(/[-_/]+/g, ' ');
+  const catLower = (item.category || '').toLowerCase();
+
+  // Handle pure hyphen / punctuation queries (e.g. "-", "--")
+  if (tokens.length === 0) {
+    if (slug.includes(rawQ) || titleLower.includes(rawQ) || descLower.includes(rawQ)) {
+      return 100 - slug.length * 0.2;
+    }
+    return 0;
+  }
+
+  const nameCombined = `${slug} ${spaceSlug} ${shortName} ${spaceShort} ${titleLower} ${spaceTitle}`;
+  const fullCombined = `${nameCombined} ${descLower} ${spaceDesc} ${catLower}`;
+
+  const directNameMatch =
+    slug.includes(rawQ) ||
+    titleLower.includes(rawQ) ||
+    shortName.includes(rawQ) ||
+    (normQ.length > 0 &&
+      (spaceSlug.includes(normQ) ||
+        spaceShort.includes(normQ) ||
+        spaceTitle.includes(normQ) ||
+        slug.includes(hyphenQ) ||
+        shortName.includes(hyphenQ))) ||
+    (compactQ.length >= 2 && (compactSlug.includes(compactQ) || compactShort.includes(compactQ)));
+
+  const allTokensInName = tokens.length > 0 && tokens.every(t => nameCombined.includes(t));
+  const allTokensInFull = tokens.length > 0 && tokens.every(t => fullCombined.includes(t));
+  const directDescMatch =
+    descLower.includes(rawQ) ||
+    catLower.includes(rawQ) ||
+    (normQ.length > 0 && (spaceDesc.includes(normQ) || descLower.includes(hyphenQ)));
+
+  if (!directNameMatch && !allTokensInName && !allTokensInFull && !directDescMatch) {
+    return 0;
+  }
+
+  let score = 0;
+
+  // Exact matches
+  if (
+    shortName === rawQ ||
+    shortName === hyphenQ ||
+    spaceShort === normQ ||
+    slug === rawQ ||
+    slug === hyphenQ ||
+    spaceSlug === normQ
+  ) {
+    score += 1000;
+  }
+
+  // Exact match on subcommand leaf word (e.g. "extract" in "podman-artifact-extract")
+  const segments = shortName.split('-');
+  if (segments[segments.length - 1] === normQ || segments[0] === normQ) {
+    score += 750;
+  }
+
+  // Prefix matches on short name or full slug
+  if (
+    shortName.startsWith(rawQ) ||
+    shortName.startsWith(hyphenQ) ||
+    spaceShort.startsWith(normQ) ||
+    (compactQ.length >= 2 && compactShort.startsWith(compactQ))
+  ) {
+    score += 600;
+  } else if (
+    slug.startsWith(rawQ) ||
+    slug.startsWith(hyphenQ) ||
+    spaceSlug.startsWith(normQ) ||
+    (compactQ.length >= 2 && compactSlug.startsWith(compactQ))
+  ) {
+    score += 500;
+  }
+
+  if (allTokensInName) {
+    score += 400;
+  }
+  if (directNameMatch) {
+    score += 300;
+  }
+  if (allTokensInFull) {
+    score += 150;
+  }
+  if (directDescMatch) {
+    score += 100;
+  }
+
+  // Prefer shorter, more specific command names when scores tie
+  score -= slug.length * 0.5;
+
+  return Math.max(score, 1);
+}
+
 interface TopDocsSearchProps {
   className?: string;
   onSelectCommand?: (slug: string) => void;
@@ -57,6 +172,7 @@ export default function TopDocsSearch({ className, onSelectCommand }: TopDocsSea
   const history = useHistory();
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [manifest, setManifest] = useState<DocManifest | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -103,44 +219,55 @@ export default function TopDocsSearch({ className, onSelectCommand }: TopDocsSea
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Compute matched items
-  const results = useMemo<SearchItem[]>(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return [];
+  // Build flat searchable pool of all commands + guides
+  const allSearchItems = useMemo<SearchItem[]>(() => {
+    const items: SearchItem[] = [...STATIC_GUIDES];
+    if (!manifest) return items;
 
-    const matchedGuides = STATIC_GUIDES.filter(
-      g =>
-        g.title.toLowerCase().includes(q) ||
-        g.description.toLowerCase().includes(q) ||
-        g.category.toLowerCase().includes(q),
-    );
-
-    const matchedCommands: SearchItem[] = [];
-    if (manifest) {
-      for (const cat of manifest.categories) {
-        for (const item of cat.items) {
-          if (
-            item.slug.toLowerCase().includes(q) ||
-            item.title.toLowerCase().includes(q) ||
-            item.description.toLowerCase().includes(q)
-          ) {
-            matchedCommands.push({
-              id: item.slug,
-              title: item.title,
-              category: cat.name,
-              description: item.description,
-              url: `/docs/commands/${encodeURIComponent(item.slug)}`,
-              type: 'command',
-            });
-            if (matchedCommands.length >= 25) break;
-          }
-        }
-        if (matchedCommands.length >= 25) break;
+    const seen = new Set<string>();
+    const hierarchy: DocCommandNode[] = Array.isArray(manifest.commands) ? manifest.commands : [];
+    const parentBySlug = new Map<string, string>();
+    for (const node of hierarchy) {
+      for (const child of flattenCommandTree(node.subcommands || [])) {
+        parentBySlug.set(child.slug, node.label || node.title.replace(/^podman-/i, '').replace(/-/g, ' '));
       }
     }
 
-    return [...matchedGuides, ...matchedCommands].slice(0, 15);
-  }, [query, manifest]);
+    for (const cmd of flattenCommandTree(hierarchy)) {
+      if (seen.has(cmd.slug)) continue;
+      seen.add(cmd.slug);
+      items.push({
+        id: cmd.slug,
+        title: cmd.title,
+        category: parentBySlug.get(cmd.slug) || 'CLI Command',
+        description: cmd.description,
+        url: `/docs/commands/${encodeURIComponent(cmd.slug)}`,
+        type: 'command',
+      });
+    }
+
+    return items;
+  }, [manifest]);
+
+  // Compute ranked matched items across all commands and guides
+  const results = useMemo<SearchItem[]>(() => {
+    if (!query.trim()) return [];
+
+    const scored: { item: SearchItem; score: number }[] = [];
+    for (const item of allSearchItems) {
+      const score = scoreSearchItem(item, query);
+      if (score > 0) {
+        scored.push({ item, score });
+      }
+    }
+
+    scored.sort((a, b) => b.score - a.score || a.item.title.localeCompare(b.item.title));
+    return scored.slice(0, 20).map(s => s.item);
+  }, [query, allSearchItems]);
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [query]);
 
   const handleSelect = (item: SearchItem) => {
     setIsOpen(false);
@@ -177,6 +304,24 @@ export default function TopDocsSearch({ className, onSelectCommand }: TopDocsSea
           onChange={e => {
             setQuery(e.target.value);
             setIsOpen(true);
+          }}
+          onKeyDown={e => {
+            if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              setIsOpen(true);
+              if (results.length > 0) {
+                setActiveIndex(prev => (prev + 1) % results.length);
+              }
+            } else if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              setIsOpen(true);
+              if (results.length > 0) {
+                setActiveIndex(prev => (prev - 1 + results.length) % results.length);
+              }
+            } else if (e.key === 'Enter' && results.length > 0) {
+              e.preventDefault();
+              handleSelect(results[activeIndex] || results[0]);
+            }
           }}
           placeholder="Search commands & docs..."
           className="top-docs-search-input h-10 w-full rounded-full pl-9 pr-10 text-xs text-slate-800 outline-none transition-all placeholder:text-slate-400 dark:text-zinc-100 dark:placeholder:text-zinc-400 sm:w-64 sm:pl-10 sm:pr-12 sm:text-[13px] md:w-72 lg:w-80"
@@ -218,12 +363,18 @@ export default function TopDocsSearch({ className, onSelectCommand }: TopDocsSea
             </div>
           ) : (
             <ul className="m-0 list-none space-y-1 p-0">
-              {results.map(item => (
+              {results.map((item, idx) => (
                 <li key={item.id}>
                   <button
                     type="button"
+                    onMouseEnter={() => setActiveIndex(idx)}
                     onClick={() => handleSelect(item)}
-                    className="group flex w-full cursor-pointer flex-col gap-1 rounded-xl border-0 bg-transparent p-2.5 text-left transition-colors hover:bg-slate-100/80 dark:hover:bg-zinc-800/80 sm:p-3">
+                    className={clsx(
+                      'group flex w-full cursor-pointer flex-col gap-1 rounded-xl border-0 p-2.5 text-left transition-colors sm:p-3',
+                      idx === activeIndex
+                        ? 'bg-slate-100/90 dark:bg-zinc-800/90'
+                        : 'bg-transparent hover:bg-slate-100/80 dark:hover:bg-zinc-800/80',
+                    )}>
                     <div className="flex w-full items-center justify-between gap-2">
                       <span
                         className={clsx(

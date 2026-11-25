@@ -33,12 +33,12 @@ export default function NotFound(): JSX.Element {
   }, [relativeUrl]);
 
   const Messages = [
-    "Oh no! We can't seal the deal!",
-    "We can't seal with it!",
+    'Oh no! We can\u2019t seal the deal!',
+    'We can\u2019t seal with it!',
     'This is seal-iously embarrassing...',
-    "Seal-ly us! We can't find that page.",
-    "Don't flip, but we can't find that.",
-    "We don't sea that page.",
+    'Seal-ly us! We can\u2019t find that page.',
+    'Don\u2019t flip, but we can\u2019t find that.',
+    'We don\u2019t sea that page.',
   ];
   const rand_seed = Math.floor(Math.random() * Messages.length);
 

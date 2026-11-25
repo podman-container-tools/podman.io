@@ -184,7 +184,7 @@ const PullRequestSection = () => {
             return <li key={index}>{item}</li>;
           })}
         </ul>
-        <Button as="link" outline={true} text={submittingIssues[2].button.text} />
+        <Button as="link" outline={true} text={submittingIssues[2].button.text} path={submittingIssues[2].button.path} />
       </div>
     </section>
   );

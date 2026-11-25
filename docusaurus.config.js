@@ -134,11 +134,6 @@ const config = {
                 label: 'Documentation',
                 to: 'docs/',
               },
-
-              {
-                label: 'Podman CLI Commands',
-                href: 'https://docs.podman.io/en/latest/Commands.html',
-              },
             ],
           },
           {
@@ -160,10 +155,6 @@ const config = {
                 label: 'Mailing List',
                 href: 'https://lists.podman.io',
               },
-              {
-                label: 'RSS Feed',
-                href: 'https://blog.podman.io/feed/',
-              },
             ],
           },
           {
@@ -178,8 +169,8 @@ const config = {
                 href: 'https://github.com/podman-desktop/podman-desktop',
               },
               {
-                label: 'Podman Website GitHub',
-                href: 'https://github.com/containers/podman.io',
+                label: 'Podman Container Tools GitHub',
+                href: 'https://github.com/podman-container-tools',
               },
               {
                 label: 'Podman Desktop Website',

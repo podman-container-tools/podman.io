@@ -237,9 +237,9 @@ curl http://localhost:8080`;
         </div>
       </div>
 
-      {/* Versioned & REST API Docs CTA */}
+      {/* Versioned Docs CTA */}
       <div className="flex flex-col items-start justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-600 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-400 sm:flex-row sm:items-center sm:px-5">
-        <span>Showing the latest CLI reference. Looking for older Podman versions or the REST API docs?</span>
+        <span>Showing the latest documentation. Looking for older Podman versions?</span>
         <a
           href="https://docs.podman.io/en/latest/"
           target="_blank"

@@ -91,15 +91,14 @@ const GUIDE_ITEMS: NavLinkItem[] = [
     label: 'Tutorials',
     href: '/docs/tutorials',
   },
-];
-
-const RESOURCE_ITEMS: NavLinkItem[] = [
   {
     id: 'rest-api',
     label: 'REST API Reference',
     href: '/docs/rest-api',
-    isExternal: true,
   },
+];
+
+const RESOURCE_ITEMS: NavLinkItem[] = [
   {
     id: 'network',
     label: 'Basic Networking',
@@ -350,40 +349,69 @@ export default function ModernDocSidebar({
 
         <ul className="m-0 list-none space-y-0.5 p-0">
           {GUIDE_ITEMS.map(item => {
-            const active = isGuideActive(item.href);
+            const isApiReference = item.id === 'rest-api';
+            const active = isApiReference
+              ? activePath === item.href || activePath === `${item.href}/`
+              : isGuideActive(item.href);
             const isGuideOpen = openGuideId === item.id;
 
-            const pageToc = toc.length > 0 ? toc : FALLBACK_TOC[item.id] || [];
+            const pageToc = isApiReference ? [] : toc.length > 0 ? toc : FALLBACK_TOC[item.id] || [];
             const rawHeadings = pageToc.filter(h => h.level === 2);
-            const hasSubmenu = rawHeadings.length > 0;
+            const hasSubmenu = item.id !== 'tutorials' && rawHeadings.length > 0;
+            const itemClassName = clsx(
+              'doc-nav-item group flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-1.5 text-[13px] font-medium no-underline transition-all duration-150',
+              active && 'doc-nav-item-active font-semibold',
+            );
 
             return (
               <li key={item.id} className="relative">
-                <RouterLink
-                  to={item.href}
-                  onClick={() => handleGuideRowClick(item.id, active)}
-                  className={clsx(
-                    'doc-nav-item group flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-1.5 text-[13px] font-medium no-underline transition-all duration-150',
-                    active && 'doc-nav-item-active font-semibold',
-                  )}>
-                  <div className="flex min-w-0 items-center">
+                {isApiReference ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={onItemClick}
+                    className={itemClassName}>
                     <span className="doc-nav-title truncate">{item.label}</span>
-                  </div>
+                    <svg
+                      className="ml-2 h-3.5 w-3.5 shrink-0 opacity-60 transition-opacity group-hover:opacity-100"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round">
+                      <path d="M14 3h7v7" />
+                      <path d="M10 14 21 3" />
+                      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+                    </svg>
+                  </a>
+                ) : (
+                  <RouterLink
+                    to={item.href}
+                    onClick={() => handleGuideRowClick(item.id, active)}
+                    className={itemClassName}>
+                    <div className="flex min-w-0 items-center">
+                      <span className="doc-nav-title truncate">{item.label}</span>
+                    </div>
 
-                  <svg
-                    className={clsx(
-                      'duration-250 ml-2 h-3.5 w-3.5 shrink-0 origin-center opacity-60 transition-transform ease-in-out group-hover:opacity-100',
-                      isGuideOpen ? 'rotate-90 opacity-90' : 'rotate-0',
+                    {hasSubmenu && (
+                      <svg
+                        className={clsx(
+                          'duration-250 ml-2 h-3.5 w-3.5 shrink-0 origin-center opacity-60 transition-transform ease-in-out group-hover:opacity-100',
+                          isGuideOpen ? 'rotate-90 opacity-90' : 'rotate-0',
+                        )}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.25"
+                        strokeLinecap="round"
+                        strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
                     )}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.25"
-                    strokeLinecap="round"
-                    strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </RouterLink>
+                  </RouterLink>
+                )}
 
                 {/* Submenu Headings */}
                 {hasSubmenu && (

@@ -236,6 +236,26 @@ curl http://localhost:8080`;
           </table>
         </div>
       </div>
+
+      {/* Versioned & REST API Docs CTA */}
+      <div className="flex flex-col items-start justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-600 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-400 sm:flex-row sm:items-center sm:px-5">
+        <span>Showing the latest CLI reference. Looking for older Podman versions or the REST API docs?</span>
+        <a
+          href="https://docs.podman.io/en/latest/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold !text-slate-800 !no-underline transition-colors hover:border-slate-300 hover:bg-slate-100 hover:!text-slate-900 dark:border-zinc-700 dark:bg-zinc-800 dark:!text-zinc-100 dark:hover:border-zinc-600 dark:hover:bg-zinc-700">
+          <span>docs.podman.io</span>
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
+          </svg>
+        </a>
+      </div>
     </div>
   );
 }

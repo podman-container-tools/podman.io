@@ -229,7 +229,7 @@ function LinuxDistroWorkspace({
 
           <div className="flex items-center gap-3 overflow-x-auto p-5 font-mono text-sm leading-relaxed text-gray-900 dark:bg-[#120c22] dark:text-white">
             <span className="select-none font-bold text-[#892CA0] dark:text-purple-300">$</span>
-            <span className="text-emerald-600 dark:text-emerald-300 font-bold">{current.command}</span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-300">{current.command}</span>
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-2 border-t border-black/[0.08] bg-white px-5 py-3 text-xs text-gray-700 dark:border-t dark:border-white/10 dark:bg-[#1d142d] dark:text-gray-300">
@@ -240,7 +240,7 @@ function LinuxDistroWorkspace({
               />
               <span className="font-semibold text-gray-700 dark:text-gray-300">{current.note}</span>
             </div>
-            <div className="text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5 text-[11px] font-bold">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-300">
               <Icon icon="material-symbols:verified-rounded" className="text-sm" />
               <span>Official Repository</span>
             </div>
@@ -260,7 +260,7 @@ function LinuxDistroWorkspace({
 
             <div className="flex items-center gap-3 overflow-x-auto p-5 font-mono text-sm leading-relaxed text-gray-900 dark:bg-[#120c22] dark:text-white">
               <span className="select-none font-bold text-[#892CA0] dark:text-purple-300">$</span>
-              <span className="text-emerald-600 dark:text-emerald-300 font-bold">
+              <span className="font-bold text-emerald-600 dark:text-emerald-300">
                 podman --version &amp;&amp; podman run --rm hello-world
               </span>
             </div>
@@ -269,7 +269,7 @@ function LinuxDistroWorkspace({
               <div className="flex items-center gap-2">
                 <Icon
                   icon="material-symbols:check-circle-rounded"
-                  className="text-emerald-700 dark:text-emerald-400 shrink-0 text-base"
+                  className="shrink-0 text-base text-emerald-700 dark:text-emerald-400"
                 />
                 <span className="font-semibold text-gray-700 dark:text-gray-300">
                   Confirms daemonless engine &amp; rootless runtime
@@ -666,7 +666,7 @@ export default function DownloadsPage(): JSX.Element {
                           Alternative option (Not recommended):
                         </strong>{' '}
                         <span className="text-gray-700 dark:text-gray-300">Homebrew formula</span>{' '}
-                        <span className="download-container text-emerald-600 dark:text-emerald-400 inline-flex items-center rounded-md px-2.5 py-1 font-mono text-[12px] font-bold dark:border dark:border-white/10 dark:bg-[#120c22] dark:shadow-none">
+                        <span className="shadow-xs inline-flex items-center rounded-md border-0 bg-white px-2.5 py-1 font-mono text-[12px] font-bold text-emerald-600 dark:bg-[#120c22] dark:text-emerald-400">
                           brew install podman
                         </span>
                       </span>

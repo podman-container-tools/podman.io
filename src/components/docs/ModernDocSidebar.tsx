@@ -1,20 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
-import Link from '@docusaurus/Link';
-import { useLocation } from '@docusaurus/router';
+import { useLocation, useHistory } from '@docusaurus/router';
 import { useDocSubmenu, type TOCHeading } from '@site/src/context/DocSubmenuContext';
+import { docsService } from '@site/src/services/docsService';
+import type { DocManifest, DocCommandNode } from '@site/src/services/docsTypes';
+
+interface SpaLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  to: string;
+}
+
+function RouterLink({ to, onClick, children, ...rest }: SpaLinkProps): JSX.Element {
+  const history = useHistory();
+  return (
+    <a
+      href={to}
+      onClick={e => {
+        if (onClick) {
+          onClick(e);
+        }
+        if (!e.defaultPrevented && e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+          e.preventDefault();
+          history.push(to);
+        }
+      }}
+      {...rest}>
+      {children}
+    </a>
+  );
+}
 
 interface NavLinkItem {
   id: string;
   label: string;
   href: string;
   isExternal?: boolean;
-  icon: (props: { className?: string; active?: boolean }) => JSX.Element;
-}
-
-interface NavSection {
-  title: string;
-  items: NavLinkItem[];
 }
 
 function formatHeadingTitle(value: string): string {
@@ -24,7 +43,7 @@ function formatHeadingTitle(value: string): string {
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
+    .replace(/&#39;/g, String.fromCharCode(39))
     .trim();
 }
 
@@ -51,233 +70,58 @@ const FALLBACK_TOC: Record<string, TOCHeading[]> = {
   ],
 };
 
-const NAV_SECTIONS: NavSection[] = [
+const GUIDE_ITEMS: NavLinkItem[] = [
   {
-    title: 'Guides',
-    items: [
-      {
-        id: 'getting-started',
-        label: 'Getting Started',
-        href: '/docs',
-        icon: ({ className, active }) => (
-          <svg
-            className={clsx(
-              'h-4 w-4 shrink-0 transition-colors',
-              className,
-              active
-                ? 'text-[#892ca0] dark:text-purple-300'
-                : 'text-gray-400 dark:text-zinc-500 group-hover:text-[#892ca0] dark:group-hover:text-purple-300',
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round">
-            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
-            <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
-            <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
-            <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
-          </svg>
-        ),
-      },
-      {
-        id: 'installation',
-        label: 'Installation',
-        href: '/docs/installation',
-        icon: ({ className, active }) => (
-          <svg
-            className={clsx(
-              'h-4 w-4 shrink-0 transition-colors',
-              className,
-              active
-                ? 'text-[#892ca0] dark:text-purple-300'
-                : 'text-gray-400 dark:text-zinc-500 group-hover:text-[#892ca0] dark:group-hover:text-purple-300',
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round">
-            <polyline points="4 17 10 11 4 5" />
-            <line x1="12" y1="19" x2="20" y2="19" />
-          </svg>
-        ),
-      },
-      {
-        id: 'checkpoint',
-        label: 'Checkpoint',
-        href: '/docs/checkpoint',
-        icon: ({ className, active }) => (
-          <svg
-            className={clsx(
-              'h-4 w-4 shrink-0 transition-colors',
-              className,
-              active
-                ? 'text-[#892ca0] dark:text-purple-300'
-                : 'text-gray-400 dark:text-zinc-500 group-hover:text-[#892ca0] dark:group-hover:text-purple-300',
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round">
-            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-            <polyline points="17 21 17 13 7 13 7 21" />
-            <polyline points="7 3 7 8 15 8" />
-          </svg>
-        ),
-      },
-    ],
+    id: 'getting-started',
+    label: 'Getting Started',
+    href: '/docs',
   },
   {
-    title: 'Resources',
-    items: [
-      {
-        id: 'tutorials',
-        label: 'Tutorials',
-        href: 'https://docs.podman.io/en/latest/Tutorials.html',
-        isExternal: true,
-        icon: ({ className }) => (
-          <svg
-            className={clsx(
-              'text-gray-400 dark:text-zinc-500 h-4 w-4 shrink-0 transition-colors group-hover:text-[#892ca0] dark:group-hover:text-purple-300',
-              className,
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-          </svg>
-        ),
-      },
-      {
-        id: 'documentation',
-        label: 'Documentation',
-        href: 'https://docs.podman.io',
-        isExternal: true,
-        icon: ({ className }) => (
-          <svg
-            className={clsx(
-              'text-gray-400 dark:text-zinc-500 h-4 w-4 shrink-0 transition-colors group-hover:text-[#892ca0] dark:group-hover:text-purple-300',
-              className,
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-            <line x1="8" y1="21" x2="16" y2="21" />
-            <line x1="12" y1="17" x2="12" y2="21" />
-          </svg>
-        ),
-      },
-      {
-        id: 'network',
-        label: 'Network',
-        href: 'https://github.com/podman-container-tools/podman/blob/main/docs/tutorials/basic_networking.md',
-        isExternal: true,
-        icon: ({ className }) => (
-          <svg
-            className={clsx(
-              'text-gray-400 dark:text-zinc-500 h-4 w-4 shrink-0 transition-colors group-hover:text-[#892ca0] dark:group-hover:text-purple-300',
-              className,
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="2" y1="12" x2="22" y2="12" />
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-          </svg>
-        ),
-      },
-      {
-        id: 'python-sdk',
-        label: 'Podman Python',
-        href: 'https://podman-py.readthedocs.io/en/latest/index.html',
-        isExternal: true,
-        icon: ({ className }) => (
-          <svg
-            className={clsx(
-              'text-gray-400 dark:text-zinc-500 h-4 w-4 shrink-0 transition-colors group-hover:text-[#892ca0] dark:group-hover:text-purple-300',
-              className,
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round">
-            <polyline points="16 18 22 12 16 6" />
-            <polyline points="8 6 2 12 8 18" />
-          </svg>
-        ),
-      },
-    ],
+    id: 'installation',
+    label: 'Installation',
+    href: '/docs/installation',
   },
   {
-    title: 'Community',
-    items: [
-      {
-        id: 'community-meetings',
-        label: 'Meetings & Notes',
-        href: '/community',
-        icon: ({ className, active }) => (
-          <svg
-            className={clsx(
-              'h-4 w-4 shrink-0 transition-colors',
-              className,
-              active
-                ? 'text-[#892ca0] dark:text-purple-300'
-                : 'text-gray-400 dark:text-zinc-500 group-hover:text-[#892ca0] dark:group-hover:text-purple-300',
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-        ),
-      },
-      {
-        id: 'github-repo',
-        label: 'GitHub',
-        href: 'https://github.com/containers/podman',
-        isExternal: true,
-        icon: ({ className }) => (
-          <svg
-            className={clsx(
-              'text-gray-400 dark:text-zinc-500 h-4 w-4 shrink-0 transition-colors group-hover:text-[#892ca0] dark:group-hover:text-purple-300',
-              className,
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round">
-            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-          </svg>
-        ),
-      },
-    ],
+    id: 'checkpoint',
+    label: 'Checkpoint & Restore',
+    href: '/docs/checkpoint',
+  },
+  {
+    id: 'tutorials',
+    label: 'Tutorials',
+    href: '/docs/tutorials',
+  },
+  {
+    id: 'rest-api',
+    label: 'REST API Reference',
+    href: '/docs/rest-api',
+  },
+];
+
+const RESOURCE_ITEMS: NavLinkItem[] = [
+  {
+    id: 'network',
+    label: 'Basic Networking',
+    href: 'https://github.com/podman-container-tools/podman/blob/main/docs/tutorials/basic_networking.md',
+    isExternal: true,
+  },
+  {
+    id: 'python-sdk',
+    label: 'Podman Python SDK',
+    href: 'https://podman-py.readthedocs.io/en/latest/index.html',
+    isExternal: true,
+  },
+  {
+    id: 'troubleshooting',
+    label: 'Troubleshooting Guide',
+    href: 'https://github.com/podman-container-tools/podman/blob/main/troubleshooting.md',
+    isExternal: true,
+  },
+  {
+    id: 'github-repo',
+    label: 'GitHub Source & Issues',
+    href: 'https://github.com/podman-container-tools/podman',
+    isExternal: true,
   },
 ];
 
@@ -285,15 +129,137 @@ interface ModernDocSidebarProps {
   currentPath?: string;
   onItemClick?: () => void;
   className?: string;
+  onSelectCommand?: (slug: string) => void;
+  currentCommandSlug?: string;
 }
 
-export default function ModernDocSidebar({ currentPath, onItemClick, className }: ModernDocSidebarProps): JSX.Element {
+export default function ModernDocSidebar({
+  currentPath,
+  onItemClick,
+  className,
+  onSelectCommand,
+  currentCommandSlug,
+}: ModernDocSidebarProps): JSX.Element {
   const location = useLocation();
+  const history = useHistory();
   const activePath = currentPath || location.pathname;
-  const { toc, activeHeadingId, setActiveHeadingId } = useDocSubmenu();
+  const { toc, activeHeadingId, setActiveHeadingId, openCategoryId, setOpenCategoryId, openGuideId, setOpenGuideId } =
+    useDocSubmenu();
 
-  const isItemActive = (href: string, isExternal?: boolean) => {
-    if (isExternal) return false;
+  // Manifest and commands state
+  const [manifest, setManifest] = useState<DocManifest | null>(null);
+
+  const isCliPath = activePath.startsWith('/docs/commands') || activePath.startsWith('/commands');
+
+  // Active command resolution
+  const activeCmdParam = useMemo(() => {
+    if (currentCommandSlug) return currentCommandSlug.toLowerCase();
+    const pathToMatch = activePath || location.pathname;
+    const pathMatch = pathToMatch.match(/^\/docs\/commands\/([^/]+)\/?$/);
+    if (pathMatch) {
+      return decodeURIComponent(pathMatch[1]).toLowerCase();
+    }
+    const locMatch = location.pathname.match(/^\/docs\/commands\/([^/]+)\/?$/);
+    if (locMatch) {
+      return decodeURIComponent(locMatch[1]).toLowerCase();
+    }
+    // Legacy ?cmd= support while bookmarks redirect
+    if (typeof window === 'undefined') return '';
+    const params = new URLSearchParams(location.search);
+    return (params.get('cmd') || '').toLowerCase();
+  }, [currentCommandSlug, activePath, location.pathname, location.search]);
+
+  // Load manifest and listen for live updates
+  useEffect(() => {
+    let mounted = true;
+    docsService.getManifest().then(m => {
+      if (mounted) {
+        setManifest(m);
+      }
+    });
+
+    const handleManifestUpdate = (e: CustomEvent<DocManifest>) => {
+      if (mounted && e.detail) setManifest(e.detail);
+    };
+
+    const handleInvalidation = () => {
+      if (mounted) {
+        docsService.getManifest(true).then(m => {
+          if (mounted) setManifest(m);
+        });
+      }
+    };
+
+    window.addEventListener('podman-docs-manifest-updated', handleManifestUpdate as EventListener);
+    window.addEventListener('podman-docs-invalidated', handleInvalidation as EventListener);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener('podman-docs-manifest-updated', handleManifestUpdate as EventListener);
+      window.removeEventListener('podman-docs-invalidated', handleInvalidation as EventListener);
+    };
+  }, []);
+
+  const commandNodes = useMemo<DocCommandNode[]>(() => {
+    if (!manifest || !Array.isArray(manifest.commands)) return [];
+    return manifest.commands;
+  }, [manifest]);
+
+  useEffect(() => {
+    if (commandNodes.length > 0 && activeCmdParam && activeCmdParam !== 'overview') {
+      const topNode = commandNodes.find(n => n.slug.toLowerCase() === activeCmdParam);
+      if (topNode) {
+        if (topNode.subcommands.length > 0) {
+          setOpenCategoryId(topNode.slug);
+        } else {
+          setOpenCategoryId(prev => {
+            if (!prev) return null;
+            const prevNode = commandNodes.find(n => n.slug === prev);
+            if (prevNode && prevNode.subcommands.some(s => s.slug.toLowerCase() === activeCmdParam)) {
+              return prev;
+            }
+            return null;
+          });
+        }
+        return;
+      }
+
+      const containsSlug = (node: DocCommandNode): boolean =>
+        node.subcommands.some(sub => sub.slug.toLowerCase() === activeCmdParam || containsSlug(sub));
+
+      for (const node of commandNodes) {
+        if (containsSlug(node)) {
+          setOpenCategoryId(node.slug);
+          break;
+        }
+      }
+    }
+  }, [activeCmdParam, commandNodes, setOpenCategoryId]);
+
+  const toggleCategory = (catId: string) => {
+    setOpenCategoryId(prev => (prev === catId ? null : catId));
+    setOpenGuideId(null);
+  };
+
+  const handleCommandClick = (slug: string) => {
+    if (slug === 'overview' || !slug) {
+      setOpenCategoryId(null);
+      setOpenGuideId(null);
+    }
+    if (onSelectCommand) {
+      onSelectCommand(slug);
+    } else {
+      if (slug === 'overview' || !slug) {
+        history.push('/docs/commands');
+      } else {
+        history.push(`/docs/commands/${encodeURIComponent(slug)}`);
+      }
+    }
+    if (onItemClick) onItemClick();
+  };
+
+  // Guides section active check
+  const isGuideActive = (href: string) => {
     if (href === '/docs') {
       return (
         activePath === '/docs' ||
@@ -305,160 +271,409 @@ export default function ModernDocSidebar({ currentPath, onItemClick, className }
     return activePath === href || activePath === `${href}/`;
   };
 
-  const currentActiveGuideId = NAV_SECTIONS[0].items.find(item => isItemActive(item.href))?.id || 'getting-started';
-
-  // Accordion state: only one guide is open at a time
-  const [openGuideId, setOpenGuideId] = useState<string | null>(currentActiveGuideId);
-
-  // When active page changes, auto-open that guide and close the others
   useEffect(() => {
-    if (currentActiveGuideId) {
-      setOpenGuideId(currentActiveGuideId);
+    const activeGuide = GUIDE_ITEMS.find(item => isGuideActive(item.href));
+    if (activeGuide) {
+      setOpenGuideId(activeGuide.id);
+    } else if (isCliPath) {
+      setOpenGuideId(null);
     }
-  }, [currentActiveGuideId]);
+  }, [activePath, isCliPath, setOpenGuideId]);
 
-  const handleGuideRowClick = (guideId: string, isActive: boolean) => {
-    if (onItemClick) onItemClick();
-    if (isActive) {
-      // Toggle if clicking the already active guide
-      setOpenGuideId(prev => (prev === guideId ? null : guideId));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      // Opening another guide immediately closes the previous one with smooth transition
-      setOpenGuideId(guideId);
-    }
-  };
-
-  const scrollToHeading = (e: React.MouseEvent, id: string) => {
+  const scrollToHeading = (e: React.MouseEvent<HTMLAnchorElement>, headingId: string) => {
     e.preventDefault();
-    const el = document.getElementById(id);
+    const el = document.getElementById(headingId);
     if (el) {
-      const navbarOffset = 115;
-      const elementPosition = el.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - navbarOffset;
+      setActiveHeadingId(headingId);
+      const navHeight = 60;
+      const targetPos = el.getBoundingClientRect().top + window.pageYOffset - navHeight - 16;
       window.scrollTo({
-        top: offsetPosition,
+        top: Math.max(0, targetPos),
         behavior: 'smooth',
       });
-      window.history.pushState(null, '', `#${id}`);
-      setActiveHeadingId(id);
-      if (onItemClick) onItemClick();
+      if (typeof window !== 'undefined') {
+        window.history.pushState(null, '', `#${headingId}`);
+      }
     }
   };
+
+  const handleGuideRowClick = (guideId: string, isActiveGuide: boolean) => {
+    if (isActiveGuide) {
+      setOpenGuideId(prev => (prev === guideId ? null : guideId));
+    } else {
+      setOpenGuideId(guideId);
+    }
+    setOpenCategoryId(null);
+    if (onItemClick) onItemClick();
+  };
+
+  const isOverviewActive = isCliPath && (!activeCmdParam || activeCmdParam === 'overview');
 
   return (
     <nav
-      className={clsx('no-scrollbar w-full flex-1 select-none space-y-6 overflow-y-auto px-3 py-5', className)}
-      aria-label="Documentation Navigation">
-      {NAV_SECTIONS.map(section => (
-        <div key={section.title}>
-          <div className="text-gray-400 dark:text-zinc-500 mb-2 px-3 text-[11px] font-bold uppercase tracking-wider">
-            {section.title}
-          </div>
+      className={clsx(
+        'modern-doc-sidebar no-scrollbar h-full w-full space-y-6 overflow-y-auto px-3.5 py-5 text-sm',
+        className,
+      )}
+      aria-label="Documentation navigation">
+      {/* ========================================================= */}
+      {/* SECTION: OVERVIEW                                         */}
+      {/* ========================================================= */}
+      <div>
+        <h3 className="doc-section-title mb-2 px-3">Overview</h3>
 
-          <ul className="m-0 list-none space-y-0.5 p-0">
-            {section.items.map(item => {
-              const active = isItemActive(item.href, item.isExternal);
-              const IconComponent = item.icon;
-              const isGuide = section.title === 'Guides';
-              const rawHeadings = isGuide
-                ? ((active && toc && toc.length > 0 ? toc : FALLBACK_TOC[item.id]) || []).filter(h => h.level === 2)
-                : [];
-              const hasSubmenu = isGuide && rawHeadings.length > 0;
-              const isGuideOpen = isGuide && openGuideId === item.id;
+        <ul className="m-0 list-none space-y-0.5 p-0">
+          <li className="relative">
+            <RouterLink
+              to="/docs/commands"
+              onClick={() => handleCommandClick('overview')}
+              className={clsx(
+                'doc-nav-item group flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-[13px] font-medium no-underline transition-all duration-150',
+                isOverviewActive && 'doc-nav-item-active font-semibold',
+              )}>
+              <div className="flex min-w-0 items-center">
+                <span className="doc-nav-title truncate">What is Podman?</span>
+              </div>
+            </RouterLink>
+          </li>
+        </ul>
+      </div>
 
-              return (
-                <li key={item.id} className="relative">
-                  <Link
+      <div className="mx-3 h-px bg-slate-200/70 dark:bg-zinc-800/80" />
+
+      {/* ========================================================= */}
+      {/* SECTION 1: GUIDES                                         */}
+      {/* ========================================================= */}
+      <div>
+        <h3 className="doc-section-title mb-2 px-3">Guides</h3>
+
+        <ul className="m-0 list-none space-y-0.5 p-0">
+          {GUIDE_ITEMS.map(item => {
+            const isApiReference = item.id === 'rest-api';
+            const active = isApiReference
+              ? activePath === item.href || activePath === `${item.href}/`
+              : isGuideActive(item.href);
+            const isGuideOpen = openGuideId === item.id;
+
+            const pageToc = isApiReference ? [] : toc.length > 0 ? toc : FALLBACK_TOC[item.id] || [];
+            const rawHeadings = pageToc.filter(h => h.level === 2);
+            const hasSubmenu = item.id !== 'tutorials' && rawHeadings.length > 0;
+            const itemClassName = clsx(
+              'doc-nav-item group flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-1.5 text-[13px] font-medium no-underline transition-all duration-150',
+              active && 'doc-nav-item-active font-semibold',
+            );
+
+            return (
+              <li key={item.id} className="relative">
+                {isApiReference ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={onItemClick}
+                    className={itemClassName}>
+                    <span className="doc-nav-title truncate">{item.label}</span>
+                    <svg
+                      className="ml-2 h-3.5 w-3.5 shrink-0 opacity-60 transition-opacity group-hover:opacity-100"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round">
+                      <path d="M14 3h7v7" />
+                      <path d="M10 14 21 3" />
+                      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+                    </svg>
+                  </a>
+                ) : (
+                  <RouterLink
                     to={item.href}
-                    onClick={() => {
-                      if (isGuide) {
-                        handleGuideRowClick(item.id, active);
-                      } else {
-                        if (onItemClick) onItemClick();
-                      }
-                    }}
-                    className={clsx(
-                      'doc-nav-item group flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-[13px] font-medium no-underline transition-all duration-150',
-                      active ? 'doc-nav-item-active font-semibold text-[#892ca0]' : 'dark:text-zinc-300 text-gray-700',
-                    )}>
-                    <div className="flex min-w-0 items-center gap-2.5">
-                      <IconComponent active={active} />
+                    onClick={() => handleGuideRowClick(item.id, active)}
+                    className={itemClassName}>
+                    <div className="flex min-w-0 items-center">
                       <span className="doc-nav-title truncate">{item.label}</span>
                     </div>
 
-                    {/* Chevron dropdown icon visible on all three guide items inside the row */}
-                    {isGuide && (
+                    {hasSubmenu && (
                       <svg
                         className={clsx(
-                          'duration-250 ml-2 h-3.5 w-3.5 shrink-0 origin-center transition-transform ease-in-out',
-                          isGuideOpen ? 'rotate-90' : 'rotate-0',
-                          active
-                            ? 'text-[#892ca0] dark:text-purple-300'
-                            : 'text-gray-400 dark:text-zinc-500 group-hover:text-[#892ca0] dark:group-hover:text-purple-300',
+                          'duration-250 ml-2 h-3.5 w-3.5 shrink-0 origin-center opacity-60 transition-transform ease-in-out group-hover:opacity-100',
+                          isGuideOpen ? 'rotate-90 opacity-90' : 'rotate-0',
                         )}
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        strokeWidth="2.5"
+                        strokeWidth="2.25"
                         strokeLinecap="round"
                         strokeLinejoin="round">
                         <polyline points="9 18 15 12 9 6" />
                       </svg>
                     )}
+                  </RouterLink>
+                )}
 
-                    {item.isExternal && (
-                      <svg
-                        className="text-gray-400 ml-2 h-3.5 w-3.5 shrink-0 opacity-40 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#892ca0] group-hover:opacity-100 dark:group-hover:text-purple-300"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                        <polyline points="15 3 21 3 21 9" />
-                        <line x1="10" y1="14" x2="21" y2="3" />
-                      </svg>
-                    )}
-                  </Link>
+                {/* Submenu Headings */}
+                {hasSubmenu && (
+                  <div className={clsx('doc-submenu-wrapper', isGuideOpen && 'doc-submenu-wrapper-open')}>
+                    <div className="doc-submenu-inner">
+                      <ul className="doc-submenu-tree mb-1.5 ml-3.5 mt-1 list-none space-y-0.5 p-0 pl-2.5">
+                        {rawHeadings.map(heading => {
+                          const isCurrentActive = active && activeHeadingId === heading.id;
+                          const cleanTitle = formatHeadingTitle(heading.value);
 
-                  {/* Smooth collapsible accordion container with fluid height & opacity transition */}
-                  {hasSubmenu && (
-                    <div className={clsx('doc-submenu-wrapper', isGuideOpen && 'doc-submenu-wrapper-open')}>
-                      <div className="doc-submenu-inner">
-                        <ul className="doc-submenu-tree mb-2 ml-4 mt-1 list-none space-y-0.5 p-0 pl-2.5">
-                          {rawHeadings.map(heading => {
-                            const isCurrentActive = active && activeHeadingId === heading.id;
-                            const cleanTitle = formatHeadingTitle(heading.value);
-
-                            return (
-                              <li key={heading.id}>
-                                <a
-                                  href={`#${heading.id}`}
-                                  onClick={e => scrollToHeading(e, heading.id)}
-                                  className={clsx(
-                                    'doc-submenu-link block truncate rounded-md px-2 py-1 text-[12.5px] no-underline transition-colors duration-150',
-                                    isCurrentActive
-                                      ? 'doc-submenu-link-active font-semibold text-[#892ca0] dark:text-purple-300'
-                                      : 'dark:text-zinc-400 dark:hover:text-zinc-200 text-gray-500 hover:text-gray-900',
-                                  )}
-                                  title={cleanTitle}>
-                                  {cleanTitle}
-                                </a>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
+                          return (
+                            <li key={heading.id}>
+                              <a
+                                href={`#${heading.id}`}
+                                onClick={e => scrollToHeading(e, heading.id)}
+                                className={clsx(
+                                  'doc-submenu-link block truncate rounded-lg px-2.5 py-1.5 text-[12.5px] no-underline transition-all duration-150',
+                                  isCurrentActive && 'doc-submenu-link-active font-semibold',
+                                )}
+                                title={cleanTitle}>
+                                {cleanTitle}
+                              </a>
+                            </li>
+                          );
+                        })}
+                      </ul>
                     </div>
-                  )}
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      <div className="mx-3 h-px bg-slate-200/70 dark:bg-zinc-800/80" />
+
+      {/* ========================================================= */}
+      {/* SECTION 2: CLI COMMANDS (2nd-level + Subcommand Dropdown) */}
+      {/* ========================================================= */}
+      <div>
+        <h3 className="doc-section-title mb-2 px-3">CLI Commands</h3>
+
+        <ul className="m-0 list-none space-y-0.5 p-0">
+          {commandNodes.map(node => {
+            const hasSubcommands = node.subcommands && node.subcommands.length > 0;
+            const isOpen = openCategoryId === node.slug;
+            const isActiveInOpenParent = Boolean(
+              openCategoryId &&
+              openCategoryId !== node.slug &&
+              commandNodes
+                .find(n => n.slug === openCategoryId)
+                ?.subcommands.some(s => s.slug.toLowerCase() === activeCmdParam),
+            );
+            const isSelfActive = isCliPath && activeCmdParam === node.slug.toLowerCase() && !isActiveInOpenParent;
+            const isNodeActive = isSelfActive;
+            const displayLabel =
+              node.label ||
+              (node.slug.toLowerCase() === 'podman'
+                ? 'Podman'
+                : node.title.replace(/^podman-/i, '').replace(/-/g, ' '));
+
+            if (!hasSubcommands) {
+              return (
+                <li key={node.slug} className="relative">
+                  <RouterLink
+                    to={`/docs/commands/${encodeURIComponent(node.slug)}`}
+                    onClick={() => {
+                      setOpenCategoryId(null);
+                      setOpenGuideId(null);
+                      handleCommandClick(node.slug);
+                    }}
+                    className={clsx(
+                      'doc-nav-item group flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-1.5 text-[13px] font-medium no-underline transition-all duration-150',
+                      isNodeActive && 'doc-nav-item-active font-semibold',
+                    )}
+                    title={node.description || node.title}>
+                    <div className="flex min-w-0 items-center">
+                      <span className="doc-nav-title truncate">{displayLabel}</span>
+                    </div>
+                  </RouterLink>
                 </li>
               );
-            })}
-          </ul>
-        </div>
-      ))}
+            }
+
+            return (
+              <li key={node.slug} className="relative">
+                <RouterLink
+                  to={`/docs/commands/${encodeURIComponent(node.slug)}`}
+                  onClick={e => {
+                    setOpenGuideId(null);
+                    if (isSelfActive) {
+                      e.preventDefault();
+                      setOpenCategoryId(prev => (prev === node.slug ? null : node.slug));
+                    } else {
+                      setOpenCategoryId(node.slug);
+                      handleCommandClick(node.slug);
+                    }
+                  }}
+                  className={clsx(
+                    'doc-nav-item group flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-1.5 text-[13px] font-medium no-underline transition-all duration-150',
+                    isNodeActive && 'doc-nav-item-active font-semibold',
+                  )}
+                  title={node.description || node.title}>
+                  <div className="flex min-w-0 items-center">
+                    <span className="doc-nav-title truncate">{displayLabel}</span>
+                  </div>
+
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Toggle ${node.title} subcommands`}
+                    onClick={e => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleCategory(node.slug);
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleCategory(node.slug);
+                      }
+                    }}
+                    className="ml-1 flex shrink-0 cursor-pointer items-center rounded-md p-1 transition-colors hover:bg-black/5 dark:hover:bg-white/10">
+                    <svg
+                      className={clsx(
+                        'duration-250 h-3.5 w-3.5 shrink-0 origin-center opacity-60 transition-transform ease-in-out group-hover:opacity-100',
+                        isOpen ? 'rotate-90 opacity-90' : 'rotate-0',
+                      )}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.25"
+                      strokeLinecap="round"
+                      strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </div>
+                </RouterLink>
+
+                {/* Indented 3rd-Level Subcommands List with Smooth Height Transition */}
+                <div
+                  aria-hidden={!isOpen}
+                  className={clsx('doc-submenu-wrapper', isOpen && 'doc-submenu-wrapper-open')}>
+                  <div className="doc-submenu-inner">
+                    <ul className="doc-submenu-tree mb-1.5 ml-3.5 mt-1 list-none space-y-0.5 p-0 pl-2.5">
+                      {node.subcommands.map(sub => {
+                        const isCmdActive = isCliPath && activeCmdParam === sub.slug.toLowerCase();
+                        const nested = sub.subcommands || [];
+
+                        return (
+                          <li key={sub.slug}>
+                            <RouterLink
+                              to={`/docs/commands/${encodeURIComponent(sub.slug)}`}
+                              tabIndex={isOpen ? 0 : -1}
+                              onClick={() => handleCommandClick(sub.slug)}
+                              className={clsx(
+                                'doc-submenu-link block w-full truncate rounded-lg px-2.5 py-1.5 text-[12.5px] no-underline transition-all duration-150',
+                                isCmdActive && 'doc-submenu-link-active font-semibold',
+                              )}
+                              title={sub.description || sub.title}>
+                              {sub.label ||
+                                sub.title
+                                  .replace(new RegExp(`^${node.slug}-`, 'i'), '')
+                                  .replace(/^podman-/i, '')
+                                  .replace(/-/g, ' ')}
+                            </RouterLink>
+                            {nested.length > 0 && (
+                              <ul className="mt-0.5 list-none space-y-0.5 p-0 pl-2.5">
+                                {nested.map(grandchild => {
+                                  const isNestedActive = isCliPath && activeCmdParam === grandchild.slug.toLowerCase();
+                                  return (
+                                    <li key={grandchild.slug}>
+                                      <RouterLink
+                                        to={`/docs/commands/${encodeURIComponent(grandchild.slug)}`}
+                                        tabIndex={isOpen ? 0 : -1}
+                                        onClick={() => handleCommandClick(grandchild.slug)}
+                                        className={clsx(
+                                          'doc-submenu-link block w-full truncate rounded-lg px-2.5 py-1.5 text-[12.5px] no-underline transition-all duration-150',
+                                          isNestedActive && 'doc-submenu-link-active font-semibold',
+                                        )}
+                                        title={grandchild.description || grandchild.title}>
+                                        {grandchild.label ||
+                                          grandchild.title.replace(/^podman-/i, '').replace(/-/g, ' ')}
+                                      </RouterLink>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      <div className="mx-3 h-px bg-slate-200/70 dark:bg-zinc-800/80" />
+
+      {/* ========================================================= */}
+      {/* SECTION 3: TUTORIALS & RESOURCES                          */}
+      {/* ========================================================= */}
+      <div>
+        <h3 className="doc-section-title mb-2 px-3">Tutorials & Resources</h3>
+
+        <ul className="m-0 list-none space-y-0.5 p-0">
+          {RESOURCE_ITEMS.map(item => {
+            if (!item.isExternal) {
+              const active = activePath === item.href || activePath === `${item.href}/`;
+              return (
+                <li key={item.id} className="relative">
+                  <RouterLink
+                    to={item.href}
+                    onClick={onItemClick}
+                    className={clsx(
+                      'doc-nav-item group flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-1.5 text-[13px] font-medium no-underline transition-all duration-150',
+                      active && 'is-active font-semibold',
+                    )}>
+                    <div className="flex min-w-0 items-center">
+                      <span className="doc-nav-title truncate">{item.label}</span>
+                    </div>
+                  </RouterLink>
+                </li>
+              );
+            }
+
+            return (
+              <li key={item.id} className="relative">
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={onItemClick}
+                  className="doc-nav-item group flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-1.5 text-[13px] font-medium no-underline transition-all duration-150">
+                  <div className="flex min-w-0 items-center">
+                    <span className="doc-nav-title truncate">{item.label}</span>
+                  </div>
+
+                  <svg
+                    className="ml-2 h-3.5 w-3.5 shrink-0 opacity-60 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </nav>
   );
 }

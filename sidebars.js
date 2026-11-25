@@ -19,9 +19,9 @@ const sidebars = {
       label: 'Checkpoint',
     },
     {
-      type: 'link',
+      type: 'doc',
+      id: 'tutorials',
       label: 'Tutorials',
-      href: 'https://docs.podman.io/en/latest/Tutorials.html',
     },
     {
       type: 'link',

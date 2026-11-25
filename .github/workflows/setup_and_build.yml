@@ -4,10 +4,29 @@ name: Setup and build
 
 on:
   workflow_call:
+    inputs:
+      podman_docs_ref:
+        description: 'Optional upstream podman-container-tools/podman commit SHA or ref for CLI docs'
+        required: false
+        type: string
+      podman_docs_fallback_ref:
+        description: 'Last known-good upstream podman-container-tools/podman commit SHA to fall back to if the primary ref fails'
+        required: false
+        type: string
+    outputs:
+      built_docs_ref:
+        description: 'The upstream podman-container-tools/podman commit SHA that was successfully built'
+        value: ${{ jobs.setup_and_build.outputs.built_docs_ref }}
+
+permissions: {}
 
 jobs:
   setup_and_build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      built_docs_ref: ${{ steps.build.outputs.built_docs_ref }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -37,7 +56,22 @@ jobs:
       - name: Lint
         run: yarn lint
       - name: Build
-        run: yarn build
+        id: build
+        env:
+          PODMAN_DOCS_REF: ${{ inputs.podman_docs_ref }}
+          PODMAN_DOCS_FALLBACK_REF: ${{ inputs.podman_docs_fallback_ref }}
+        run: |
+          if yarn build; then
+            echo "built_docs_ref=${PODMAN_DOCS_REF}" >> "$GITHUB_OUTPUT"
+          elif [ -n "$PODMAN_DOCS_FALLBACK_REF" ] && [ "$PODMAN_DOCS_FALLBACK_REF" != "$PODMAN_DOCS_REF" ]; then
+            echo "::warning::Docs build failed for upstream revision ${PODMAN_DOCS_REF}. Falling back to last known-good revision ${PODMAN_DOCS_FALLBACK_REF}."
+            rm -rf docs/commands static/data/cli-docs build .docusaurus
+            PODMAN_DOCS_REF="$PODMAN_DOCS_FALLBACK_REF" node scripts/fetch-podman-docs.js --strict --force
+            yarn docusaurus build
+            echo "built_docs_ref=${PODMAN_DOCS_FALLBACK_REF}" >> "$GITHUB_OUTPUT"
+          else
+            exit 1
+          fi
       - name: Upload artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:

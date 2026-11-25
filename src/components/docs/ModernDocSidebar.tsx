@@ -86,9 +86,20 @@ const GUIDE_ITEMS: NavLinkItem[] = [
     label: 'Checkpoint & Restore',
     href: '/docs/checkpoint',
   },
+  {
+    id: 'tutorials',
+    label: 'Tutorials',
+    href: '/docs/tutorials',
+  },
 ];
 
 const RESOURCE_ITEMS: NavLinkItem[] = [
+  {
+    id: 'rest-api',
+    label: 'REST API Reference',
+    href: '/docs/rest-api',
+    isExternal: true,
+  },
   {
     id: 'network',
     label: 'Basic Networking',
@@ -586,6 +597,25 @@ export default function ModernDocSidebar({
 
         <ul className="m-0 list-none space-y-0.5 p-0">
           {RESOURCE_ITEMS.map(item => {
+            if (!item.isExternal) {
+              const active = activePath === item.href || activePath === `${item.href}/`;
+              return (
+                <li key={item.id} className="relative">
+                  <RouterLink
+                    to={item.href}
+                    onClick={onItemClick}
+                    className={clsx(
+                      'doc-nav-item group flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-1.5 text-[13px] font-medium no-underline transition-all duration-150',
+                      active && 'is-active font-semibold',
+                    )}>
+                    <div className="flex min-w-0 items-center">
+                      <span className="doc-nav-title truncate">{item.label}</span>
+                    </div>
+                  </RouterLink>
+                </li>
+              );
+            }
+
             return (
               <li key={item.id} className="relative">
                 <a

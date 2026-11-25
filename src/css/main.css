@@ -1625,6 +1625,15 @@ article h4[id] {
   font-weight: 700 !important;
 }
 
+[data-theme='dark'] .theme-doc-markdown.markdown h1,
+[data-theme='dark'] .theme-doc-markdown.markdown h2,
+[data-theme='dark'] .theme-doc-markdown.markdown h3,
+[data-theme='dark'] .theme-doc-markdown.markdown h4,
+[data-theme='dark'] .theme-doc-markdown.markdown h5,
+[data-theme='dark'] .theme-doc-markdown.markdown h6 {
+  color: #ffffff !important;
+}
+
 .theme-doc-markdown.markdown > header > h1,
 .theme-doc-markdown.markdown > h1:first-child {
   font-size: 1.875rem !important;

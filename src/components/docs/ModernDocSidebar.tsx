@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 import { useLocation, useHistory } from '@docusaurus/router';
 import { useDocSubmenu, type TOCHeading } from '@site/src/context/DocSubmenuContext';

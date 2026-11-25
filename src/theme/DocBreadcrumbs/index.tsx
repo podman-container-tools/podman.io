@@ -3,9 +3,6 @@ import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 import { useSidebarBreadcrumbs } from '@docusaurus/theme-common/internal';
 import TopDocsSearch from '@site/src/components/RuntimeDocs/TopDocsSearch';
-import MobileDocsMenu from '@site/src/components/docs/MobileDocsMenu';
-import { docsService } from '@site/src/services/docsService';
-import type { DocCommandNode } from '@site/src/services/docsTypes';
 
 const GUIDE_NAMES: Record<string, string> = {
   '/docs': 'Getting Started',
@@ -38,7 +35,6 @@ function resolveParentCommand(slug: string): string | null {
 export default function DocBreadcrumbs(): JSX.Element | null {
   const sidebarBreadcrumbs = useSidebarBreadcrumbs();
   const location = useLocation();
-  const [commands, setCommands] = React.useState<DocCommandNode[]>([]);
   const path = location.pathname.replace(/\/$/, '');
 
   const commandMatch = path.match(/^\/docs\/commands\/([^/]+)$/);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import clsx from 'clsx';
 import { useLocation, useHistory } from '@docusaurus/router';
 import { useDocSubmenu, type TOCHeading } from '@site/src/context/DocSubmenuContext';
@@ -195,33 +195,46 @@ export default function ModernDocSidebar({
     return manifest.commands;
   }, [manifest]);
 
+  const manualToggleRef = useRef(false);
+
+  const openParentSubSlugs = useMemo<Set<string>>(() => {
+    if (!openCategoryId) return new Set();
+    const openNode = commandNodes.find(n => n.slug === openCategoryId);
+    if (!openNode) return new Set();
+    return new Set(openNode.subcommands.map(s => s.slug.toLowerCase()));
+  }, [openCategoryId, commandNodes]);
+
   useEffect(() => {
-    if (commandNodes.length > 0 && activeCmdParam && activeCmdParam !== 'overview') {
-      const topNode = commandNodes.find(n => n.slug.toLowerCase() === activeCmdParam);
-      if (topNode) {
-        if (topNode.subcommands.length > 0) {
-          setOpenCategoryId(topNode.slug);
-        } else {
-          setOpenCategoryId(prev => {
-            if (!prev) return null;
-            const prevNode = commandNodes.find(n => n.slug === prev);
-            if (prevNode && prevNode.subcommands.some(s => s.slug.toLowerCase() === activeCmdParam)) {
-              return prev;
-            }
-            return null;
-          });
-        }
-        return;
+    if (commandNodes.length === 0 || !activeCmdParam || activeCmdParam === 'overview') {
+      return;
+    }
+
+    if (manualToggleRef.current) {
+      manualToggleRef.current = false;
+      return;
+    }
+
+    const topNode = commandNodes.find(n => n.slug.toLowerCase() === activeCmdParam);
+    if (topNode) {
+      if (topNode.subcommands.length > 0) {
+        setOpenCategoryId(topNode.slug);
+      } else {
+        setOpenCategoryId(prev => {
+          if (!prev) return null;
+          const prevNode = commandNodes.find(n => n.slug === prev);
+          if (prevNode && prevNode.subcommands.some(s => s.slug.toLowerCase() === activeCmdParam)) {
+            return prev;
+          }
+          return null;
+        });
       }
+      return;
+    }
 
-      const containsSlug = (node: DocCommandNode): boolean =>
-        node.subcommands.some(sub => sub.slug.toLowerCase() === activeCmdParam || containsSlug(sub));
-
-      for (const node of commandNodes) {
-        if (containsSlug(node)) {
-          setOpenCategoryId(node.slug);
-          break;
-        }
+    for (const node of commandNodes) {
+      if (node.subcommands.some(sub => sub.slug.toLowerCase() === activeCmdParam)) {
+        setOpenCategoryId(node.slug);
+        break;
       }
     }
   }, [activeCmdParam, commandNodes, setOpenCategoryId]);
@@ -421,11 +434,7 @@ export default function ModernDocSidebar({
             const hasSubcommands = node.subcommands && node.subcommands.length > 0;
             const isOpen = openCategoryId === node.slug;
             const isActiveInOpenParent = Boolean(
-              openCategoryId &&
-              openCategoryId !== node.slug &&
-              commandNodes
-                .find(n => n.slug === openCategoryId)
-                ?.subcommands.some(s => s.slug.toLowerCase() === activeCmdParam),
+              openCategoryId && openCategoryId !== node.slug && openParentSubSlugs.has(activeCmdParam),
             );
             const isSelfActive = isCliPath && activeCmdParam === node.slug.toLowerCase() && !isActiveInOpenParent;
             const isNodeActive = isSelfActive;
@@ -441,6 +450,7 @@ export default function ModernDocSidebar({
                   <RouterLink
                     to={`/docs/commands/${encodeURIComponent(node.slug)}`}
                     onClick={() => {
+                      manualToggleRef.current = true;
                       setOpenCategoryId(null);
                       setOpenGuideId(null);
                       handleCommandClick(node.slug);
@@ -463,12 +473,12 @@ export default function ModernDocSidebar({
                 <RouterLink
                   to={`/docs/commands/${encodeURIComponent(node.slug)}`}
                   onClick={e => {
+                    manualToggleRef.current = true;
                     setOpenGuideId(null);
+                    setOpenCategoryId(prev => (prev === node.slug ? null : node.slug));
                     if (isSelfActive) {
                       e.preventDefault();
-                      setOpenCategoryId(prev => (prev === node.slug ? null : node.slug));
                     } else {
-                      setOpenCategoryId(node.slug);
                       handleCommandClick(node.slug);
                     }
                   }}
@@ -522,14 +532,17 @@ export default function ModernDocSidebar({
                     <ul className="doc-submenu-tree mb-1.5 ml-3.5 mt-1 list-none space-y-0.5 p-0 pl-2.5">
                       {node.subcommands.map(sub => {
                         const isCmdActive = isCliPath && activeCmdParam === sub.slug.toLowerCase();
-                        const nested = sub.subcommands || [];
 
                         return (
                           <li key={sub.slug}>
                             <RouterLink
                               to={`/docs/commands/${encodeURIComponent(sub.slug)}`}
                               tabIndex={isOpen ? 0 : -1}
-                              onClick={() => handleCommandClick(sub.slug)}
+                              onClick={() => {
+                                manualToggleRef.current = true;
+                                setOpenCategoryId(node.slug);
+                                handleCommandClick(sub.slug);
+                              }}
                               className={clsx(
                                 'doc-submenu-link block w-full truncate rounded-lg px-2.5 py-1.5 text-[12.5px] no-underline transition-all duration-150',
                                 isCmdActive && 'doc-submenu-link-active font-semibold',
@@ -541,29 +554,6 @@ export default function ModernDocSidebar({
                                   .replace(/^podman-/i, '')
                                   .replace(/-/g, ' ')}
                             </RouterLink>
-                            {nested.length > 0 && (
-                              <ul className="mt-0.5 list-none space-y-0.5 p-0 pl-2.5">
-                                {nested.map(grandchild => {
-                                  const isNestedActive = isCliPath && activeCmdParam === grandchild.slug.toLowerCase();
-                                  return (
-                                    <li key={grandchild.slug}>
-                                      <RouterLink
-                                        to={`/docs/commands/${encodeURIComponent(grandchild.slug)}`}
-                                        tabIndex={isOpen ? 0 : -1}
-                                        onClick={() => handleCommandClick(grandchild.slug)}
-                                        className={clsx(
-                                          'doc-submenu-link block w-full truncate rounded-lg px-2.5 py-1.5 text-[12.5px] no-underline transition-all duration-150',
-                                          isNestedActive && 'doc-submenu-link-active font-semibold',
-                                        )}
-                                        title={grandchild.description || grandchild.title}>
-                                        {grandchild.label ||
-                                          grandchild.title.replace(/^podman-/i, '').replace(/-/g, ' ')}
-                                      </RouterLink>
-                                    </li>
-                                  );
-                                })}
-                              </ul>
-                            )}
                           </li>
                         );
                       })}

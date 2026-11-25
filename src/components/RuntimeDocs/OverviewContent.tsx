@@ -158,9 +158,9 @@ curl http://localhost:8080`;
               </svg>
             )}
           </button>
-          <div className="sm:p-4.5 overflow-x-auto p-4 pr-14 leading-relaxed">
-            <pre className="!m-0 !border-0 !bg-transparent !p-0 font-mono text-xs leading-relaxed text-slate-800 dark:text-zinc-100 sm:text-[13px]">
-              <code>
+          <div className="sm:p-4.5 overflow-x-hidden p-4 pr-14 leading-relaxed">
+            <pre className="!m-0 whitespace-pre-wrap break-words !border-0 !bg-transparent !p-0 font-mono text-xs leading-relaxed text-slate-800 dark:text-zinc-100 sm:text-[13px]">
+              <code className="whitespace-pre-wrap break-words">
                 {quickStartSnippet.split('\n').map((line, idx) => {
                   const isComment = line.trim().startsWith('#');
                   return (

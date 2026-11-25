@@ -6,12 +6,6 @@ export interface DocMetadata {
   filename: string;
 }
 
-export interface TOCHeading {
-  id: string;
-  text: string;
-  level: number;
-}
-
 export interface DocCommandNode {
   slug: string;
   title: string;

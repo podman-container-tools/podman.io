@@ -14,8 +14,8 @@ const GUIDE_NAMES: Record<string, string> = {
 
 function resolveParentCommand(slug: string): string | null {
   const lower = slug.toLowerCase();
-  if ((lower.endsWith('.unit') && lower !== 'podman-systemd.unit') || lower === 'podman-quadlet-basic-usage') {
-    return 'podman-systemd.unit';
+  if (lower.endsWith('.unit') || lower === 'podman-quadlet-basic-usage') {
+    return 'podman-quadlet';
   }
   if (lower === 'podman-machine-os') {
     return null;

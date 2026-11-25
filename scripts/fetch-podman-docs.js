@@ -540,6 +540,8 @@ function preprocessMarkdown(filename, rawContent, optionsMap, revision, knownSlu
       if (knownSlugs && !knownSlugs.has(resolvedSlug)) {
         if (resolvedSlug === 'podman-image-pull' && knownSlugs.has('podman-pull')) {
           resolvedSlug = 'podman-pull';
+        } else {
+          return text;
         }
       }
       const hashPart = hash ? `#${hash}` : '';

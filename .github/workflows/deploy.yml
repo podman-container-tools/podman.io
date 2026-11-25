@@ -38,6 +38,7 @@ jobs:
     outputs:
       should_build: ${{ steps.check.outputs.should_build }}
       target_ref: ${{ steps.check.outputs.target_ref }}
+      fallback_ref: ${{ steps.check.outputs.fallback_ref }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -91,6 +92,7 @@ jobs:
 
           BASELINE_REV="${DEPLOYED_REV:-$PINNED_REV}"
           CURRENT_REV="${UPSTREAM_SHA:-$BASELINE_REV}"
+          echo "fallback_ref=$BASELINE_REV" >> "$GITHUB_OUTPUT"
 
           if [ "$EVENT_NAME" = "schedule" ]; then
             if [ -n "$UPSTREAM_SHA" ] && [ "$UPSTREAM_SHA" != "$BASELINE_REV" ]; then
@@ -124,8 +126,10 @@ jobs:
     uses: $/.github/workflows/setup_and_build.yml
     with:
       podman_docs_ref: ${{ needs.check_upstream_docs.outputs.target_ref }}
+      podman_docs_fallback_ref: ${{ needs.check_upstream_docs.outputs.fallback_ref }}
   deploy:
     needs: [check_upstream_docs, setup_and_build]
+    if: github.event_name != 'schedule' || needs.setup_and_build.outputs.built_docs_ref != needs.check_upstream_docs.outputs.fallback_ref
     # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
     permissions:
       contents: write
@@ -164,7 +168,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          DEPLOYED_REF: ${{ needs.check_upstream_docs.outputs.target_ref }}
+          DEPLOYED_REF: ${{ needs.setup_and_build.outputs.built_docs_ref || needs.check_upstream_docs.outputs.target_ref }}
         run: |
           if [ -z "$DEPLOYED_REF" ]; then
             exit 0

@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const colors = require('tailwindcss/colors');
+
 module.exports = {
   corePlugins: { preflight: true },
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
@@ -7,6 +9,11 @@ module.exports = {
     colors: {
       transparent: 'transparent',
       current: 'currentColor',
+      // Standard Tailwind modern palettes for clean documentation UI
+      slate: colors.slate,
+      zinc: colors.zinc,
+      emerald: colors.emerald,
+      sky: colors.sky,
       // TODO: Get feedback from Mo on using this aqua color tag
       aqua: '#f2f9f9',
       black: '#000000',

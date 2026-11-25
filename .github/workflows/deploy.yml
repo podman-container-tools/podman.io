@@ -5,8 +5,21 @@ on:
   push:
     branches: [main]
 
+  # Check once a day if upstream podman-container-tools/podman CLI documentation changed
+  schedule:
+    - cron: '0 0 * * *'
+
+  # Allow upstream podman-container-tools/podman webhook to trigger a documentation rebuild directly
+  repository_dispatch:
+    types: [upstream-docs-updated]
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      podman_docs_ref:
+        description: 'Optional upstream podman-container-tools/podman commit SHA or ref to build docs from'
+        required: false
+        type: string
 
 # Set workflow-level permissions to read-only by default
 permissions: {}
@@ -18,12 +31,105 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  check_upstream_docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      should_build: ${{ steps.check.outputs.should_build }}
+      target_ref: ${{ steps.check.outputs.target_ref }}
+      fallback_ref: ${{ steps.check.outputs.fallback_ref }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Resolve upstream Podman documentation revision
+        id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_REF: ${{ inputs.podman_docs_ref }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          validate_ref() {
+            case "$1" in
+              ""|-*|*..*|*[![:alnum:]._/-]*) return 1 ;;
+              *) return 0 ;;
+            esac
+          }
+
+          PINNED_REV=""
+          if [ -f .podman-docs-revision ]; then
+            RAW_PIN=$(tr -d '[:space:]' < .podman-docs-revision)
+            if validate_ref "$RAW_PIN"; then
+              PINNED_REV="$RAW_PIN"
+            fi
+          fi
+
+          # Resolve latest upstream commit on podman-container-tools/podman via git ls-remote (no GitHub REST API call)
+          RAW_UPSTREAM=$(git ls-remote https://github.com/podman-container-tools/podman.git refs/heads/main | awk '{print $1}' || true)
+
+          UPSTREAM_SHA=""
+          if validate_ref "$RAW_UPSTREAM"; then
+            UPSTREAM_SHA="$RAW_UPSTREAM"
+          fi
+
+          # Check currently deployed revision from static manifest.json on the live site (with fallback to gh-pages git ref)
+          RAW_DEPLOYED=$(curl -sSf "https://podman.io/data/cli-docs/manifest.json" \
+            | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(d);console.log(j.revision||'')}catch{console.log('')}})" || true)
+
+          if [ -z "$RAW_DEPLOYED" ]; then
+            git fetch --depth=1 origin gh-pages 2>/dev/null || true
+            RAW_DEPLOYED=$(git show origin/gh-pages:data/cli-docs/manifest.json 2>/dev/null \
+              | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(d);console.log(j.revision||'')}catch{console.log('')}})" || true)
+          fi
+
+          DEPLOYED_REV=""
+          if validate_ref "$RAW_DEPLOYED"; then
+            DEPLOYED_REV="$RAW_DEPLOYED"
+          fi
+
+          BASELINE_REV="${DEPLOYED_REV:-$PINNED_REV}"
+          CURRENT_REV="${UPSTREAM_SHA:-$BASELINE_REV}"
+          echo "fallback_ref=$BASELINE_REV" >> "$GITHUB_OUTPUT"
+
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            if [ -n "$UPSTREAM_SHA" ] && [ "$UPSTREAM_SHA" != "$BASELINE_REV" ]; then
+              echo "Upstream Podman docs changed ($BASELINE_REV -> $UPSTREAM_SHA). Triggering rebuild."
+              echo "should_build=true" >> "$GITHUB_OUTPUT"
+              echo "target_ref=$UPSTREAM_SHA" >> "$GITHUB_OUTPUT"
+            else
+              echo "No upstream Podman docs changes detected (revision: $BASELINE_REV). Skipping scheduled build."
+              echo "should_build=false" >> "$GITHUB_OUTPUT"
+              echo "target_ref=$BASELINE_REV" >> "$GITHUB_OUTPUT"
+            fi
+          elif [ -n "$INPUT_REF" ]; then
+            if ! validate_ref "$INPUT_REF"; then
+              echo "Invalid podman_docs_ref input: $INPUT_REF" >&2
+              exit 1
+            fi
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "target_ref=$INPUT_REF" >> "$GITHUB_OUTPUT"
+          else
+            # Push to main, repository_dispatch, or manual run without input:
+            # Resolve to current/deployed upstream revision so pushes never downgrade a scheduled update
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "target_ref=$CURRENT_REV" >> "$GITHUB_OUTPUT"
+          fi
+
   setup_and_build:
+    needs: check_upstream_docs
+    if: needs.check_upstream_docs.outputs.should_build == 'true'
     permissions:
       contents: read
     uses: $/.github/workflows/setup_and_build.yml
+    with:
+      podman_docs_ref: ${{ needs.check_upstream_docs.outputs.target_ref }}
+      podman_docs_fallback_ref: ${{ needs.check_upstream_docs.outputs.fallback_ref }}
   deploy:
-    needs: setup_and_build
+    needs: [check_upstream_docs, setup_and_build]
+    if: github.event_name != 'schedule' || needs.setup_and_build.outputs.built_docs_ref != needs.check_upstream_docs.outputs.fallback_ref
     # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
     permissions:
       contents: write
@@ -58,3 +164,26 @@ jobs:
           # You can swap them out with your own user credentials.
           user_name: github-actions[bot]
           user_email: 41898282+github-actions[bot]@users.noreply.github.com
+      - name: Sync pinned .podman-docs-revision in repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          DEPLOYED_REF: ${{ needs.setup_and_build.outputs.built_docs_ref || needs.check_upstream_docs.outputs.target_ref }}
+        run: |
+          if [ -z "$DEPLOYED_REF" ]; then
+            exit 0
+          fi
+          git clone --depth=1 --branch main "https://x-access-token:${GH_TOKEN}@github.com/${GH_REPO}.git" repo-sync || exit 0
+          cd repo-sync
+          CURRENT_PIN=""
+          if [ -f .podman-docs-revision ]; then
+            CURRENT_PIN=$(tr -d '[:space:]' < .podman-docs-revision)
+          fi
+          if [ "$CURRENT_PIN" != "$DEPLOYED_REF" ]; then
+            printf '%s\n' "$DEPLOYED_REF" > .podman-docs-revision
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .podman-docs-revision
+            git commit -m "chore: sync .podman-docs-revision to ${DEPLOYED_REF} [skip ci]"
+            git push origin main || true
+          fi

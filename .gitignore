@@ -15,3 +15,5 @@ yarn-error.log
 .docusaurus/
 build/
 types
+static/data/cli-docs/
+docs/commands/

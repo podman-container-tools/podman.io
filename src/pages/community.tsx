@@ -59,9 +59,9 @@ function ActionDropdown({
                   rel="noopener noreferrer"
                   style={{ textDecoration: 'none' }}
                   onClick={() => setIsOpen(false)}
-                  className="text-gray-800 dark:text-gray-200 flex items-center justify-between rounded-md px-3.5 py-2.5 !text-sm font-semibold transition hover:bg-purple-100 hover:text-[#892CA0] dark:hover:bg-white/10 dark:hover:text-purple-300">
+                  className="flex items-center justify-between rounded-md px-3.5 py-2.5 !text-sm font-semibold !text-[#892CA0] transition hover:bg-purple-100 hover:!text-[#77218d] dark:!text-white dark:hover:bg-white/10 dark:hover:!text-blue-500">
                   <span>{link.text}</span>
-                  <Icon icon="material-symbols:arrow-outward-rounded" className="text-xs opacity-60" />
+                  <Icon icon="material-symbols:arrow-outward-rounded" className="text-xs opacity-80" />
                 </a>
               </li>
             ))}
@@ -131,74 +131,67 @@ export default function Community(): JSX.Element {
   const { withBaseUrl } = useBaseUrlUtils();
   const desktopLogoSrc = useBaseUrl('logos/optimized/podman-desktop-logo-200w-198h.webp');
   const mailingListImageSrc = useBaseUrl(mailingList.extraInfo.image.path);
+  const communityHeroImageSrc = useBaseUrl('images/raw/Podman%20Seal%20Community%20Scene.png');
 
   return (
     <Layout
       title="Podman Community Hub"
       description="Connect with the Podman open source container engine community across chat, meetings, and GitHub.">
       {/* ============================================================
-          HERO: 2-Column Balanced Hero (Matches meetings.tsx)
+          TOP WAVE BANNER (Matches secondary page convention)
       ============================================================ */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-blue-500 to-purple-700 pb-16 pt-10 text-white dark:from-blue-700 dark:to-purple-900 md:pb-24 md:pt-14">
+      <div className="bg-gradient-to-r from-blue-500 to-purple-700 dark:from-blue-700 dark:to-purple-900 lg:pt-8">
+        <WaveBorder />
+      </div>
+
+      {/* ============================================================
+          HERO: Header on Main Page
+      ============================================================ */}
+      <section className="relative z-10 -mt-6 bg-transparent pb-8 pt-0 md:-mt-12 md:pb-12 lg:-mt-16">
         <div className="container mx-auto px-4 lg:px-8 xl:max-w-[1240px]">
-          <div className="grid items-center gap-8 lg:grid-cols-12">
+          <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-12">
             {/* Left Column: Title & Subtitle */}
-            <div className="lg:col-span-7">
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/20 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm">
-                <Icon icon="material-symbols:groups-rounded" className="text-base text-white" />
-                <span className="text-white">Podman Community Hub</span>
+            <div className="text-left lg:col-span-7">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-purple-100 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#892CA0] dark:bg-purple-900/40 dark:text-purple-300">
+                <Icon
+                  icon="material-symbols:groups-rounded"
+                  className="text-base text-[#892CA0] dark:text-purple-300"
+                />
+                <span>Podman Community Hub</span>
               </div>
-              <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-white dark:text-gray-50 sm:text-4xl lg:text-5xl lg:leading-tight">
+              <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl lg:text-5xl lg:leading-tight">
                 Join the Podman Community
               </h1>
-              <p className="max-w-2xl !text-base font-medium leading-relaxed text-white/90 dark:text-gray-100 sm:!text-lg">
+              <p className="text-gray-600 max-w-2xl !text-base font-medium leading-relaxed dark:text-gray-300 sm:!text-lg">
                 Join developers worldwide to chat, attend meetings, share feedback, and contribute to the Podman
                 container ecosystem.
               </p>
-              <div className="mt-5 inline-flex items-center gap-2 !text-xs font-semibold text-white/90">
-                <Icon icon="material-symbols:handshake-rounded" className="text-base text-white" />
+              <div className="text-gray-600 mt-5 inline-flex flex-wrap items-center gap-2 !text-xs font-semibold dark:text-gray-300">
+                <Icon
+                  icon="material-symbols:handshake-rounded"
+                  className="text-base text-[#892CA0] dark:text-purple-300"
+                />
                 <span>We expect all who participate to adhere to our</span>
                 <a
                   href="https://github.com/containers/common/blob/main/CODE-OF-CONDUCT.md"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: '#ffffff', fontSize: 'inherit' }}
-                  className="!text-xs font-bold underline underline-offset-2 transition hover:text-white/80">
+                  className="dark:hover:text-purple-200 !text-xs font-bold text-[#892CA0] underline underline-offset-2 transition hover:text-[#77218d] dark:text-purple-300">
                   Code of Conduct &rarr;
                 </a>
               </div>
             </div>
 
-            {/* Right Column: Active Hours Card (Balances Hero Layout) */}
-            <div className="lg:col-span-5 lg:flex lg:justify-end">
-              <div className="w-full max-w-sm rounded-md bg-white/15 p-6 backdrop-blur-md dark:bg-black/25">
-                <div className="mb-3 flex items-center gap-2">
-                  <Icon icon="material-symbols:schedule-rounded" className="text-lg text-white" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-white">Global Community</span>
-                </div>
-                <p className="m-0 text-justify !text-sm leading-relaxed text-white/85">
-                  Podman community members and maintainers collaborate across{' '}
-                  <strong>Central European Time (CET)</strong> and <strong>US Eastern Time (ET)</strong>.
-                </p>
-                <div className="mt-5 flex items-center justify-between rounded-md bg-white/10 px-4 py-2.5 text-xs font-medium text-white backdrop-blur-sm">
-                  <span className="font-semibold">Current Time</span>
-                  <a
-                    href="#current-time"
-                    style={{ color: '#ffffff', fontSize: 'inherit' }}
-                    className="!text-xs font-bold hover:underline">
-                    View local clocks &darr;
-                  </a>
-                </div>
-              </div>
+            {/* Right Column: Community Illustration */}
+            <div className="flex justify-center lg:col-span-5 lg:justify-end">
+              <img
+                src={communityHeroImageSrc}
+                alt="Podman community seals collaborating with containers"
+                className="w-full max-w-xs rounded-xl object-contain sm:max-w-sm lg:max-w-md"
+              />
             </div>
           </div>
         </div>
-
-        {/* Signature Wave Border */}
-        <WaveBorder
-          className="pointer-events-none absolute bottom-0 left-0 z-10 h-8 w-full sm:h-12 md:h-14 lg:h-16"
-          preserveAspectRatio="none"
-        />
       </section>
 
       {/* ============================================================
@@ -211,7 +204,7 @@ export default function Community(): JSX.Element {
             <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
               Connect With the Community
             </h2>
-            <p className="text-gray-600 mx-auto mt-2 max-w-xl text-justify !text-base font-medium leading-relaxed dark:text-gray-300">
+            <p className="text-gray-600 mx-auto mt-2 max-w-xl text-center !text-base font-medium leading-relaxed dark:text-gray-300">
               Join maintainers and container enthusiasts across our real-time bridged chat channels and community
               forums.
             </p>
@@ -356,55 +349,7 @@ export default function Community(): JSX.Element {
       </section>
 
       {/* ============================================================
-          SECTION 5: PODMAN DESKTOP CALLOUT (Matching downloads.tsx)
-          Solid light purple container (#f3e8ff), NO gradient
-      ============================================================ */}
-      <section className="bg-white py-10 dark:bg-[#1B1B1D] sm:py-14">
-        <div className="container mx-auto px-4 lg:px-8 xl:max-w-[1240px]">
-          <div className="flex flex-col justify-between gap-6 rounded-md border border-black/[0.08] bg-purple-100 p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:flex-row sm:items-center sm:p-8">
-            <div className="flex items-start gap-4 sm:items-center">
-              <img
-                src={desktopLogoSrc}
-                alt="Podman Desktop Logo"
-                className="h-14 w-14 shrink-0 object-contain sm:h-16 sm:w-16"
-              />
-              <div className="space-y-1">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
-                  Prefer a Graphical Desktop Interface?
-                </h3>
-                <p className="text-gray-600 m-0 max-w-xl text-justify !text-sm font-medium leading-relaxed dark:text-gray-300">
-                  Participate in monthly community meetings, release demos, and desktop extension syncs on the official
-                  Podman Desktop platform.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex shrink-0 flex-wrap items-center gap-3">
-              <a
-                href="https://podman-desktop.io/community#community-events"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: 'none', backgroundColor: '#892CA0', color: '#ffffff' }}
-                className="shadow-xs inline-flex items-center gap-2 rounded-md bg-[#892CA0] px-4 py-2.5 !text-sm font-bold text-white !no-underline transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#77218d] hover:!text-white hover:shadow-md">
-                <span className="text-white">Desktop Events</span>
-                <Icon icon="material-symbols:arrow-outward-rounded" className="text-base text-white" />
-              </a>
-              <a
-                href="https://podman-desktop.io"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: 'none' }}
-                className="shadow-xs hover:bg-purple-200 inline-flex items-center gap-1.5 rounded-md bg-white px-4 py-2.5 !text-sm font-bold text-[#892CA0] !no-underline transition-all duration-150 hover:text-[#77218d] dark:bg-white/10 dark:text-purple-300 dark:hover:bg-white/15">
-                <span>Official Website</span>
-                <Icon icon="material-symbols:arrow-outward-rounded" className="text-base" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          SECTION 6: FULL MAILING LIST SECTION (Restored from Original)
+          SECTION 5: FULL MAILING LIST SECTION (Restored from Original)
       ============================================================ */}
       <section id="mailing-list" className="bg-white py-16 dark:bg-[#1B1B1D] sm:py-20">
         <div className="container mx-auto px-4 lg:px-8 xl:max-w-[1240px]">
@@ -412,14 +357,14 @@ export default function Community(): JSX.Element {
             <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
               {mailingList.title}
             </h2>
-            <p className="text-gray-600 mx-auto mt-2 max-w-xl text-justify !text-base font-medium leading-relaxed dark:text-gray-300">
+            <p className="text-gray-600 mx-auto mt-2 max-w-xl text-center !text-base font-medium leading-relaxed dark:text-gray-300">
               {mailingList.subtitle}
             </p>
           </div>
 
           <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-12 lg:gap-10">
-            {/* Left Column: Subscribe Options (Full Height Card in bg-purple-100/70 with Unified Drop Shadow) */}
-            <div className="flex h-full flex-col justify-between rounded-md border border-black/[0.08] bg-purple-100/70 p-7 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:p-9 lg:col-span-7">
+            {/* Left Column: Subscribe Options (Full Height Card in bg-white with Unified Drop Shadow) */}
+            <div className="flex h-full flex-col justify-between rounded-md border border-black/[0.08] bg-white p-7 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:p-9 lg:col-span-7">
               <div>
                 <div className="flex items-center gap-3">
                   <div className="shadow-xs flex h-11 w-11 items-center justify-center rounded-md bg-[#892CA0] text-white">
@@ -437,9 +382,9 @@ export default function Community(): JSX.Element {
                   preferred way to subscribe:
                 </p>
 
-                <div className="mt-5 flex flex-col gap-4">
+                <div className="mt-9 flex flex-col divide-y divide-black/[0.08] dark:divide-white/[0.08]">
                   {/* Option 1: Email */}
-                  <div className="shadow-2xs flex flex-col justify-between gap-3 rounded-md bg-[#EBD6F5] p-5 dark:bg-white/10 sm:flex-row sm:items-center">
+                  <div className="flex flex-col justify-between gap-3 pb-5 sm:flex-row sm:items-center">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <Icon
@@ -454,7 +399,7 @@ export default function Community(): JSX.Element {
                         Send an email to{' '}
                         <code
                           style={{ fontSize: '0.82rem' }}
-                          className="rounded bg-[#DEC2EE] px-1.5 py-0.5 font-mono font-semibold text-[#5F246B] dark:bg-white/10 dark:text-purple-300">
+                          className="rounded border-0 bg-purple-100/70 px-1.5 py-0.5 font-mono font-semibold text-[#5F246B] dark:bg-white/10 dark:text-purple-300">
                           podman-join@lists.podman.io
                         </code>{' '}
                         with &ldquo;Subscribe&rdquo; in the subject line.
@@ -472,7 +417,7 @@ export default function Community(): JSX.Element {
                   </div>
 
                   {/* Option 2: Web Form */}
-                  <div className="shadow-2xs flex flex-col justify-between gap-3 rounded-md bg-[#EBD6F5] p-5 dark:bg-white/10 sm:flex-row sm:items-center">
+                  <div className="flex flex-col justify-between gap-3 py-5 sm:flex-row sm:items-center">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <Icon
@@ -503,8 +448,8 @@ export default function Community(): JSX.Element {
                 </div>
               </div>
 
-              {/* Confirmation Instructions Box */}
-              <div className="p-4.5 shadow-2xs mt-5 rounded-md bg-[#EBD6F5] dark:bg-white/10 sm:p-5">
+              {/* Confirmation Instructions */}
+              <div className="mt-2 border-t border-black/[0.08] pt-5 dark:border-white/[0.08]">
                 <div className="flex items-start gap-3">
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#892CA0] text-white">
                     <Icon icon="material-symbols:verified-rounded" className="text-lg text-white" />
@@ -518,7 +463,7 @@ export default function Community(): JSX.Element {
                       back, you&rsquo;ll be able to send mail directly to{' '}
                       <code
                         style={{ fontSize: '0.82rem' }}
-                        className="rounded bg-[#DEC2EE] px-1.5 py-0.5 font-mono font-semibold text-[#5F246B] dark:bg-white/10 dark:text-purple-300">
+                        className="rounded border-0 bg-purple-100/70 px-1.5 py-0.5 font-mono font-semibold text-[#5F246B] dark:bg-white/10 dark:text-purple-300">
                         podman@lists.podman.io
                       </code>{' '}
                       and manage your subscription preferences.
@@ -531,7 +476,7 @@ export default function Community(): JSX.Element {
             {/* Right Column: Screenshot Image + Browse Inside + Node 1 (Equal Height) */}
             <div className="flex h-full flex-col justify-between gap-6 lg:col-span-5">
               {/* Image & Browse Archive Card */}
-              <div className="flex flex-1 flex-col justify-between rounded-md border border-black/[0.08] bg-purple-100/70 p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:p-7">
+              <div className="flex flex-1 flex-col justify-between rounded-md border border-black/[0.08] bg-white p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:p-7">
                 <div>
                   {/* Screenshot Image with controlled height */}
                   <div className="shadow-2xs overflow-hidden rounded-md border border-black/5 dark:border-white/10">
@@ -575,7 +520,7 @@ export default function Community(): JSX.Element {
               </div>
 
               {/* Node 1: Please Note Callout */}
-              <div className="rounded-md border border-black/[0.08] bg-purple-100/70 p-5 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:p-6">
+              <div className="rounded-md border border-black/[0.08] bg-white p-5 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:p-6">
                 <div className="flex items-start gap-3.5">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#892CA0] text-white">
                     <Icon icon="material-symbols:info-rounded" className="text-lg text-white" />
@@ -590,6 +535,54 @@ export default function Community(): JSX.Element {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          SECTION 6: PODMAN DESKTOP CALLOUT (Matching downloads.tsx)
+          Solid light purple container (#f3e8ff), NO gradient
+      ============================================================ */}
+      <section className="bg-white py-10 dark:bg-[#1B1B1D] sm:py-14">
+        <div className="container mx-auto px-4 lg:px-8 xl:max-w-[1240px]">
+          <div className="flex flex-col justify-between gap-6 rounded-md border border-black/[0.08] bg-purple-100 p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)] dark:border-white/[0.08] dark:bg-[#242328] dark:shadow-[0_2px_10px_rgba(0,0,0,0.22)] sm:flex-row sm:items-center sm:p-8">
+            <div className="flex items-start gap-4 sm:items-center">
+              <img
+                src={desktopLogoSrc}
+                alt="Podman Desktop Logo"
+                className="h-14 w-14 shrink-0 object-contain sm:h-16 sm:w-16"
+              />
+              <div className="space-y-1">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+                  Prefer a Graphical Desktop Interface?
+                </h3>
+                <p className="text-gray-600 m-0 max-w-xl text-justify !text-sm font-medium leading-relaxed dark:text-gray-300">
+                  Participate in monthly community meetings, release demos, and desktop extension syncs on the official
+                  Podman Desktop platform.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex shrink-0 flex-wrap items-center gap-3">
+              <a
+                href="https://podman-desktop.io/community#community-events"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none', backgroundColor: '#892CA0', color: '#ffffff' }}
+                className="shadow-xs inline-flex items-center gap-2 rounded-md bg-[#892CA0] px-4 py-2.5 !text-sm font-bold text-white !no-underline transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#77218d] hover:!text-white hover:shadow-md">
+                <span className="text-white">Desktop Events</span>
+                <Icon icon="material-symbols:arrow-outward-rounded" className="text-base text-white" />
+              </a>
+              <a
+                href="https://podman-desktop.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none' }}
+                className="shadow-xs hover:bg-purple-200 inline-flex items-center gap-1.5 rounded-md bg-white px-4 py-2.5 !text-sm font-bold text-[#892CA0] !no-underline transition-all duration-150 hover:text-[#77218d] dark:bg-white/10 dark:text-purple-300 dark:hover:bg-white/15">
+                <span>Official Website</span>
+                <Icon icon="material-symbols:arrow-outward-rounded" className="text-base" />
+              </a>
             </div>
           </div>
         </div>
@@ -651,7 +644,7 @@ export default function Community(): JSX.Element {
                 </div>
 
                 {/* Clearly Visible Divider Line */}
-                <div className="my-8 h-px w-full bg-purple-300 dark:bg-white/10" />
+                <div className="my-8 h-px w-full bg-black/20 dark:bg-white/10" />
 
                 {/* Subsection B: File a New Issue */}
                 <div>
